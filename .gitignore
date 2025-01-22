@@ -1,32 +1,69 @@
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
+# Build and intermediate files
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+*.pdb
 *.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
 *.exe
-*.out
+*.dll
 *.app
+*.dylib
+*.icns
+*.so
+
+# User-specific files
+*.user
+*.userprefs
+*.o
+*.log
+*.VS/
+*.vscode/
+
+# Ignored by Unreal Engine
+*.sln
+*.suo
+*.opensdf
+*.VC.db
+*.VC.VC.opendb
+
+# Crash logs and temporary files
+*.log
+*.temp
+*.tmproj
+
+# Ignore config files specific to local machine
+Config/DefaultEditor.ini
+Config/DefaultEditorUserSettings.ini
+Config/DefaultGame.ini
+Config/DefaultGameUserSettings.ini
+Config/DefaultEngine.ini
+Config/DefaultInput.ini
+
+# Mac specific files
+.DS_Store
+
+# Python generated files
+*.pyc
+*.pyo
+__pycache__/
+
+# Ignore Unreal's plugin intermediate files
+Plugins/*/Intermediate/
+
+# Ignore Build directory for packaged projects
+Build/
+
+# Ignore platform-specific builds
+*.apk
+*.ipa
+
+# Ignore any auto-generated or temporary project files
+*.gen.cpp
+*.gen.h
+*.manifest
+*.modules
+
+# Ignore compiled shader cache
+Shaders/
+*.upack
