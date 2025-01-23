@@ -6,6 +6,13 @@
 #include "GameFramework/Character.h"
 #include "ASCharacterBase.generated.h"
 
+UENUM()
+enum class ECharacterControlType : uint8
+{
+	Shoulder,
+	Quater
+};
+
 UCLASS()
 class ANIMATED_SHOT_API AASCharacterBase : public ACharacter
 {
@@ -15,4 +22,9 @@ public:
 	// Sets default values for this character's properties
 	AASCharacterBase();
 
+protected:
+	virtual void SetCharacterControlData(const class UASCharacterControlData* CharacterControlData);
+
+	UPROPERTY(EditAnywhere, Category = CharacterControl, Meta = (AllowPrivateAccess = "true"))
+	TMap<ECharacterControlType, class UASCharacterControlData*> CharacterControlManager;
 };

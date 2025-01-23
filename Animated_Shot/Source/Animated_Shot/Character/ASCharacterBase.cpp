@@ -4,6 +4,7 @@
 #include "Character/ASCharacterBase.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "ASCharacterControlData.h"
 
 // Sets default values
 AASCharacterBase::AASCharacterBase()
@@ -42,4 +43,27 @@ AASCharacterBase::AASCharacterBase()
 	{
 		GetMesh()->SetAnimInstanceClass(AnimInstanceClassRef.Class);
 	}
+
+	static ConstructorHelpers::FObjectFinder<UASCharacterControlData> ShoulderDataRef(TEXT("/Script/Animated_Shot.ASCharacterControlData'/Game/MyCharacter/CharacterControl/ASC_Shoulder.ASC_Shoulder'"));
+	if (ShoulderDataRef.Object)
+	{
+		CharacterControlManager.Add(ECharacterControlType::Shoulder, ShoulderDataRef.Object);
+	}
+
+	static ConstructorHelpers::FObjectFinder<UASCharacterControlData> QuaterDataRef(TEXT("/Script/Animated_Shot.ASCharacterControlData'/Game/MyCharacter/CharacterControl/ASC_Quater.ASC_Quater'"));
+	if(QuaterDataRef.Object)
+	{
+		CharacterControlManager.Add(ECharacterControlType::Quater, QuaterDataRef.Object);
+	}
+}
+
+void AASCharacterBase::SetCharacterControlData(const UASCharacterControlData* CharacterControlData)
+{
+	//Pawn
+	bUseControllerRotationYaw = CharacterControlData -> bUseControllerRotationYaw;
+	
+	//CharaccterMovement
+	GetCharacterMovement()->bOrientRotationToMovement = CharacterControlData->bOrientRotationToMovement;
+	GetCharacterMovement()->bUseControllerDesiredRotation = CharacterControlData->bUseControllerDesiredRotation;
+	GetCharacterMovement()->RotationRate = CharacterControlData->RotationRate;
 }
