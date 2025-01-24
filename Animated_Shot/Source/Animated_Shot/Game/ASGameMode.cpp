@@ -12,7 +12,7 @@ AASGameMode::AASGameMode()
 	//	DefaultPawnClass = ThirdPersonClassRef.Class;
 	//}
 	//DefaultPawnClass
-	static ConstructorHelpers::FClassFinder<APawn> DefaultPawnClassRef(TEXT("/Script/Animated_Shot.ASCharacterPlayer"));
+	static ConstructorHelpers::FClassFinder<APawn> DefaultPawnClassRef(TEXT("/Script/Engine.Blueprint'/Game/MyCharacter/AS_Character.AS_Character_C'"));
 	if (DefaultPawnClassRef.Class)
 	{
 		DefaultPawnClass = DefaultPawnClassRef.Class;

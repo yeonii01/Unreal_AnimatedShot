@@ -59,6 +59,8 @@ protected:
 	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "true"))
 	//TObjectPtr<class UInputAction> QuaterLookAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> AttackAction;
 
 	void ShoulderMove(const FInputActionValue& Value);
 	void ShoulderLook(const FInputActionValue& Value);	
@@ -67,4 +69,6 @@ protected:
 	//void QuaterLook(const FInputActionValue& Value);
 
 	ECharacterControlType CurrentCharacterControlType;
+
+	void Attack();
 };

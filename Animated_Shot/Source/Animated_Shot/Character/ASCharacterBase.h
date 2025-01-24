@@ -27,4 +27,11 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = CharacterControl, Meta = (AllowPrivateAccess = "true"))
 	TMap<ECharacterControlType, class UASCharacterControlData*> CharacterControlManager;
+
+//Combo Action Section
+protected:
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<class UAnimMontage> ComboActionMontage;
+
+	void ProcessComboCommand();
 };

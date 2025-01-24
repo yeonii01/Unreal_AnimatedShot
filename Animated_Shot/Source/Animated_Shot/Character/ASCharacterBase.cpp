@@ -5,6 +5,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ASCharacterControlData.h"
+#include "Animation/AnimMontage.h"
 
 // Sets default values
 AASCharacterBase::AASCharacterBase()
@@ -66,4 +67,10 @@ void AASCharacterBase::SetCharacterControlData(const UASCharacterControlData* Ch
 	GetCharacterMovement()->bOrientRotationToMovement = CharacterControlData->bOrientRotationToMovement;
 	GetCharacterMovement()->bUseControllerDesiredRotation = CharacterControlData->bUseControllerDesiredRotation;
 	GetCharacterMovement()->RotationRate = CharacterControlData->RotationRate;
+}
+
+void AASCharacterBase::ProcessComboCommand()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	AnimInstance->Montage_Play(ComboActionMontage);
 }
