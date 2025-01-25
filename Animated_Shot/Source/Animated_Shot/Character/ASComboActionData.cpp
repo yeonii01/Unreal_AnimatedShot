@@ -3,3 +3,6 @@
 
 #include "Character/ASComboActionData.h"
 
+UASComboActionData::UASComboActionData()
+{
+}

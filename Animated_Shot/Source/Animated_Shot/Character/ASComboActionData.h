@@ -14,4 +14,18 @@ class ANIMATED_SHOT_API UASComboActionData : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 	
+public:
+	UASComboActionData();
+
+	UPROPERTY(EditAnywhere, Category = Name)
+	FString MontageSectionNamePrefix;
+
+	UPROPERTY(EditAnywhere, Category = Name)
+	uint8 MaxComboCount;
+
+	UPROPERTY(EditAnywhere, Category = Name)
+	float FrameRate;
+
+	UPROPERTY(EditAnywhere, Category = Name)
+	TArray<float> EffectiveFrameCount;
 };
