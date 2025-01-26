@@ -7,6 +7,8 @@
 #include "ASCharacterControlData.h"
 #include "Animation/AnimMontage.h"
 #include "ASComboActionData.h"
+#include "Physics/ASCollision.h"
+#include "Engine/DamageEvents.h"
 
 // Sets default values
 AASCharacterBase::AASCharacterBase()
@@ -18,7 +20,7 @@ AASCharacterBase::AASCharacterBase()
 
 	//Capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
-	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
+	GetCapsuleComponent()->SetCollisionProfileName(CPROFILE_ASCAPSULE);
 
 	//Movement
 	GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -32,7 +34,7 @@ AASCharacterBase::AASCharacterBase()
 	//Mesh
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -100.f), FRotator(0.f, -90.f, 0.f));
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	GetMesh()->SetCollisionProfileName(TEXT("CharacterMesh"));
+	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
 	
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh>CharacterMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/MyCharacter/character_01_011.character_01_011'"));
 	if (CharacterMeshRef.Object)
@@ -56,6 +58,24 @@ AASCharacterBase::AASCharacterBase()
 	if(QuaterDataRef.Object)
 	{
 		CharacterControlManager.Add(ECharacterControlType::Quater, QuaterDataRef.Object);
+	}
+
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRef(TEXT(" / Script / Engine.AnimMontage'/Game/MyCharacter/Animations/AM_ComboAttack.AM_ComboAttack'"));
+	if (ComboActionMontageRef.Object)
+	{
+		ComboActionMontage = ComboActionMontageRef.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UASComboActionData> ComboActionDataRef(TEXT("/Script/Animated_Shot.ASComboActionData'/Game/CharacterAction/ASA_ComboAttack.ASA_ComboAttack'"));
+	if (ComboActionDataRef.Object)
+	{
+		ComboActionData = ComboActionDataRef.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/MyCharacter/Animations/AM_Dead.AM_Dead'"));
+	if (DeadMontageRef.Object)
+	{
+		DeadMontage = DeadMontageRef.Object;
 	}
 }
 
@@ -141,4 +161,53 @@ void AASCharacterBase::ComboCheck()
 		SetComboCheckTimer();
 		HasNextComboCommand = false;
 	}
+}
+
+void AASCharacterBase::AttackHitCheck()
+{
+	FHitResult OutHitResult;
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(Attack), false, this);
+
+	const float AttackRange = 500.f;
+	const float AttackRadius = 10.f;
+	const float AttackDamage = 30.f;
+	const FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
+	const FVector End = Start + GetActorForwardVector() * AttackRange;
+
+	bool HitDetected = GetWorld()->SweepSingleByChannel(OutHitResult, Start, End, FQuat::Identity, CCHANEL_ASACTION, FCollisionShape::MakeSphere(AttackRadius), Params); //World가 제공하는 함수					
+	if (HitDetected)
+	{
+		FDamageEvent DamageEvent;
+		OutHitResult.GetActor()->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
+	}
+
+#if ENABLE_DRAW_DEBUG
+
+	FVector CapsuleOrigin = Start + (End - Start) * 0.5f;
+	float CapsuleHalfHeight = AttackRange * 0.5f;
+	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
+	
+	DrawDebugCapsule(GetWorld(), CapsuleOrigin, CapsuleHalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(), DrawColor, false, 5.f);
+#endif
+}
+
+float AASCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	SetDead();
+	return DamageAmount;
+}
+
+void AASCharacterBase::SetDead()
+{
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	PlayDeadAnimation();
+	SetActorEnableCollision(false);
+}
+
+void AASCharacterBase::PlayDeadAnimation()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	AnimInstance->StopAllMontages(0.f);
+	AnimInstance->Montage_Play(DeadMontage, 1.f);
 }

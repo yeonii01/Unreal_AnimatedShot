@@ -11,5 +11,7 @@ public class Animated_Shot : ModuleRules
 		PublicIncludePaths.AddRange(new string[] { "Animated_Shot" });
 
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
+
+		PublicDefinitions.Add("ENABLE_DRAW_DEBUG=1");
 	}
 }
