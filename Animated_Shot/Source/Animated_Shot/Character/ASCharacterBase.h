@@ -58,7 +58,7 @@ protected:
 	TObjectPtr<class UAnimMontage> DeadMontage;
 
 	virtual void SetDead();
-	void PlayDeadAnimation();
+	virtual void PlayDeadAnimation();
 
 	float DeadEventDelayTime = 5.f;
 };

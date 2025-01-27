@@ -64,7 +64,7 @@ AASCharacterPlayer::AASCharacterPlayer()
 		AttackAction = InputActionAttackRef.Object;
 	}
 
-	CurrentCharacterControlType = ECharacterControlType::Quater;
+	CurrentCharacterControlType = ECharacterControlType::Shoulder;
 }
 
 void AASCharacterPlayer::BeginPlay()

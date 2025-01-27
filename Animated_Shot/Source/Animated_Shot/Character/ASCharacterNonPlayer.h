@@ -18,5 +18,5 @@ public:
 	AASCharacterNonPlayer();
 	
 protected:
-	void SetDead() override;
+	virtual void SetDead() override;
 };
