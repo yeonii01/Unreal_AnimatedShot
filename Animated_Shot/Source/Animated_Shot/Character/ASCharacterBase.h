@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interface/ASAnimationAttackInterface.h"
+#include "Interface/ASCharacterWidgetInterface.h"
 #include "ASCharacterBase.generated.h"
 
 UENUM()
@@ -15,13 +16,15 @@ enum class ECharacterControlType : uint8
 };
 
 UCLASS()
-class ANIMATED_SHOT_API AASCharacterBase : public ACharacter, public IASAnimationAttackInterface
+class ANIMATED_SHOT_API AASCharacterBase : public ACharacter, public IASAnimationAttackInterface, public IASCharacterWidgetInterface
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
 	AASCharacterBase();
+
+	virtual void PostInitializeComponents() override;
 
 protected:
 	virtual void SetCharacterControlData(const class UASCharacterControlData* CharacterControlData);
@@ -54,11 +57,23 @@ protected:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 //Dead Section
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = Animation)
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = Animation, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> DeadMontage;
 
 	virtual void SetDead();
 	virtual void PlayDeadAnimation();
 
 	float DeadEventDelayTime = 5.f;
+
+//Stat Section
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat, Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UASCharacterStatComponent> Stat;
+
+//UI Widget Section
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widget, Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UWidgetComponent> HpBar;
+
+	virtual void SetUpCharacterWidget(class UASUserWidget* InUserWidget) override;
 };
