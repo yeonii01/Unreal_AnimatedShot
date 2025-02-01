@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/TimelineComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Item/ASAWeapon.h"
 #include "ASItemBox.generated.h"
 
 UCLASS()
@@ -14,6 +17,9 @@ class ANIMATED_SHOT_API AASItemBox : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AASItemBox();
+
+protected:
+	virtual void Tick(float DeltaTime) override;  
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = Box)
@@ -33,4 +39,13 @@ protected:
 
 	UFUNCTION()
 	void OnEffectFinished(class UParticleSystemComponent* ParticleSystem);
+
+private:
+	UPROPERTY()
+	bool bIsOpening = false;
+	UPROPERTY()
+	float CurrentRotation = 0.f;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AASAWeapon> WeaponClass;
 };

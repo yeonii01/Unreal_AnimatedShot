@@ -7,6 +7,8 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Physics/ASCollision.h"
 #include "Interface/ASCharacterItemInterface.h"
+#include "Kismet/GameplayStatics.h"
+#include "Player/ASPlayerController.h"
 
 // Sets default values
 AASItemBox::AASItemBox()
@@ -37,6 +39,27 @@ AASItemBox::AASItemBox()
 		Effect->SetTemplate(EffectRef.Object);
 		Effect->bAutoActivate = false;
 	}
+	Effect->SetRelativeLocation(FVector(0.f, 0.f, 5.f));
+	Effect->SetTranslucentSortPriority(1);
+	PrimaryActorTick.bCanEverTick = true;
+	static ConstructorHelpers::FClassFinder<AASAWeapon> WeaponRef(TEXT("/Script/CoreUObject.Class'/Script/Animated_Shot.ASAWeapon_C'"));
+	if (WeaponRef.Class)
+	{
+		WeaponClass = WeaponRef.Class;
+	}
+}
+
+void AASItemBox::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (bIsOpening && CurrentRotation > -90.f)
+	{
+		float RotationSpeed = 90.f;
+		float RotationDelta = RotationSpeed * DeltaTime;
+		CurrentRotation = FMath::Clamp(CurrentRotation - RotationDelta, -90.f, 0.f);
+		Mesh->SetRelativeRotation(FRotator(0.f, 0.f, CurrentRotation));
+	}
 }
 
 void AASItemBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult)
@@ -46,14 +69,21 @@ void AASItemBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor
 	{
 		OverlappingPawn->TakeItem(Item);
 	}
-
 	Effect->Activate(true);
-	Mesh->SetHiddenInGame(true);
+	bIsOpening = true;
 	SetActorEnableCollision(false);
 	Effect->OnSystemFinished.AddDynamic(this, &AASItemBox::OnEffectFinished);
+	FVector SpawnLocation1 = GetActorLocation() + FVector(60, 0, 80);
+	FVector SpawnLocation2 = GetActorLocation() + FVector(-60, 0, 80);
+	FRotator SpawnRotation = GetActorRotation() + FRotator(0, 90, -90);
+
+	AASAWeapon* SpawnWeapon1 = GetWorld()->SpawnActor<AASAWeapon>(WeaponClass, SpawnLocation1, SpawnRotation);
+	UStaticMesh* NewMesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/MyCharacter/weapon_02.weapon_02"));
+	SpawnWeapon1->WeaponMesh->SetStaticMesh(NewMesh);
+	AASAWeapon* SpawnWeapon2 = GetWorld()->SpawnActor<AASAWeapon>(WeaponClass, SpawnLocation2, SpawnRotation);
 }
 
 void AASItemBox::OnEffectFinished(UParticleSystemComponent* ParticleSystem)
 {
-	Destroy();
+	//Destroy();
 }
