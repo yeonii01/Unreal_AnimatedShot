@@ -13,6 +13,9 @@
 #include "Components/WidgetComponent.h"
 #include "UI/ASWidgetComponent.h"
 #include "UI/ASHpBarWidget.h"
+#include "Item/ASWeaponItemData.h"
+
+DEFINE_LOG_CATEGORY(LogASCharacter);
 
 // Sets default values
 AASCharacterBase::AASCharacterBase()
@@ -97,6 +100,17 @@ AASCharacterBase::AASCharacterBase()
 		HpBar->SetDrawSize(FVector2D(150.f, 15.f));
 		HpBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
+
+	//Item Actions
+	TakeItemActions.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AASCharacterBase::EquipWeapon)));
+	TakeItemActions.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AASCharacterBase::DrinkPotion)));
+	TakeItemActions.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AASCharacterBase::ReadScroll)));
+
+	//Weapon Component
+	Weapon1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon1"));
+	Weapon1->SetupAttachment(GetMesh(), TEXT("Bip002_L_HandSocket"));
+	Weapon2 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon2"));
+	Weapon2->SetupAttachment(GetMesh(), TEXT("Bip002_R_HandSocket"));
 }
 
 void AASCharacterBase::PostInitializeComponents()
@@ -249,4 +263,38 @@ void AASCharacterBase::SetUpCharacterWidget(UASUserWidget* InUserWidget)
 		HpBarWidget->UpdateHpBar(Stat->GetCurrentHp());
 		Stat->OnHpChanged.AddUObject(HpBarWidget, &UASHpBarWidget::UpdateHpBar);
 	}
+}
+
+void AASCharacterBase::TakeItem(UASItemData* InItemData)
+{
+	if (InItemData)
+	{
+		TakeItemActions[(uint8)InItemData->Type].ItemDelegate.ExecuteIfBound(InItemData);
+	}
+}
+
+void AASCharacterBase::DrinkPotion(UASItemData* InItemData)
+{
+	UE_LOG(LogASCharacter, Log, TEXT("Drink Potion"));
+}
+
+void AASCharacterBase::EquipWeapon(UASItemData* InItemData)
+{
+	UASWeaponItemData* WeaponItemData = Cast<UASWeaponItemData>(InItemData);
+	
+	if (WeaponItemData)
+	{
+		if (WeaponItemData->WeaponMesh.IsPending())
+		{
+			WeaponItemData->WeaponMesh.LoadSynchronous();
+		}
+		Weapon1->SetStaticMesh(WeaponItemData->WeaponMesh.Get());
+		Weapon2->SetStaticMesh(WeaponItemData->WeaponMesh.Get());
+	}
+}
+
+
+void AASCharacterBase::ReadScroll(UASItemData* InItemData)
+{
+	UE_LOG(LogASCharacter, Log, TEXT("Read Scroll"));
 }
