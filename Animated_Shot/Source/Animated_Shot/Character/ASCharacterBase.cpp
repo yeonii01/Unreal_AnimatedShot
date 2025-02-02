@@ -209,10 +209,10 @@ void AASCharacterBase::AttackHitCheck()
 	FHitResult OutHitResult;
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(Attack), false, this);
 
-	const float AttackRange = 500.f;
-	const float AttackRadius = 10.f;
+	const float AttackRange = 1000.f;
+	const float AttackRadius = 5.f;
 	const float AttackDamage = 30.f;
-	const FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
+	const FVector Start = (GetActorLocation() - FVector(0.f, 0.f, 30.f)) + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
 	const FVector End = Start + GetActorForwardVector() * AttackRange;
 
 	bool HitDetected = GetWorld()->SweepSingleByChannel(OutHitResult, Start, End, FQuat::Identity, CCHANEL_ASACTION, FCollisionShape::MakeSphere(AttackRadius), Params); //World가 제공하는 함수					
