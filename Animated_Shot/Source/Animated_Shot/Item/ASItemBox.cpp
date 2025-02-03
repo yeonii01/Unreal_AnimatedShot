@@ -9,6 +9,8 @@
 #include "Interface/ASCharacterItemInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/ASPlayerController.h"
+#include "Item/ASItemData.h"
+#include "Item/ASWeaponItemData.h"
 
 // Sets default values
 AASItemBox::AASItemBox()
@@ -64,26 +66,38 @@ void AASItemBox::Tick(float DeltaTime)
 
 void AASItemBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult)
 {
-	IASCharacterItemInterface* OverlappingPawn = Cast<IASCharacterItemInterface>(OtherActor);
-	if (OverlappingPawn)
-	{
-		OverlappingPawn->TakeItem(Item);
-	}
 	Effect->Activate(true);
 	bIsOpening = true;
 	SetActorEnableCollision(false);
 	Effect->OnSystemFinished.AddDynamic(this, &AASItemBox::OnEffectFinished);
-	FVector SpawnLocation1 = GetActorLocation() + FVector(60, 0, 80);
-	FVector SpawnLocation2 = GetActorLocation() + FVector(-60, 0, 80);
-	FRotator SpawnRotation = GetActorRotation() + FRotator(0, 90, -90);
 
-	AASAWeapon* SpawnWeapon1 = GetWorld()->SpawnActor<AASAWeapon>(WeaponClass, SpawnLocation1, SpawnRotation);
-	UStaticMesh* NewMesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/MyCharacter/weapon_02.weapon_02"));
-	SpawnWeapon1->WeaponMesh->SetStaticMesh(NewMesh);
-	AASAWeapon* SpawnWeapon2 = GetWorld()->SpawnActor<AASAWeapon>(WeaponClass, SpawnLocation2, SpawnRotation);
+	OpenBox(OtherActor);
 }
 
 void AASItemBox::OnEffectFinished(UParticleSystemComponent* ParticleSystem)
 {
 	//Destroy();
+}
+
+void AASItemBox::OpenBox(AActor* OtherActor)
+{
+	UStaticMesh* NewMesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/MyCharacter/weapon_02.weapon_02"));
+	UASWeaponItemData* NewItem = NewObject<UASWeaponItemData>();
+	NewItem->SetItemType(EItemType::Weapon2);
+	NewItem->WeaponMesh = NewMesh;
+	Item = NewItem;
+	
+	FVector SpawnLocation1 = GetActorLocation() + FVector(60, 0, 80);
+	FVector SpawnLocation2 = GetActorLocation() + FVector(-60, 0, 80);
+	FRotator SpawnRotation = GetActorRotation() + FRotator(0, 90, -90);
+
+	AASAWeapon* SpawnWeapon1 = GetWorld()->SpawnActor<AASAWeapon>(WeaponClass, SpawnLocation1, SpawnRotation);
+	SpawnWeapon1->WeaponMesh->SetStaticMesh(NewMesh);
+	AASAWeapon* SpawnWeapon2 = GetWorld()->SpawnActor<AASAWeapon>(WeaponClass, SpawnLocation2, SpawnRotation);
+
+	IASCharacterItemInterface* OverlappingPawn = Cast<IASCharacterItemInterface>(OtherActor);
+	if (OverlappingPawn)
+	{
+		OverlappingPawn->TakeItem(Item);
+	}
 }

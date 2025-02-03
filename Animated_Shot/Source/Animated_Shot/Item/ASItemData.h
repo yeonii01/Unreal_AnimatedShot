@@ -24,4 +24,6 @@ class ANIMATED_SHOT_API UASItemData : public UPrimaryDataAsset
 public:
 	UPROPERTY(EditAnywhere, BluePrintReadWrite, Category = Type)
 	EItemType Type;
+
+	void SetItemType(EItemType InType) { Type = InType; }
 };

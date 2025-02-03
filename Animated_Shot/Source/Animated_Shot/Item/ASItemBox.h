@@ -48,4 +48,6 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AASAWeapon> WeaponClass;
+
+	void OpenBox(AActor* OtherActor);
 };
