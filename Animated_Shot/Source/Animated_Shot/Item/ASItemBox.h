@@ -49,5 +49,11 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AASAWeapon> WeaponClass;
 
-	void OpenBox(AActor* OtherActor);
+	void OpenBox();
+
+	UPROPERTY()
+	AActor* OverlapActor;
+
+	UFUNCTION()
+	void SelectWeapon(int _key);
 };
