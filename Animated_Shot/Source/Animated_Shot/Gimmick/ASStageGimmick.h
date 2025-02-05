@@ -32,6 +32,12 @@ class ANIMATED_SHOT_API AASStageGimmick : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AASStageGimmick();
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+protected:
+	virtual void OnConstruction(const FTransform& Transform) override;
 
 //Stage Section
 protected:
@@ -72,4 +78,18 @@ protected:
 	void SetFight();
 	void SetChooseReward();
 	void SetChooseNext();
+
+//Fight Section
+protected:
+	UPROPERTY(EditAnywhere, Category = Fight, Meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class AASCharacterNonPlayer> OpponentClass;
+
+	UPROPERTY(EditAnyWhere, Category = Fight, Meta = (AllowPrivateAccess = "true"))
+	float OpponentSpawnTime;
+
+	UFUNCTION()
+	void OnOpponentDestroyed(AActor* DestroyedActor);
+
+	FTimerHandle OpponentTimerHandle;
+	void OnOpponentSpawn();
 };

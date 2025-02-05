@@ -5,6 +5,8 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
 #include "Physics/ASCollision.h"
+#include "Character/ASCharacterNonPlayer.h"
+#include "Engine/OverlapResult.h"
 
 // Sets default values
 AASStageGimmick::AASStageGimmick()
@@ -31,7 +33,7 @@ AASStageGimmick::AASStageGimmick()
 	UStaticMeshComponent* Gate = CreateDefaultSubobject<UStaticMeshComponent>(GateSocket);
 	Gate->SetStaticMesh(GateMeshRef.Object);
 	Gate->SetupAttachment(Stage, GateSocket);
-	Gate->SetRelativeLocation(FVector(-1220.f, -230.5f, 10.f));
+	Gate->SetRelativeLocation(FVector(-1220.f, -230.5f, 20.f));
 	Gate->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
 	Gates.Add(GateSocket, Gate);
 
@@ -51,22 +53,50 @@ AASStageGimmick::AASStageGimmick()
 	StateChangeActions.Add(EStageState::FIGHT, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &AASStageGimmick::SetFight)));
 	StateChangeActions.Add(EStageState::REWARD, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &AASStageGimmick::SetChooseReward)));
 	StateChangeActions.Add(EStageState::NEXT, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &AASStageGimmick::SetChooseNext)));
+
+	//Fight Section
+	OpponentSpawnTime = 2.f;
+	OpponentClass = AASCharacterNonPlayer::StaticClass();
+}
+
+void AASStageGimmick::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void AASStageGimmick::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+
+	SetState(CurrentState);
 }
 
 void AASStageGimmick::OnStageTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	SetState(EStageState::FIGHT);
 }
 
 void AASStageGimmick::OnGateTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	//
 }
 
 void AASStageGimmick::OpenGates()
 {
+	for (auto& Gate : Gates)
+	{
+		(Gate.Value)->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
+		(Gate.Value)->SetRelativeLocation(FVector(-1220.f, -230.5f, 20.f));
+	}
 }
 
 void AASStageGimmick::CloseGates()
 {
+	for (auto& Gate : Gates)
+	{
+		(Gate.Value)->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
+		(Gate.Value)->SetRelativeLocation(FVector(-1270.f, -300.5f, 20.f));
+	}
 }
 
 void AASStageGimmick::SetState(EStageState InNewState)
@@ -81,16 +111,62 @@ void AASStageGimmick::SetState(EStageState InNewState)
 
 void AASStageGimmick::SetReady()
 {
+	StageTrigger->SetCollisionProfileName(CPROFILE_ASTRIGGER);
+
+	for (auto& GateTrigger : GateTriggers) GateTrigger->SetCollisionProfileName(TEXT("NoCollision"));
+
+	OpenGates();
 }
 
 void AASStageGimmick::SetFight()
 {
+	StageTrigger->SetCollisionProfileName(TEXT("NoCollision"));
+
+	for (auto& GateTrigger : GateTriggers) GateTrigger->SetCollisionProfileName(TEXT("NoCollision"));
+
+	CloseGates();
+
+	OnOpponentSpawn();
+	/*if (!GetWorld())
+	{
+		FTimerHandle RetryHandle;
+		GetWorldTimerManager().SetTimer(RetryHandle, this, &AASStageGimmick::SetFight, 1.f, false);
+		return;
+	}
+
+	GetWorld()->GetTimerManager().SetTimer(OpponentTimerHandle, this, &AASStageGimmick::OnOpponentSpawn, OpponentSpawnTime, false);*/
 }
 
 void AASStageGimmick::SetChooseReward()
 {
+	StageTrigger->SetCollisionProfileName(TEXT("NoCollision"));
+
+	for (auto& GateTrigger : GateTriggers) GateTrigger->SetCollisionProfileName(TEXT("NoCollision"));
+
+	CloseGates();
 }
 
 void AASStageGimmick::SetChooseNext()
 {
+	StageTrigger->SetCollisionProfileName(TEXT("NoCollision"));
+
+	for (auto& GateTrigger : GateTriggers) GateTrigger->SetCollisionProfileName(CPROFILE_ASTRIGGER);
+
+	OpenGates();
+}
+
+void AASStageGimmick::OnOpponentDestroyed(AActor* DestroyedActor)
+{
+	SetState(EStageState::REWARD);
+}
+
+void AASStageGimmick::OnOpponentSpawn()
+{
+	const FVector SpawnLocation = GetActorLocation() + FVector::UpVector * 88.f;
+	AActor* OpponentActor = GetWorld()->SpawnActor(OpponentClass, &SpawnLocation, &FRotator::ZeroRotator);
+	AASCharacterNonPlayer* ASOpponentCharacter = Cast<AASCharacterNonPlayer>(OpponentActor);
+	if (ASOpponentCharacter)
+	{
+		ASOpponentCharacter->OnDestroyed.AddDynamic(this, &AASStageGimmick::OnOpponentDestroyed);
+	}
 }
