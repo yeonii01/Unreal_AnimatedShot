@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Gimmick/ASStageGimmick.h"
+#include "ASStageGimmick.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
 #include "Physics/ASCollision.h"
@@ -48,12 +48,6 @@ AASStageGimmick::AASStageGimmick()
 
 	GateTriggers.Add(GateTrigger);
 
-	CurrentState = EStageState::READY;
-	StateChangeActions.Add(EStageState::READY, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &AASStageGimmick::SetReady)));
-	StateChangeActions.Add(EStageState::FIGHT, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &AASStageGimmick::SetFight)));
-	StateChangeActions.Add(EStageState::REWARD, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &AASStageGimmick::SetChooseReward)));
-	StateChangeActions.Add(EStageState::NEXT, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &AASStageGimmick::SetChooseNext)));
-
 	//Fight Section
 	OpponentSpawnTime = 2.f;
 	OpponentClass = AASCharacterNonPlayer::StaticClass();
@@ -62,14 +56,24 @@ AASStageGimmick::AASStageGimmick()
 void AASStageGimmick::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red,
+		FString::Printf(TEXT("%d %d %d"), GetActorLocation().X, GetActorLocation().Y,
+			GetActorLocation().Z));
+
+	CurrentState = EStageState::READY;
+	StateChangeActions.Add(EStageState::READY, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &AASStageGimmick::SetReady)));
+	StateChangeActions.Add(EStageState::FIGHT, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &AASStageGimmick::SetFight)));
+	StateChangeActions.Add(EStageState::REWARD, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &AASStageGimmick::SetChooseReward)));
+	StateChangeActions.Add(EStageState::NEXT, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &AASStageGimmick::SetChooseNext)));
 }
 
-void AASStageGimmick::OnConstruction(const FTransform& Transform)
-{
-	Super::OnConstruction(Transform);
-
-	SetState(CurrentState);
-}
+//void AASStageGimmick::OnConstruction(const FTransform& Transform)
+//{
+//	/*Super::OnConstruction(Transform);
+//
+//	SetState(CurrentState);*/
+//}
 
 void AASStageGimmick::OnStageTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -101,11 +105,9 @@ void AASStageGimmick::CloseGates()
 
 void AASStageGimmick::SetState(EStageState InNewState)
 {
-	CurrentState = InNewState;
-
 	if (StateChangeActions.Contains(InNewState))
 	{
-		StateChangeActions[CurrentState].StageDelegate.ExecuteIfBound();
+		StateChangeActions[InNewState].StageDelegate.ExecuteIfBound();
 	}
 }
 
@@ -123,6 +125,10 @@ void AASStageGimmick::SetFight()
 	StageTrigger->SetCollisionProfileName(TEXT("NoCollision"));
 
 	for (auto& GateTrigger : GateTriggers) GateTrigger->SetCollisionProfileName(TEXT("NoCollision"));
+
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red,
+		FString::Printf(TEXT("%d %d %d"), GetActorLocation().X, GetActorLocation().Y,
+			GetActorLocation().Z));
 
 	CloseGates();
 

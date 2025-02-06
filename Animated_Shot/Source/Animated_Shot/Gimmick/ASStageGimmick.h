@@ -15,6 +15,7 @@ struct FStageChangedDelegateWrapper
 	FStageChangedDelegateWrapper(const FOnStageChangedDelegate& InDelegate) : StageDelegate(InDelegate) {}
 	FOnStageChangedDelegate StageDelegate;
 };
+
 UENUM(BlueprintType)
 enum class EStageState : uint8
 {
@@ -28,16 +29,17 @@ UCLASS()
 class ANIMATED_SHOT_API AASStageGimmick : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AASStageGimmick();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 protected:
-	virtual void OnConstruction(const FTransform& Transform) override;
+	//virtual void OnConstruction(const FTransform& Transform) override;
 
 //Stage Section
 protected:
@@ -50,7 +52,7 @@ protected:
 	UFUNCTION()
 	void OnStageTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-//Gate Section
+	//Gate Section
 protected:
 	UPROPERTY(VisibleAnywhere, Category = Gate, Meta = (AllowPrivateAccess = "true"))
 	TMap<FName, TObjectPtr<class UStaticMeshComponent>> Gates;
@@ -62,13 +64,16 @@ protected:
 	void OnGateTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	void OpenGates();
+
+	UFUNCTION(BlueprintCallable)
 	void CloseGates();
 
-//Stage Section
+	//Stage Section
 protected:
-	UPROPERTY(EditAnywhere,Category = Stage, Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = Stage, Meta = (AllowPrivateAccess = "true"))
 	EStageState CurrentState;
 
+	UFUNCTION(BlueprintCallable)
 	void SetState(EStageState InNewState);
 
 	UPROPERTY()
@@ -79,7 +84,7 @@ protected:
 	void SetChooseReward();
 	void SetChooseNext();
 
-//Fight Section
+	//Fight Section
 protected:
 	UPROPERTY(EditAnywhere, Category = Fight, Meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class AASCharacterNonPlayer> OpponentClass;
@@ -92,4 +97,7 @@ protected:
 
 	FTimerHandle OpponentTimerHandle;
 	void OnOpponentSpawn();
+
+public:
+	FOnStageChangedDelegate tempdele;
 };

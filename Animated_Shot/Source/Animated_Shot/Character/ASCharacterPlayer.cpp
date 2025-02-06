@@ -65,6 +65,7 @@ AASCharacterPlayer::AASCharacterPlayer()
 	}
 
 	CurrentCharacterControlType = ECharacterControlType::Shoulder;
+	PrimaryActorTick.bCanEverTick = true;
 }
 
 void AASCharacterPlayer::BeginPlay()
@@ -72,6 +73,16 @@ void AASCharacterPlayer::BeginPlay()
 	Super::BeginPlay();
 
 	SetCharacterControl(CurrentCharacterControlType);
+}
+
+void AASCharacterPlayer::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (GetWorld())
+	{
+		UE_LOG(LogTemp, Log, TEXT("aaa"));
+	}
 }
 
 void AASCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
