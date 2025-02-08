@@ -98,6 +98,17 @@ protected:
 	FTimerHandle OpponentTimerHandle;
 	void OnOpponentSpawn();
 
-public:
-	FOnStageChangedDelegate tempdele;
+protected:
+	UPROPERTY(VisibleAnywhere, Category = Reward, Meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class AASItemBox> RewardBoxClass;
+
+	UPROPERTY(VisibleAnywhere, Category = Reward, Meta = (AllowPrivateAccess = "true"))
+	TArray<TWeakObjectPtr<class AASItemBox>> RewardBoxes;
+
+	TMap<FName, FVector> RewardBoxLocations;
+
+	UFUNCTION()
+	void OnRewardTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	void SpawnRewardBoxes();
 };

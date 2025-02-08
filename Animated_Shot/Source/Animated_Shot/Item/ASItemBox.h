@@ -18,6 +18,7 @@ public:
 	// Sets default values for this actor's properties
 	AASItemBox();
 
+	FORCEINLINE class UBoxComponent* GetTrigger() { return Trigger; }
 protected:
 	virtual void Tick(float DeltaTime) override;  
 
@@ -35,25 +36,17 @@ protected:
 	TObjectPtr<class UASItemData> Item;
 
 	UFUNCTION()
-	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult);
+	virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult);
 
 	UFUNCTION()
 	void OnEffectFinished(class UParticleSystemComponent* ParticleSystem);
 
-private:
+protected:
 	UPROPERTY()
 	bool bIsOpening = false;
 	UPROPERTY()
 	float CurrentRotation = 0.f;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AASAWeapon> WeaponClass;
-
-	void OpenBox();
-
 	UPROPERTY()
 	AActor* OverlapActor;
-
-	UFUNCTION()
-	void SelectWeapon(int _key);
 };
