@@ -34,6 +34,10 @@ public:
 	// Sets default values for this actor's properties
 	AASStageGimmick();
 
+public:
+	FORCEINLINE int32 GetStageNum() const { return CurrentStageNum; }
+	FORCEINLINE void SetStageNum(int32 NewStageNum) { CurrentStageNum = NewStageNum; }
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -111,4 +115,9 @@ protected:
 	void OnRewardTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	void SpawnRewardBoxes();
+
+//	//Stage Stat
+//protected:
+//	UPROPERTY(VisibleInstanceOnly, Category = Stat, Meta = (AllowPrivateAccess = "true"))
+//	int32 CurrentStageNum;
 };

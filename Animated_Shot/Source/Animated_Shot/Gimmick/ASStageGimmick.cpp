@@ -57,6 +57,9 @@ AASStageGimmick::AASStageGimmick()
 	RewardBoxClass = AASItemBox::StaticClass();
 	FVector BoxLocation = Stage->GetSocketLocation(GateSocket) / 2;
 	RewardBoxLocations.Add(GateSocket, BoxLocation);
+
+	//Stage Stat
+	//CurrentStageNum = 0;
 }
 
 void AASStageGimmick::BeginPlay()
@@ -173,6 +176,7 @@ void AASStageGimmick::OnOpponentSpawn()
 	if (ASOpponentCharacter)
 	{
 		ASOpponentCharacter->OnDestroyed.AddDynamic(this, &AASStageGimmick::OnOpponentDestroyed);
+		ASOpponentCharacter->SetLevel(1);		//npc 레벨 설정
 	}
 }
 

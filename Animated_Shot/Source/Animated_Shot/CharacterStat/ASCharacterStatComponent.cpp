@@ -2,13 +2,13 @@
 
 
 #include "CharacterStat/ASCharacterStatComponent.h"
+#include "GameData/ASGameSingleton.h"
 #include "ASCharacterStatComponent.h"
 
 // Sets default values for this component's properties
 UASCharacterStatComponent::UASCharacterStatComponent()
 {
-	MaxHp = 200.f;
-	SetHp(MaxHp);
+	CurrentLevel = 1;
 }
 
 
@@ -16,7 +16,16 @@ UASCharacterStatComponent::UASCharacterStatComponent()
 void UASCharacterStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	SetHp(MaxHp);
+
+	SetLevelStat(CurrentLevel);
+	SetHp(BaseStat.MaxHp);
+}
+
+void UASCharacterStatComponent::SetLevelStat(int32 InNewLevel)
+{
+	CurrentLevel = FMath::Clamp(InNewLevel, 1, UASGameSingleton::Get().CharacterMaxLevel);
+	BaseStat = UASGameSingleton::Get().GetCharacterStat(CurrentLevel);
+	check(BaseStat.MaxHp > 0.f)
 }
 
 float UASCharacterStatComponent::ApplyDamage(float InDamage)
@@ -35,7 +44,7 @@ float UASCharacterStatComponent::ApplyDamage(float InDamage)
 
 void UASCharacterStatComponent::SetHp(float NewHp)
 {
-	CurrentHp = FMath::Clamp<float>(NewHp, 0.0f, MaxHp);
+	CurrentHp = FMath::Clamp<float>(NewHp, 0.0f, BaseStat.MaxHp);
 
 	OnHpChanged.Broadcast(CurrentHp);
 }

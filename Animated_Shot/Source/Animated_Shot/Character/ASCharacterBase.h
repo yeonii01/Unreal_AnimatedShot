@@ -104,4 +104,9 @@ protected:
 	virtual void DrinkPotion(class UASItemData* InItemData);
 	virtual void EquipWeapon(class UASItemData* InItemData);
 	virtual void ReadScroll(class UASItemData* InItemData);
+
+//Stat Section
+public:
+	int32 GetLevel();
+	void SetLevel(int32 InNewLevel);
 };
