@@ -59,7 +59,7 @@ AASStageGimmick::AASStageGimmick()
 	RewardBoxLocations.Add(GateSocket, BoxLocation);
 
 	//Stage Stat
-	//CurrentStageNum = 0;
+	CurrentStageNum = 1;
 }
 
 void AASStageGimmick::BeginPlay()
@@ -170,13 +170,14 @@ void AASStageGimmick::OnOpponentDestroyed(AActor* DestroyedActor)
 
 void AASStageGimmick::OnOpponentSpawn()
 {
-	const FVector SpawnLocation = GetActorLocation() + FVector::UpVector * 88.f;
-	AActor* OpponentActor = GetWorld()->SpawnActor(OpponentClass, &SpawnLocation, &FRotator::ZeroRotator);
-	AASCharacterNonPlayer* ASOpponentCharacter = Cast<AASCharacterNonPlayer>(OpponentActor);
+	const FTransform SpawnTransform(GetActorLocation() + FVector::UpVector * 88.f);
+	AASCharacterNonPlayer* ASOpponentCharacter = GetWorld()->SpawnActorDeferred<AASCharacterNonPlayer>(OpponentClass, SpawnTransform);
 	if (ASOpponentCharacter)
 	{
 		ASOpponentCharacter->OnDestroyed.AddDynamic(this, &AASStageGimmick::OnOpponentDestroyed);
-		ASOpponentCharacter->SetLevel(1);		//npc 레벨 설정
+		//CurrentStageNum = 2;								//수정해야함
+		ASOpponentCharacter->SetLevel(CurrentStageNum);		//npc 레벨 설정
+		ASOpponentCharacter->FinishSpawning(SpawnTransform);
 	}
 }
 

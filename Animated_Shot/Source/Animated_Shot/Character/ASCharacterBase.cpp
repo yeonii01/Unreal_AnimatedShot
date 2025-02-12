@@ -291,9 +291,18 @@ void AASCharacterBase::EquipWeapon(UASItemData* InItemData)
 		}
 		Weapon1->SetStaticMesh(WeaponItemData->WeaponMesh.Get());
 		Weapon2->SetStaticMesh(WeaponItemData->WeaponMesh.Get());
+		if (InItemData->Type == EItemType::Weapon1)
+		{
+			FASCharacterStat NewModifierStat(0, 100, 0, 0);
+			Stat->SetModifierStat(NewModifierStat);
+		}
+		else
+		{
+			FASCharacterStat NewModifierStat(0, 50, 20, 0);
+			Stat->SetModifierStat(NewModifierStat);
+		}
 	}
 }
-
 
 void AASCharacterBase::ReadScroll(UASItemData* InItemData)
 {

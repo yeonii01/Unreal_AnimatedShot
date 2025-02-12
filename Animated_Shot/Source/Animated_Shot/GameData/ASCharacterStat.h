@@ -12,6 +12,7 @@ struct FASCharacterStat : public FTableRowBase
 
 public:
 	FASCharacterStat() : MaxHp(0.0f), Attack(0.0f), AttackRange(0.0f), AttackSpeed(0.0f) {}
+	FASCharacterStat(float _MaxHp, float _Attack,float  _AttackRange ,float  _AttackSpeed) : MaxHp(_MaxHp), Attack(_Attack), AttackRange(_AttackRange), AttackSpeed(_AttackSpeed) {}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat)
 	float MaxHp;

@@ -10,12 +10,13 @@
 #include "Kismet/GameplayStatics.h"
 #include "Player/ASPlayerController.h"
 #include "Item/ASItemData.h"
+#include "CharacterStat/ASCharacterStatComponent.h"
 #include "Item/ASWeaponItemData.h"
-
 
 AAASItemWeaponBox::AAASItemWeaponBox()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
 	static ConstructorHelpers::FClassFinder<AASAWeapon> WeaponRef(TEXT("/Script/CoreUObject.Class'/Script/Animated_Shot.ASAWeapon_C'"));
 	if (WeaponRef.Class)
 	{
@@ -79,6 +80,7 @@ void AAASItemWeaponBox::SelectWeapon(int _key)
 	{
 		UASWeaponItemData* NewItem = NewObject<UASWeaponItemData>();
 		NewItem->SetItemType(EItemType::Weapon2);
+
 		NewItem->WeaponMesh = NewMesh2;
 		Item = NewItem;
 	}

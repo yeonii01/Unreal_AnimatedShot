@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Item/ASItemData.h"
+#include "GameData/ASCharacterStat.h"
 #include "ASWeaponItemData.generated.h"
 
 /**
@@ -17,4 +18,7 @@ class ANIMATED_SHOT_API UASWeaponItemData : public UASItemData
 public:
 	UPROPERTY(EditAnywhere, Category = Weapon)
 	TSoftObjectPtr<UStaticMesh> WeaponMesh;
+
+	UPROPERTY(EditAnywhere, Category =Stat)
+	FASCharacterStat ModifierStat;
 };

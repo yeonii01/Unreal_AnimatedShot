@@ -3,6 +3,7 @@
 
 #include "Character/ASCharacterNonPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Engine/AssetManager.h"
 
 AASCharacterNonPlayer::AASCharacterNonPlayer()
 {
@@ -11,7 +12,7 @@ AASCharacterNonPlayer::AASCharacterNonPlayer()
 	{
 		GetMesh()->SetSkeletalMesh(NonPlayerMeshRef.Object);
 	}
-
+	GetMesh()->SetHiddenInGame(true);
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRef(TEXT("/Game/Monster/Animation/FlowerDyad/ABP_AS_FlowerDyad.ABP_AS_FlowerDyad_C"));
 	if (AnimInstanceClassRef.Class)
 	{
@@ -25,6 +26,15 @@ AASCharacterNonPlayer::AASCharacterNonPlayer()
 	}
 }
 
+void AASCharacterNonPlayer::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	//ensure(NPCMeshes.Num() > 0);
+	int32 RandIndex = FMath::RandRange(0, NPCMeshes.Num() - 1);
+	NPCMeshHandle = UAssetManager::Get().GetStreamableManager().RequestAsyncLoad(NPCMeshes[RandIndex], FStreamableDelegate::CreateUObject(this, &AASCharacterNonPlayer::NPCMeshLoadCompleted));
+}
+
 void AASCharacterNonPlayer::SetDead()
 {
 	Super::SetDead();
@@ -33,4 +43,19 @@ void AASCharacterNonPlayer::SetDead()
 	GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([&](){
 		Destroy();
 		}), DeadEventDelayTime, false);
+}
+
+void AASCharacterNonPlayer::NPCMeshLoadCompleted()
+{
+	if (NPCMeshHandle.IsValid())
+	{
+		USkeletalMesh* NPCMesh = Cast<USkeletalMesh>(NPCMeshHandle->GetLoadedAsset());
+		if (NPCMesh)
+		{
+			GetMesh()->SetSkeletalMesh(NPCMesh);
+			GetMesh()->SetHiddenInGame(false);
+		}
+	}
+
+	NPCMeshHandle->ReleaseHandle();
 }

@@ -116,8 +116,8 @@ protected:
 
 	void SpawnRewardBoxes();
 
-//	//Stage Stat
-//protected:
-//	UPROPERTY(VisibleInstanceOnly, Category = Stat, Meta = (AllowPrivateAccess = "true"))
-//	int32 CurrentStageNum;
+	//Stage Stat
+protected:
+	UPROPERTY(EditAnyWhere, Category = Stat, Meta = (AllowPrivateAccess = "true"))
+	int32 CurrentStageNum;
 };
