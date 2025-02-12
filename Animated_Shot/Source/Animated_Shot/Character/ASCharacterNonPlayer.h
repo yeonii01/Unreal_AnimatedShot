@@ -28,5 +28,8 @@ protected:
 	UPROPERTY(config)
 	TArray<FSoftObjectPath> NPCMeshes;
 
+	TArray<UClass*> AnimClasses;
+	TArray<UAnimMontage*> DeadMontages;
+
 	TSharedPtr<FStreamableHandle> NPCMeshHandle;
 };
