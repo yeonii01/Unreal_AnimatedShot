@@ -4,6 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "LevelSequence.h"
+#include "LevelSequenceActor.h"
+#include "LevelSequencePlayer.h"
+#include "Blueprint/UserWidget.h"
 #include "ASGameMode.generated.h"
 
 /**
@@ -16,4 +20,22 @@ class ANIMATED_SHOT_API AASGameMode : public AGameModeBase
 	
 public:
 	AASGameMode();
+
+	virtual void BeginPlay() override;
+
+private:
+	UPROPERTY(EditAnywhere, Category = "Cinematic")
+	TSoftObjectPtr<ULevelSequence> IntroSequence;
+
+	// 위젯 클래스 지정
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> TextWidgetClass;
+
+	void PlayIntroSequence();
+
+	UFUNCTION()
+	void OnSequenceFinished();
+
+private:
+	UUserWidget* TextWidget;
 };
