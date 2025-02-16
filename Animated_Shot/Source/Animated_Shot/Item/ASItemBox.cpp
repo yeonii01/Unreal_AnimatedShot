@@ -35,6 +35,17 @@ AASItemBox::AASItemBox()
 	Mesh->SetRelativeLocation(FVector(0.f, -80.f, -30.f));
 	Mesh->SetCollisionProfileName(TEXT("NoCollision"));
 
+	// 두 번째 메쉬 추가
+	BoxBodyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SecondMesh"));
+	BoxBodyMesh->SetupAttachment(Mesh); // 기존 Mesh에 부착
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> BoxBodyMeshRef(TEXT("/Script/Engine.StaticMesh'/Game/CemeteryDungeon/Meshes/Chests/SM_cdmediumchest2bottom.SM_cdmediumchest2bottom'"));
+	if (BoxBodyMeshRef.Succeeded())
+	{
+		BoxBodyMesh->SetStaticMesh(BoxBodyMeshRef.Object);
+	}
+	BoxBodyMesh->SetRelativeLocation(FVector(0.f, 0.f, -50.f)); // 두 번째 메쉬의 상대 위치
+	BoxBodyMesh->SetCollisionProfileName(TEXT("NoCollision"));
+
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> EffectRef(TEXT("/Script/Engine.ParticleSystem'/Game/Effect/P_TreasureChest_Open_Mesh.P_TreasureChest_Open_Mesh'"));
 	if (EffectRef.Object)
 	{

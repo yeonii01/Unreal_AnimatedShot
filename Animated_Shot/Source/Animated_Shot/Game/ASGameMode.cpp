@@ -36,6 +36,11 @@ AASGameMode::AASGameMode()
 	{
 		TextWidgetClass = WidgetClass.Class;
 	}
+	static ConstructorHelpers::FObjectFinder<USoundCue> BGMAsset(TEXT("/Game/Sound/AS_Bgm.AS_Bgm"));
+	if (BGMAsset.Succeeded())
+	{
+		BackgroundMusic = BGMAsset.Object;
+	}
 
 	TextWidget = nullptr;
 }
@@ -49,6 +54,12 @@ void AASGameMode::BeginPlay()
 		TextWidget = CreateWidget<UUserWidget>(GetWorld(), TextWidgetClass);
 		if (TextWidget) TextWidget->AddToViewport();
 	}
+	PlayBackgroundMusic();
+}
+
+void AASGameMode::PlayBackgroundMusic()
+{
+	UGameplayStatics::PlaySound2D(GetWorld(), BackgroundMusic.Get());
 }
 
 void AASGameMode::PlayIntroSequence()

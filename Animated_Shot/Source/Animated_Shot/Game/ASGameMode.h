@@ -7,6 +7,7 @@
 #include "LevelSequence.h"
 #include "LevelSequenceActor.h"
 #include "LevelSequencePlayer.h"
+#include "Sound/SoundCue.h"
 #include "Blueprint/UserWidget.h"
 #include "ASGameMode.generated.h"
 
@@ -31,6 +32,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> TextWidgetClass;
 
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	TSoftObjectPtr<USoundCue> BackgroundMusic;
+
+	void PlayBackgroundMusic();
 	void PlayIntroSequence();
 
 	UFUNCTION()
