@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "Character/ASCharacterBase.h"
 #include "Engine/StreamableManager.h"
+#include "Interface/ASCharacterAIInterface.h"
 #include "ASCharacterNonPlayer.generated.h"
 
 /**
  * 
  */
 UCLASS(config=AnimatedShot)
-class ANIMATED_SHOT_API AASCharacterNonPlayer : public AASCharacterBase
+class ANIMATED_SHOT_API AASCharacterNonPlayer : public AASCharacterBase, public IASCharacterAIInterface
 {
 	GENERATED_BODY()
 
@@ -32,4 +33,10 @@ protected:
 	TArray<UAnimMontage*> DeadMontages;
 
 	TSharedPtr<FStreamableHandle> NPCMeshHandle;
+
+protected:
+	virtual float GetAIPatrolRadius() override;
+	virtual float GetAIDetectRange() override;
+	virtual float GetAIAttackRange() override;
+	virtual float GetAITurnSpeed() override;
 };

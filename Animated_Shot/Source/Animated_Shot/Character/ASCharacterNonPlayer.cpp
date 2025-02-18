@@ -5,6 +5,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/AssetManager.h"
 #include "AI/ASAIController.h"
+#include "CharacterStat/ASCharacterStatComponent.h"
 
 AASCharacterNonPlayer::AASCharacterNonPlayer()
 {
@@ -103,4 +104,24 @@ void AASCharacterNonPlayer::NPCMeshLoadCompleted()
 	}
 
 	NPCMeshHandle->ReleaseHandle();
+}
+
+float AASCharacterNonPlayer::GetAIPatrolRadius()
+{
+	return 700.f;
+}
+
+float AASCharacterNonPlayer::GetAIDetectRange()
+{
+	return 400.f;
+}
+
+float AASCharacterNonPlayer::GetAIAttackRange()
+{
+	return Stat->GetTotalStat().AttackRange + Stat->GetAttackRadius() * 2;
+}
+
+float AASCharacterNonPlayer::GetAITurnSpeed()
+{
+	return 0.f;
 }
