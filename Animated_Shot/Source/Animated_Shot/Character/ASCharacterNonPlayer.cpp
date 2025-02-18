@@ -4,12 +4,17 @@
 #include "Character/ASCharacterNonPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/AssetManager.h"
+#include "AI/ASAIController.h"
 
 AASCharacterNonPlayer::AASCharacterNonPlayer()
 {
+	GetMesh()->SetHiddenInGame(true);
+
+	AIControllerClass = AASAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
 	AnimClasses.SetNum(12);
 	DeadMontages.SetNum(12);
-	GetMesh()->SetHiddenInGame(true);
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand0(TEXT("/Game/Monster/Animation/Beez/ABP_AS_Beez.ABP_AS_Beez_C"));
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand1(TEXT("/Game/Monster/Animation/DevilTree/ABP_AS_Deviltree.ABP_AS_Deviltree_C"));
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand2(TEXT("/Game/Monster/Animation/FlowerDyad/ABP_AS_FlowerDyad.ABP_AS_FlowerDyad_C"));
