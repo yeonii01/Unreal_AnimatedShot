@@ -25,12 +25,6 @@ AASGameMode::AASGameMode()
 		PlayerControllerClass = PlayerControllerClassRef.Class;
 	}
 
-	static ConstructorHelpers::FObjectFinder<ULevelSequence> SequenceAsset(TEXT("/Game/LS_Title/LS_Title.LS_Title"));
-	if (SequenceAsset.Succeeded())
-	{
-		IntroSequence = SequenceAsset.Object;
-	}
-
 	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetClass(TEXT("/Game/UI/WBP_Title.WBP_Title_C"));
 	if (WidgetClass.Succeeded())
 	{
@@ -48,6 +42,9 @@ AASGameMode::AASGameMode()
 void AASGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+	FSoftObjectPath SequencePath(TEXT("/Game/LS_Title/LS_Title.LS_Title"));
+	IntroSequence = Cast<ULevelSequence>(StaticLoadObject(ULevelSequence::StaticClass(), nullptr, *SequencePath.ToString()));
+
 	PlayIntroSequence();
 	if (TextWidgetClass)
 	{

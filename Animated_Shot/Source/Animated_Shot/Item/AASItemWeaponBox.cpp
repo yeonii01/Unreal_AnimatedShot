@@ -17,11 +17,17 @@ AAASItemWeaponBox::AAASItemWeaponBox()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	static ConstructorHelpers::FClassFinder<AASAWeapon> WeaponRef(TEXT("/Script/CoreUObject.Class'/Script/Animated_Shot.ASAWeapon_C'"));
+	static ConstructorHelpers::FClassFinder<AASAWeapon> WeaponRef(TEXT("/Game/Item/Weapon/Weapon_BP.Weapon_BP_C"));
+
 	if (WeaponRef.Class)
 	{
 		WeaponClass = WeaponRef.Class;
 	}
+}
+
+void AAASItemWeaponBox::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
 void AAASItemWeaponBox::Tick(float DeltaTime)
@@ -56,7 +62,7 @@ void AAASItemWeaponBox::OpenBox()
 	FVector SpawnLocation2 = GetActorLocation() + FVector(-60, 0, 80);
 	FRotator SpawnRotation = GetActorRotation() + FRotator(0, 90, -90);
 
-	UStaticMesh* NewMesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/MyCharacter/weapon_02.weapon_02"));
+	UStaticMesh* NewMesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/MyCharacter/weapon_02"));
 
 	AASAWeapon* SpawnWeapon1 = GetWorld()->SpawnActor<AASAWeapon>(WeaponClass, SpawnLocation1, SpawnRotation);
 	SpawnWeapon1->WeaponMesh->SetStaticMesh(NewMesh);
@@ -65,8 +71,8 @@ void AAASItemWeaponBox::OpenBox()
 
 void AAASItemWeaponBox::SelectWeapon(int _key)
 {
-	UStaticMesh* NewMesh1 = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/MyCharacter/weapon_01.weapon_01"));
-	UStaticMesh* NewMesh2 = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/MyCharacter/weapon_02.weapon_02"));
+	UStaticMesh* NewMesh1 = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/MyCharacter/weapon_01"));
+	UStaticMesh* NewMesh2 = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/MyCharacter/weapon_02"));
 
 	if (_key == 1)
 	{

@@ -30,6 +30,9 @@ protected:
 	TObjectPtr<class UStaticMeshComponent> Mesh;
 
 	UPROPERTY(VisibleAnywhere, Category = Box)
+	UStaticMeshComponent* BoxBodyMesh;
+
+	UPROPERTY(VisibleAnywhere, Category = Box)
 	TObjectPtr<class UParticleSystemComponent> Effect;
 
 	UPROPERTY(EditAnywhere, Category = Item)

@@ -14,6 +14,7 @@ AASAWeapon::AASAWeapon()
     {
         WeaponMesh->SetStaticMesh(MeshAsset.Object);
     }
+
     SetActorScale3D(FVector(2.0f, 2.0f, 2.0f));
     PrimaryActorTick.bCanEverTick = true;
 }

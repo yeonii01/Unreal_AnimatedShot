@@ -66,10 +66,6 @@ void AASStageGimmick::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red,
-		FString::Printf(TEXT("%d %d %d"), GetActorLocation().X, GetActorLocation().Y,
-			GetActorLocation().Z));
-
 	CurrentState = EStageState::READY;
 	StateChangeActions.Add(EStageState::READY, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &AASStageGimmick::SetReady)));
 	StateChangeActions.Add(EStageState::FIGHT, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &AASStageGimmick::SetFight)));
@@ -170,7 +166,8 @@ void AASStageGimmick::OnOpponentDestroyed(AActor* DestroyedActor)
 
 void AASStageGimmick::OnOpponentSpawn()
 {
-	const FTransform SpawnTransform(GetActorLocation() + FVector::UpVector * 88.f);
+	FRotator SpawnRotation = FRotator(0.f, -90.f, 0.f);
+	const FTransform SpawnTransform(SpawnRotation,GetActorLocation() + FVector::UpVector * 88.f);
 	AASCharacterNonPlayer* ASOpponentCharacter = GetWorld()->SpawnActorDeferred<AASCharacterNonPlayer>(OpponentClass, SpawnTransform);
 	if (ASOpponentCharacter)
 	{
@@ -202,7 +199,7 @@ void AASStageGimmick::SpawnRewardBoxes()
 {
 	for (const auto& RewardBoxLocation : RewardBoxLocations)
 	{
-		FVector WorldSpawnLocation = GetActorLocation() + RewardBoxLocation.Value + FVector(0.f, 0.f, 30.f);
+		FVector WorldSpawnLocation = GetActorLocation() + RewardBoxLocation.Value + FVector(0.f, 0.f, 70.f);
 		AActor* ItemActor = GetWorld()->SpawnActor(RewardBoxClass, &WorldSpawnLocation, &FRotator::ZeroRotator);
 		AASItemBox* RewardBoxActor = Cast<AASItemBox>(ItemActor);
 		if (RewardBoxActor)

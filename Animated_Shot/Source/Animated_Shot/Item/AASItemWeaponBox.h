@@ -18,6 +18,7 @@ public:
 	// Sets default values for this actor's properties
 	AAASItemWeaponBox();
 
+	virtual void BeginPlay() override;
 protected:
 	virtual void Tick(float DeltaTime) override;
 
@@ -28,6 +29,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AASAWeapon> WeaponClass;
 
+	UFUNCTION()
 	void OpenBox();
 
 	UFUNCTION()

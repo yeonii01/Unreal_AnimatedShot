@@ -68,7 +68,7 @@ void AASCharacterNonPlayer::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	ensure(NPCMeshes.Num() > 0);
-	int32 RandIndex = FMath::RandRange(0, NPCMeshes.Num() - 1);
+	int32 RandIndex = FMath::RandRange(0, 7);
 	NPCMeshHandle = UAssetManager::Get().GetStreamableManager().RequestAsyncLoad(NPCMeshes[RandIndex], FStreamableDelegate::CreateUObject(this, &AASCharacterNonPlayer::NPCMeshLoadCompleted));
 	GetMesh()->SetAnimInstanceClass(AnimClasses[RandIndex]);
 	DeadMontage = DeadMontages[RandIndex];
