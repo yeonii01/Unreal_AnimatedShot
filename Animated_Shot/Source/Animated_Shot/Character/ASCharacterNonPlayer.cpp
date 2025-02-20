@@ -16,7 +16,7 @@ AASCharacterNonPlayer::AASCharacterNonPlayer()
 
 	AnimClasses.SetNum(12);
 	DeadMontages.SetNum(12);
-	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand0(TEXT("/Game/Monster/Animation/Beez/ABP_AS_Beez.ABP_AS_Beez_C"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand0(TEXT("/Game/Monster/Animation/Beez/ABP_AS_Beez1.ABP_AS_Beez1_C"));
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand1(TEXT("/Game/Monster/Animation/DevilTree/ABP_AS_Deviltree.ABP_AS_Deviltree_C"));
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand2(TEXT("/Game/Monster/Animation/FlowerDyad/ABP_AS_FlowerDyad.ABP_AS_FlowerDyad_C"));
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand3(TEXT("/Game/Monster/Animation/PlantaGeezer/ABP_AS_Planta.ABP_AS_Planta_C"));
@@ -67,6 +67,18 @@ AASCharacterNonPlayer::AASCharacterNonPlayer()
 	DeadMontages[9] = DeadMontageRefRand9.Object;
 	DeadMontages[10] =DeadMontageRefRand10.Object;
 	DeadMontages[11] =DeadMontageRefRand11.Object;
+
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRef(TEXT("/Game/Monster/Animation/Beez/AM_AttackMontage.AM_AttackMontage"));
+	if (ComboActionMontageRef.Object)
+	{
+		ComboActionMontage = ComboActionMontageRef.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UASComboActionData> ComboActionDataRef(TEXT("/Script/Animated_Shot.ASComboActionData'/Game/CharacterAction/ASA_ComboAttack.ASA_ComboAttack'"));
+	if (ComboActionDataRef.Object)
+	{
+		ComboActionData = ComboActionDataRef.Object;
+	}
 }
 
 void AASCharacterNonPlayer::PostInitializeComponents()
@@ -74,7 +86,7 @@ void AASCharacterNonPlayer::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	ensure(NPCMeshes.Num() > 0);
-	int32 RandIndex = FMath::RandRange(0, 7);
+	int32 RandIndex = 0/*FMath::RandRange(0, 7)*/;
 	NPCMeshHandle = UAssetManager::Get().GetStreamableManager().RequestAsyncLoad(NPCMeshes[RandIndex], FStreamableDelegate::CreateUObject(this, &AASCharacterNonPlayer::NPCMeshLoadCompleted));
 	GetMesh()->SetAnimInstanceClass(AnimClasses[RandIndex]);
 	DeadMontage = DeadMontages[RandIndex];
@@ -123,5 +135,21 @@ float AASCharacterNonPlayer::GetAIAttackRange()
 
 float AASCharacterNonPlayer::GetAITurnSpeed()
 {
-	return 0.f;
+	return 2.f;
+}
+
+void AASCharacterNonPlayer::SetAIAttackDelegate(const FAICharacterAttackFinished& InOnAttackFinished)
+{
+	OnAttackFinished = InOnAttackFinished;
+}
+
+void AASCharacterNonPlayer::AttackByAI()
+{
+	ProcessComboCommand();
+}
+
+void AASCharacterNonPlayer::NotifyComboActionEnd()
+{
+	Super::NotifyComboActionEnd();
+	OnAttackFinished.ExecuteIfBound();
 }

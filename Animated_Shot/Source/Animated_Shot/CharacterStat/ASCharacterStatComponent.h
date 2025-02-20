@@ -44,7 +44,7 @@ protected:
 	UPROPERTY(Transient, VisibleInstanceOnly, Category = Stat)
 	float CurrentLevel;
 
-	UPROPERTY(VisibleInstanceOnly, VisibleInstanceOnly, Category = Stat)
+	UPROPERTY(VisibleInstanceOnly, Category = Stat)
 	float AttackRadius;
 
 	UPROPERTY(Transient, VisibleInstanceOnly, Category =Stat, Meta = (AllowPrivateAccess = "true"))
