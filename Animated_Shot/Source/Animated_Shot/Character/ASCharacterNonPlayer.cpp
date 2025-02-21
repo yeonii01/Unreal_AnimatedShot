@@ -16,12 +16,14 @@ AASCharacterNonPlayer::AASCharacterNonPlayer()
 
 	AnimClasses.SetNum(12);
 	DeadMontages.SetNum(12);
+	ComboActionMontages.SetNum(12);
+
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand0(TEXT("/Game/Monster/Animation/Beez/ABP_AS_Beez1.ABP_AS_Beez1_C"));
-	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand1(TEXT("/Game/Monster/Animation/DevilTree/ABP_AS_Deviltree.ABP_AS_Deviltree_C"));
-	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand2(TEXT("/Game/Monster/Animation/FlowerDyad/ABP_AS_FlowerDyad.ABP_AS_FlowerDyad_C"));
-	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand3(TEXT("/Game/Monster/Animation/PlantaGeezer/ABP_AS_Planta.ABP_AS_Planta_C"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand1(TEXT("/Game/Monster/Animation/DevilTree/ABP_AS_Deviltree1.ABP_AS_Deviltree1_C"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand2(TEXT("/Game/Monster/Animation/FlowerDyad/ABP_AS_FlowerDyad1.ABP_AS_FlowerDyad1_C"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand3(TEXT("/Game/Monster/Animation/PlantaGeezer/ABP_AS_Planta1.ABP_AS_Planta1_C"));
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand4(TEXT("/Game/Monster/Animation/PlantaKid/ABP_AS_PlantaKid.ABP_AS_PlantaKid_C"));
-	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand5(TEXT("/Game/Monster/Animation/PlantaQueen/ABP_AS_PlantaQueen.ABP_AS_PlantaQueen_C"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand5(TEXT("/Game/Monster/Animation/PlantaGeezer/ABP_AS_Planta1.ABP_AS_Planta1_C"));
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand6(TEXT("/Game/Monster/Animation/PlantaShadow/ABP_AS_PlantaShadow.ABP_AS_PlantaShadow_C"));
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand7(TEXT("/Game/Monster/Animation/PlantaSlave/ABP_AS_PlantaSlave.ABP_AS_PlantaSlave_C"));
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand8(TEXT("/Game/Monster/Animation/Rabby/ABP_AS_Rabby.ABP_AS_Rabby_C"));
@@ -65,16 +67,22 @@ AASCharacterNonPlayer::AASCharacterNonPlayer()
 	DeadMontages[7] = DeadMontageRefRand7.Object;
 	DeadMontages[8] = DeadMontageRefRand8.Object;
 	DeadMontages[9] = DeadMontageRefRand9.Object;
-	DeadMontages[10] =DeadMontageRefRand10.Object;
-	DeadMontages[11] =DeadMontageRefRand11.Object;
+	DeadMontages[10] = DeadMontageRefRand10.Object;
+	DeadMontages[11] = DeadMontageRefRand11.Object;
 
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRef(TEXT("/Game/Monster/Animation/Beez/AM_AttackMontage.AM_AttackMontage"));
-	if (ComboActionMontageRef.Object)
-	{
-		ComboActionMontage = ComboActionMontageRef.Object;
-	}
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand0(TEXT("/Game/Monster/Animation/Beez/AM_AttackMontage.AM_AttackMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand1(TEXT("/Game/Monster/Animation/DevilTree/AM_AttackMontage.AM_AttackMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand2(TEXT("/Game/Monster/Animation/FlowerDyad/AM_AttackMontage.AM_AttackMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand3(TEXT("/Game/Monster/Animation/PlantaGeezer/AM_AttackMontage.AM_AttackMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand5(TEXT("/Game/Monster/Animation/PlantaGeezer/AM_AttackMontage.AM_AttackMontage"));
 
-	static ConstructorHelpers::FObjectFinder<UASComboActionData> ComboActionDataRef(TEXT("/Script/Animated_Shot.ASComboActionData'/Game/CharacterAction/ASA_ComboAttack.ASA_ComboAttack'"));
+	ComboActionMontages[0] = ComboActionMontageRefRand0.Object;
+	ComboActionMontages[1] = ComboActionMontageRefRand1.Object;
+	ComboActionMontages[2] = ComboActionMontageRefRand2.Object;
+	ComboActionMontages[3] = ComboActionMontageRefRand3.Object;
+	ComboActionMontages[5] = ComboActionMontageRefRand5.Object;
+
+	static ConstructorHelpers::FObjectFinder<UASComboActionData> ComboActionDataRef(TEXT("/Script/Animated_Shot.ASComboActionData'/Game/CharacterAction/ASA_ComboAttack1.ASA_ComboAttack1'"));
 	if (ComboActionDataRef.Object)
 	{
 		ComboActionData = ComboActionDataRef.Object;
@@ -86,10 +94,11 @@ void AASCharacterNonPlayer::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	ensure(NPCMeshes.Num() > 0);
-	int32 RandIndex = 0/*FMath::RandRange(0, 7)*/;
+	int32 RandIndex = 2/*FMath::RandRange(0, 7)*/;
 	NPCMeshHandle = UAssetManager::Get().GetStreamableManager().RequestAsyncLoad(NPCMeshes[RandIndex], FStreamableDelegate::CreateUObject(this, &AASCharacterNonPlayer::NPCMeshLoadCompleted));
 	GetMesh()->SetAnimInstanceClass(AnimClasses[RandIndex]);
 	DeadMontage = DeadMontages[RandIndex];
+	ComboActionMontage = ComboActionMontages[RandIndex];
 }
 
 void AASCharacterNonPlayer::SetDead()
