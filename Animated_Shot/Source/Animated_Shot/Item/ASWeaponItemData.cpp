@@ -3,3 +3,7 @@
 
 #include "Item/ASWeaponItemData.h"
 
+UASWeaponItemData::UASWeaponItemData()
+{
+	Type = EItemType::Weapon1;
+}

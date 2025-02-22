@@ -7,6 +7,7 @@
 #include "Interface/ASAnimationAttackInterface.h"
 #include "Interface/ASCharacterWidgetInterface.h"
 #include "Interface/ASCharacterItemInterface.h"
+#include "GameData/ASCharacterStat.h"
 #include "ASCharacterBase.generated.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogASCharacter, Log, All);
@@ -110,4 +111,6 @@ protected:
 public:
 	int32 GetLevel();
 	void SetLevel(int32 InNewLevel);
+	void ApplyStat(const FASCharacterStat& BaseStat, const FASCharacterStat& ModifierStat);
+
 };

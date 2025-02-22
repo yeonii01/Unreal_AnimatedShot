@@ -74,7 +74,21 @@ void AASCharacterPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController) EnableInput(PlayerController);
+
 	SetCharacterControl(CurrentCharacterControlType);
+}
+
+void AASCharacterPlayer::SetDead()
+{
+	Super::SetDead();
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		DisableInput(PlayerController);
+	}
 }
 
 void AASCharacterPlayer::Tick(float DeltaTime)

@@ -13,7 +13,7 @@
 #include "Components/WidgetComponent.h"
 #include "UI/ASWidgetComponent.h"
 #include "UI/ASHpBarWidget.h"
-#include "Item/ASWeaponItemData.h"
+#include "Item/ASItems.h"
 
 DEFINE_LOG_CATEGORY(LogASCharacter);
 
@@ -119,6 +119,7 @@ void AASCharacterBase::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	Stat->OnHpZero.AddUObject(this, &AASCharacterBase::SetDead);
+	Stat->OnStatChanged.AddUObject(this, &AASCharacterBase::ApplyStat);
 }
 
 void AASCharacterBase::SetCharacterControlData(const UASCharacterControlData* CharacterControlData)
@@ -282,7 +283,11 @@ void AASCharacterBase::TakeItem(UASItemData* InItemData)
 
 void AASCharacterBase::DrinkPotion(UASItemData* InItemData)
 {
-	UE_LOG(LogASCharacter, Log, TEXT("Drink Potion"));
+	UASPotionItemData* PotionItemData = Cast<UASPotionItemData>(InItemData);
+	if (PotionItemData)
+	{
+		Stat->HealHp(PotionItemData->HealAmount);
+	}
 }
 
 void AASCharacterBase::EquipWeapon(UASItemData* InItemData)
@@ -312,7 +317,11 @@ void AASCharacterBase::EquipWeapon(UASItemData* InItemData)
 
 void AASCharacterBase::ReadScroll(UASItemData* InItemData)
 {
-	UE_LOG(LogASCharacter, Log, TEXT("Read Scroll"));
+	UASScrollItemData* ScrollItemData = Cast<UASScrollItemData>(InItemData);
+	if (ScrollItemData)
+	{
+		Stat->AddBaseStat(ScrollItemData->BaseStat);
+	}
 }
 
 int32 AASCharacterBase::GetLevel()
@@ -323,4 +332,10 @@ int32 AASCharacterBase::GetLevel()
 void AASCharacterBase::SetLevel(int32 InNewLevel)
 {
 	Stat->SetLevelStat(InNewLevel);
+}
+
+void AASCharacterBase::ApplyStat(const FASCharacterStat& BaseStat, const FASCharacterStat& ModifierStat)
+{
+	float MovementSpeed = (BaseStat + ModifierStat).MovementSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = MovementSpeed;
 }

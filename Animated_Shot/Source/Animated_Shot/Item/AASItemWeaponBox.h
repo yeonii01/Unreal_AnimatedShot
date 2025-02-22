@@ -24,6 +24,7 @@ protected:
 
 protected:
 	virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult) override;
+	virtual void OnEffectFinished(class UParticleSystemComponent* ParticleSystem) override;
 
 private:
 	UPROPERTY(EditAnywhere)

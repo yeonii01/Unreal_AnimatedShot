@@ -11,6 +11,7 @@
 #include "Player/ASPlayerController.h"
 #include "Item/ASItemData.h"
 #include "Item/ASWeaponItemData.h"
+#include "Engine/AssetManager.h"
 
 // Sets default values
 AASItemBox::AASItemBox()
@@ -71,13 +72,40 @@ void AASItemBox::Tick(float DeltaTime)
 	}
 }
 
+void AASItemBox::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	UAssetManager& Manager = UAssetManager::Get();
+
+	TArray<FPrimaryAssetId> Assets;
+	Manager.GetPrimaryAssetIdList(TEXT("ASItemData"), Assets);
+	ensure(0 < Assets.Num());
+
+	int32 RandomIndex = FMath::RandRange(2, Assets.Num() - 1);
+	FSoftObjectPtr AssetPtr(Manager.GetPrimaryAssetPath(Assets[RandomIndex]));
+	if (AssetPtr.IsPending())
+	{
+		AssetPtr.LoadSynchronous();
+	}
+	Item = Cast<UASItemData>(AssetPtr.Get());
+	ensure(Item);
+
+	Trigger->OnComponentBeginOverlap.AddDynamic(this, &AASItemBox::OnOverlapBegin);
+}
+
 void AASItemBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult)
 {
+	IASCharacterItemInterface* OverlappingPawn = Cast<IASCharacterItemInterface>(OtherActor);
+	if (OverlappingPawn)
+	{
+		OverlappingPawn->TakeItem(Item);
+	}
+
 	Effect->Activate(true);
-	bIsOpening = true;
+	Mesh->SetHiddenInGame(true);
 	SetActorEnableCollision(false);
 	Effect->OnSystemFinished.AddDynamic(this, &AASItemBox::OnEffectFinished);
-	OverlapActor = OtherActor;
 }
 
 void AASItemBox::OnEffectFinished(UParticleSystemComponent* ParticleSystem)

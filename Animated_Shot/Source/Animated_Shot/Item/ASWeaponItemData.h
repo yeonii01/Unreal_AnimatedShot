@@ -16,6 +16,14 @@ class ANIMATED_SHOT_API UASWeaponItemData : public UASItemData
 	GENERATED_BODY()
 
 public:
+	UASWeaponItemData();
+
+	FPrimaryAssetId GetPrimaryAssetId() const override
+	{
+		return FPrimaryAssetId("ASItemData", GetFName());
+	}
+
+public:
 	UPROPERTY(EditAnywhere, Category = Weapon)
 	TSoftObjectPtr<UStaticMesh> WeaponMesh;
 

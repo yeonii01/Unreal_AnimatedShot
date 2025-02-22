@@ -21,6 +21,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void SetDead() override;
 
 public:
 	// Called every frame

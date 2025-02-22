@@ -28,6 +28,8 @@ AAASItemWeaponBox::AAASItemWeaponBox()
 void AAASItemWeaponBox::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Trigger->OnComponentBeginOverlap.AddDynamic(this, &AAASItemWeaponBox::OnOverlapBegin);
 }
 
 void AAASItemWeaponBox::Tick(float DeltaTime)
@@ -52,8 +54,17 @@ void AAASItemWeaponBox::Tick(float DeltaTime)
 
 void AAASItemWeaponBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult)
 {
-	AASItemBox::OnOverlapBegin(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepHitResult);
+	Effect->Activate(true);
+	bIsOpening = true;
+	SetActorEnableCollision(false);
+	Effect->OnSystemFinished.AddDynamic(this, &AAASItemWeaponBox::OnEffectFinished);
+	OverlapActor = OtherActor;
 	OpenBox();
+}
+
+void AAASItemWeaponBox::OnEffectFinished(UParticleSystemComponent* ParticleSystem)
+{
+	//Destroy();
 }
 
 void AAASItemWeaponBox::OpenBox()

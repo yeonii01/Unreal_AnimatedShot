@@ -21,6 +21,7 @@ public:
 	FORCEINLINE class UBoxComponent* GetTrigger() { return Trigger; }
 protected:
 	virtual void Tick(float DeltaTime) override;  
+	virtual void PostInitializeComponents() override;
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = Box)
@@ -42,7 +43,7 @@ protected:
 	virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult);
 
 	UFUNCTION()
-	void OnEffectFinished(class UParticleSystemComponent* ParticleSystem);
+	virtual void OnEffectFinished(class UParticleSystemComponent* ParticleSystem);
 
 protected:
 	UPROPERTY()

@@ -21,6 +21,13 @@ UCLASS()
 class ANIMATED_SHOT_API UASItemData : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
+
+public:
+	FPrimaryAssetId GetPrimaryAssetId() const override
+	{
+		return FPrimaryAssetId("ASItemData", GetFName());
+	}
+
 public:
 	UPROPERTY(EditAnywhere, BluePrintReadWrite, Category = Type)
 	EItemType Type;
