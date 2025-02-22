@@ -8,15 +8,17 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "ASCharacterControlData.h"
+#include "UI/ASHUDWidget.h"
+#include "CharacterStat/ASCharacterStatComponent.h"
 
 AASCharacterPlayer::AASCharacterPlayer()
 {
 	//Camera
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 400.f;
+	CameraBoom->TargetArmLength = 350.f;
 	CameraBoom->bUsePawnControlRotation = true;
-
+	CameraBoom->SetRelativeLocation(FVector(0.f, 0.f, 50.f));
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
@@ -191,6 +193,18 @@ void AASCharacterPlayer::QuaterMove(const FInputActionValue& Value)
 void AASCharacterPlayer::Attack()
 {
 	ProcessComboCommand();
+}
+
+void AASCharacterPlayer::SetupHUDWidget(UASHUDWidget* InHUDWidget)
+{
+	if (InHUDWidget)
+	{
+		InHUDWidget->UpdateStat(Stat->GetBaseStat(), Stat->GetModifierStat());
+		InHUDWidget->UpdateHpBar(Stat->GetCurrentHp());
+
+		Stat->OnStatChanged.AddUObject(InHUDWidget, &UASHUDWidget::UpdateStat);
+		Stat->OnHpChanged.AddUObject(InHUDWidget, &UASHUDWidget::UpdateHpBar);
+	}
 }
 
 //void AASCharacterPlayer::QuaterLook(const FInputActionValue& Value)

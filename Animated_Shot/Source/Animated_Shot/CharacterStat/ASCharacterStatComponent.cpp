@@ -10,13 +10,13 @@ UASCharacterStatComponent::UASCharacterStatComponent()
 {
 	CurrentLevel = 1;
 	AttackRadius = 50.f;
+
+	bWantsInitializeComponent = true;
 }
 
-
-// Called when the game starts
-void UASCharacterStatComponent::BeginPlay()
+void UASCharacterStatComponent::InitializeComponent()
 {
-	Super::BeginPlay();
+	Super::InitializeComponent();
 
 	SetLevelStat(CurrentLevel);
 	SetHp(BaseStat.MaxHp);
@@ -25,7 +25,7 @@ void UASCharacterStatComponent::BeginPlay()
 void UASCharacterStatComponent::SetLevelStat(int32 InNewLevel)
 {
 	CurrentLevel = FMath::Clamp(InNewLevel, 1, UASGameSingleton::Get().CharacterMaxLevel);
-	BaseStat = UASGameSingleton::Get().GetCharacterStat(CurrentLevel);
+	SetBaseStat(UASGameSingleton::Get().GetCharacterStat(CurrentLevel));
 	check(BaseStat.MaxHp > 0.f)
 }
 
