@@ -70,6 +70,12 @@ AASCharacterPlayer::AASCharacterPlayer()
 	CurrentCharacterControlType = ECharacterControlType::Shoulder;
 	PrimaryActorTick.bCanEverTick = false;
 
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DamageMontageRef(TEXT("/Game/MyCharacter/Animations/AM_Damage.AM_Damage"));
+	if (DamageMontageRef.Object)
+	{
+		DamageMontage = DamageMontageRef.Object;
+	}
+
 	/** 미니맵용 스프링암 생성 */
 	MinimapSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("MinimapSpringArm"));
 	MinimapSpringArm->SetupAttachment(RootComponent);
@@ -112,7 +118,6 @@ AASCharacterPlayer::AASCharacterPlayer()
 	MinimapIcon->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.5f));
 	MinimapIcon->SetRelativeRotation(FRotator(0.f, -90.f, 90.f));
 	MinimapIcon->SetRelativeLocation(FVector(0.0f, 0.0f, 900.0f));
-
 }
 
 void AASCharacterPlayer::BeginPlay()
@@ -256,6 +261,20 @@ void AASCharacterPlayer::QuaterMove(const FInputActionValue& Value)
 void AASCharacterPlayer::Attack()
 {
 	ProcessComboCommand();
+}
+
+float AASCharacterPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	if (DamageMontage)
+	{
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+		if (AnimInstance)
+		{
+			AnimInstance->Montage_Play(DamageMontage);
+		}
+	}
+
+	return AASCharacterBase::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
 void AASCharacterPlayer::SetupHUDWidget(UASHUDWidget* InHUDWidget)

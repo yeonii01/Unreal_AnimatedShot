@@ -81,12 +81,18 @@ protected:
 
 	void Attack();
 
+//Animation
+private:
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = Animation, Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UAnimMontage> DamageMontage;
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
 	//UI Section
 protected:
 	virtual void SetupHUDWidget(class UASHUDWidget* InHUDWidget) override;
 
 private:
-
 	/** 미니맵용 스프링암 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Minimap, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* MinimapSpringArm;
