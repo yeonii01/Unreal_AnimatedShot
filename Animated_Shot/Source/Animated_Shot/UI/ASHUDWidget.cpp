@@ -14,10 +14,8 @@ UASHUDWidget::UASHUDWidget(const FObjectInitializer& ObjectInitializer) : Super(
 void UASHUDWidget::UpdateStat(const FASCharacterStat& BaseStat, const FASCharacterStat& ModifierStat)
 {
 	FASCharacterStat TotalStat = BaseStat + ModifierStat;
-	HpBar->SetMaxHp(TotalStat.MaxHp);
-
+	HpBar->UpdateStat(BaseStat, ModifierStat);
 	CharacterStat->UpdateStat(BaseStat, ModifierStat);
-
 }
 
 void UASHUDWidget::UpdateHpBar(float NewCurrentHp)

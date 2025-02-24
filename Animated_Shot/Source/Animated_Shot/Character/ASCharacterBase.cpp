@@ -267,9 +267,10 @@ void AASCharacterBase::SetUpCharacterWidget(UASUserWidget* InUserWidget)
 	UASHpBarWidget* HpBarWidget = Cast<UASHpBarWidget>(InUserWidget);
 	if (HpBarWidget)
 	{
-		HpBarWidget->SetMaxHp(Stat->GetTotalStat().MaxHp);
+		HpBarWidget->UpdateStat(Stat->GetBaseStat(),Stat->GetModifierStat());
 		HpBarWidget->UpdateHpBar(Stat->GetCurrentHp());
 		Stat->OnHpChanged.AddUObject(HpBarWidget, &UASHpBarWidget::UpdateHpBar);
+		Stat->OnStatChanged.AddUObject(HpBarWidget, &UASHpBarWidget::UpdateStat);
 	}
 }
 

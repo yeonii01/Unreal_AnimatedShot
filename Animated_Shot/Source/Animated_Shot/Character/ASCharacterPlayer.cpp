@@ -9,6 +9,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "ASCharacterControlData.h"
 #include "UI/ASHUDWidget.h"
+#include "PaperSprite.h"
 #include "CharacterStat/ASCharacterStatComponent.h"
 
 AASCharacterPlayer::AASCharacterPlayer()
@@ -68,6 +69,50 @@ AASCharacterPlayer::AASCharacterPlayer()
 
 	CurrentCharacterControlType = ECharacterControlType::Shoulder;
 	PrimaryActorTick.bCanEverTick = false;
+
+	/** 미니맵용 스프링암 생성 */
+	MinimapSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("MinimapSpringArm"));
+	MinimapSpringArm->SetupAttachment(RootComponent);
+	MinimapSpringArm->TargetArmLength = 2000.0f; // 위쪽으로 멀리 떨어진 거리
+	MinimapSpringArm->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f)); // 아래를 바라보도록 회전
+	MinimapSpringArm->bDoCollisionTest = false;
+	MinimapSpringArm->bEnableCameraLag = false;
+	MinimapSpringArm->bEnableCameraRotationLag = false;
+	MinimapSpringArm->bUsePawnControlRotation = false; // 캐릭터의 회전값을 따라가지 않도록 설정
+	MinimapSpringArm->bInheritPitch = false;
+	MinimapSpringArm->bInheritYaw = false;
+	MinimapSpringArm->bInheritRoll = false;
+
+
+	/** Scene Capture Component 생성 */
+	MinimapCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("MinimapCapture"));
+	MinimapCapture->SetupAttachment(MinimapSpringArm);
+	MinimapCapture->ProjectionType = ECameraProjectionMode::Orthographic;
+	MinimapCapture->OrthoWidth = 3000.0f; // 미니맵의 범위
+	MinimapCapture->bCaptureEveryFrame = true;
+	MinimapCapture->bCaptureOnMovement = true;
+
+	static ConstructorHelpers::FObjectFinder<UCanvasRenderTarget2D> MinimapRenderTargetRef(TEXT("/Game/UI/Minimap_Target.Minimap_Target"));
+	if (MinimapRenderTargetRef.Succeeded())
+	{
+		MinimapCanvasRenderTarget = MinimapRenderTargetRef.Object;
+	}
+
+	MinimapIcon = CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("MinimapIcon"));
+	MinimapIcon->SetupAttachment(RootComponent);
+
+	/** 아이콘용 스프라이트 로드 */
+	static ConstructorHelpers::FObjectFinder<UPaperSprite> PlayerIconSpriteRef(TEXT("/Game/UI/PlayerIcon_Sprite.PlayerIcon_Sprite"));
+	if (PlayerIconSpriteRef.Succeeded())
+	{
+		MinimapIcon->SetSprite(PlayerIconSpriteRef.Object); 
+	}
+
+	/** 아이콘 크기 조정 */
+	MinimapIcon->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.5f));
+	MinimapIcon->SetRelativeRotation(FRotator(0.f, -90.f, 90.f));
+	MinimapIcon->SetRelativeLocation(FVector(0.0f, 0.0f, 900.0f));
+
 }
 
 void AASCharacterPlayer::BeginPlay()
@@ -78,6 +123,11 @@ void AASCharacterPlayer::BeginPlay()
 	if (PlayerController) EnableInput(PlayerController);
 
 	SetCharacterControl(CurrentCharacterControlType);
+
+	if (MinimapCanvasRenderTarget)
+	{
+		MinimapCapture->TextureTarget = MinimapCanvasRenderTarget;
+	}
 }
 
 void AASCharacterPlayer::SetDead()
@@ -94,7 +144,6 @@ void AASCharacterPlayer::SetDead()
 void AASCharacterPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AASCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
