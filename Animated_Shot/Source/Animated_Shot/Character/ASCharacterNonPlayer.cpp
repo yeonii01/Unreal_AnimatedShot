@@ -5,6 +5,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/AssetManager.h"
 #include "AI/ASAIController.h"
+#include "Components/DecalComponent.h"
 #include "CharacterStat/ASCharacterStatComponent.h"
 
 AASCharacterNonPlayer::AASCharacterNonPlayer()
@@ -87,6 +88,31 @@ AASCharacterNonPlayer::AASCharacterNonPlayer()
 	{
 		ComboActionData = ComboActionDataRef.Object;
 	}
+
+	// 기존 DecalComponent 제거 후 Static Mesh 사용
+	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MaskMeshComponent"));
+	StaticMeshComponent->SetupAttachment(RootComponent);
+
+	// 원형 Masked 머터리얼 적용할 기본 Plane Mesh 설정
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> PlaneMesh(TEXT("/Engine/BasicShapes/Plane"));
+	if (PlaneMesh.Succeeded())
+	{
+		StaticMeshComponent->SetStaticMesh(PlaneMesh.Object);
+	}
+
+	// 머터리얼 로드 및 적용
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> MaskedMaterial(TEXT("/Script/Engine.Material'/Game/Monster/M_AttackRange.M_AttackRange'"));
+	if (MaskedMaterial.Succeeded())
+	{
+		MaskedMaterialInstance = UMaterialInstanceDynamic::Create(MaskedMaterial.Object, this);
+		StaticMeshComponent->SetMaterial(0, MaskedMaterialInstance);
+	}
+
+	// 크기 및 회전 설정
+	StaticMeshComponent->SetRelativeScale3D(FVector(3.0f, 3.0f, 1.0f));  // Plane 크기 조절
+	StaticMeshComponent->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));  // 바닥을 향하도록 회전
+	StaticMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -95.0f));  // 바닥을 향하도록 회전
+	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void AASCharacterNonPlayer::PostInitializeComponents()
@@ -99,6 +125,8 @@ void AASCharacterNonPlayer::PostInitializeComponents()
 	GetMesh()->SetAnimInstanceClass(AnimClasses[RandIndex]);
 	DeadMontage = DeadMontages[RandIndex];
 	ComboActionMontage = ComboActionMontages[RandIndex];
+
+	StaticMeshComponent->SetRelativeScale3D(FVector(GetAIAttackRange() / 50.f, GetAIAttackRange() / 50.f, 1.f));
 }
 
 void AASCharacterNonPlayer::SetDead()
@@ -131,6 +159,14 @@ void AASCharacterNonPlayer::NPCMeshLoadCompleted()
 	}
 
 	NPCMeshHandle->ReleaseHandle();
+}
+
+void AASCharacterNonPlayer::SetCircleColor(FLinearColor NewColor)
+{
+	if (MaskedMaterialInstance) // DecalMaterialInstance → MaskedMaterialInstance
+	{
+		MaskedMaterialInstance->SetVectorParameterValue(FName("CircleColor"), NewColor);
+	}
 }
 
 float AASCharacterNonPlayer::GetAIPatrolRadius()

@@ -11,14 +11,14 @@
 /**
  * 
  */
-UCLASS(config=AnimatedShot)
+UCLASS(config = AnimatedShot)
 class ANIMATED_SHOT_API AASCharacterNonPlayer : public AASCharacterBase, public IASCharacterAIInterface
 {
 	GENERATED_BODY()
 
 public:
 	AASCharacterNonPlayer();
-	
+
 protected:
 	virtual void PostInitializeComponents() override;
 
@@ -34,6 +34,16 @@ protected:
 	TArray<UAnimMontage*> ComboActionMontages;
 
 	TSharedPtr<FStreamableHandle> NPCMeshHandle;
+
+public:
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UStaticMeshComponent* StaticMeshComponent;
+
+	// 머터리얼 인스턴스 동적 변경 가능
+	UPROPERTY()
+	UMaterialInstanceDynamic* MaskedMaterialInstance;
+
+	void SetCircleColor(FLinearColor NewColor);
 
 protected:
 	virtual float GetAIPatrolRadius() override;

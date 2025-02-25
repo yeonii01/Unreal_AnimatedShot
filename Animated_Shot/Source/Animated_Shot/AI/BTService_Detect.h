@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTService.h"
+#include "Components/DecalComponent.h"
 #include "BTService_Detect.generated.h"
 
 /**

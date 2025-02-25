@@ -9,6 +9,7 @@
 #include "Physics/ASCollision.h"
 #include "DrawDebugHelpers.h"
 #include "Engine/OverlapResult.h"
+#include "Character/ASCharacterNonPlayer.h"
 
 UBTService_Detect::UBTService_Detect()
 {
@@ -31,6 +32,9 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	if (nullptr == AIPawn) return;
 
 	float DetectRadius = AIPawn->GetAIDetectRange();
+
+	AASCharacterNonPlayer* AIPawnActor = Cast<AASCharacterNonPlayer>(ControllingPawn);
+	if (nullptr == AIPawnActor) return;
 
 	TArray<FOverlapResult> OverlapResults;
 	FCollisionQueryParams CollisionQueryParam(SCENE_QUERY_STAT(Detect), false, ControllingPawn);	
@@ -55,8 +59,11 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 
 				DrawDebugPoint(World, Pawn->GetActorLocation(), 10.f, FColor::Green, false, 0.2f);
 				DrawDebugLine(World, ControllingPawn->GetActorLocation(), Pawn->GetActorLocation(), FColor::Green, false, 0.27f);
+
+				AIPawnActor->SetCircleColor(FLinearColor(0.55f, 0.13f, 0.13f));
 				return;
 			}
 		}
 	}
+	AIPawnActor->SetCircleColor(FLinearColor(0.24f, 0.70f, 0.44f));
 }
