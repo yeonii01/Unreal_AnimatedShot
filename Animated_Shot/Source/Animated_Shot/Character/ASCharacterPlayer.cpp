@@ -10,7 +10,10 @@
 #include "ASCharacterControlData.h"
 #include "UI/ASHUDWidget.h"
 #include "PaperSprite.h"
+#include "Components/Button.h"
+#include "Player/ASPlayerController.h"
 #include "CharacterStat/ASCharacterStatComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AASCharacterPlayer::AASCharacterPlayer()
 {
@@ -118,11 +121,20 @@ AASCharacterPlayer::AASCharacterPlayer()
 	MinimapIcon->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.5f));
 	MinimapIcon->SetRelativeRotation(FRotator(0.f, -90.f, 90.f));
 	MinimapIcon->SetRelativeLocation(FVector(0.0f, 0.0f, 900.0f));
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetClass(TEXT("/Game/UI/WBP_Respawn.WBP_Respawn_C"));
+	if (WidgetClass.Succeeded())
+	{
+		RespawnWidgetClass = WidgetClass.Class;
+	}
 }
 
 void AASCharacterPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+
+	InitialSpawnLocation = GetActorLocation();
+	InitialSpawnRotation = GetActorRotation();
 
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController) EnableInput(PlayerController);
@@ -144,6 +156,22 @@ void AASCharacterPlayer::SetDead()
 	{
 		DisableInput(PlayerController);
 	}
+
+	if (RespawnWidgetClass)
+	{
+		RespawnWidget = CreateWidget<UUserWidget>(GetWorld(), RespawnWidgetClass);
+		if (RespawnWidget) RespawnWidget->AddToViewport(100);
+	}
+
+	PlayerController->bShowMouseCursor = true;
+	PlayerController->SetInputMode(FInputModeUIOnly());
+
+	RespawnButton = Cast<UButton>(RespawnWidget->GetWidgetFromName(TEXT("RespawnButton")));
+	if (RespawnButton)
+	{
+		RespawnButton->OnClicked.AddDynamic(this, &AASCharacterPlayer::OnRespawnButtonClicked);
+	}
+
 }
 
 void AASCharacterPlayer::Tick(float DeltaTime)
@@ -273,7 +301,6 @@ float AASCharacterPlayer::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 			AnimInstance->Montage_Play(DamageMontage);
 		}
 	}
-
 	return AASCharacterBase::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
@@ -286,6 +313,30 @@ void AASCharacterPlayer::SetupHUDWidget(UASHUDWidget* InHUDWidget)
 
 		Stat->OnStatChanged.AddUObject(InHUDWidget, &UASHUDWidget::UpdateStat);
 		Stat->OnHpChanged.AddUObject(InHUDWidget, &UASHUDWidget::UpdateHpBar);
+	}
+}
+
+void AASCharacterPlayer::OnRespawnButtonClicked()
+{
+
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (PC)
+	{
+		AASPlayerController* MyPC = Cast<AASPlayerController>(PC);
+		if (MyPC)
+		{
+			if (RespawnWidget)
+			{
+				RespawnWidget->RemoveFromViewport();
+			}
+		}
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			FString CurrentLevel = World->GetMapName();
+			CurrentLevel.RemoveFromStart(World->StreamingLevelsPrefix); 
+			UGameplayStatics::OpenLevel(this, FName(*CurrentLevel));
+		}
 	}
 }
 

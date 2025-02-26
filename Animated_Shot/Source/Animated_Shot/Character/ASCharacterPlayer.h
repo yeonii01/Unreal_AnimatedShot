@@ -9,6 +9,7 @@
 #include "Engine/CanvasRenderTarget2D.h"
 #include "PaperSpriteComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
+#include "Blueprint/UserWidget.h"
 #include "ASCharacterPlayer.generated.h"
 
 /**
@@ -108,5 +109,18 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Minimap, meta = (AllowPrivateAccess = "true"))
 	UPaperSpriteComponent* MinimapIcon;
 
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> RespawnWidgetClass;
 
+	UUserWidget* RespawnWidget;
+
+	UPROPERTY()
+	class UButton* RespawnButton;
+
+	UFUNCTION()
+	void OnRespawnButtonClicked();
+
+	FVector InitialSpawnLocation;
+	FRotator InitialSpawnRotation;
 };
