@@ -107,4 +107,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Minimap, meta = (AllowPrivateAccess = "true"))
 	UPaperSpriteComponent* MinimapIcon;
+
+
 };

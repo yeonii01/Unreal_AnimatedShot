@@ -41,6 +41,13 @@ private:
 	UFUNCTION()
 	void OnSequenceFinished();
 
+	UFUNCTION()
+	void OnStartButtonClicked();
+
 private:
 	UUserWidget* TextWidget;
+
+	UPROPERTY()
+	class UButton* StartButton;
+
 };

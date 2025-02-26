@@ -3,6 +3,7 @@
 
 #include "Game/ASGameMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/Button.h"
 #include "ASGameMode.h"
 
 AASGameMode::AASGameMode()
@@ -25,7 +26,7 @@ AASGameMode::AASGameMode()
 		PlayerControllerClass = PlayerControllerClassRef.Class;
 	}
 
-	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetClass(TEXT("/Game/UI/WBP_Title.WBP_Title_C"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetClass(TEXT("/Game/UI/WBP_Start.WBP_Start_C"));
 	if (WidgetClass.Succeeded())
 	{
 		TextWidgetClass = WidgetClass.Class;
@@ -42,15 +43,29 @@ AASGameMode::AASGameMode()
 void AASGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-	FSoftObjectPath SequencePath(TEXT("/Game/LS_Title/LS_Title.LS_Title"));
-	IntroSequence = Cast<ULevelSequence>(StaticLoadObject(ULevelSequence::StaticClass(), nullptr, *SequencePath.ToString()));
+	//FSoftObjectPath SequencePath(TEXT("/Game/LS_Title/LS_Title.LS_Title"));
+	//IntroSequence = Cast<ULevelSequence>(StaticLoadObject(ULevelSequence::StaticClass(), nullptr, *SequencePath.ToString()));
 
-	PlayIntroSequence();
+	//PlayIntroSequence();
 	if (TextWidgetClass)
 	{
 		TextWidget = CreateWidget<UUserWidget>(GetWorld(), TextWidgetClass);
-		if (TextWidget) TextWidget->AddToViewport();
+		if (TextWidget) TextWidget->AddToViewport(100);
 	}
+
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (PlayerController)
+	{
+		PlayerController->bShowMouseCursor = true;
+		PlayerController->SetInputMode(FInputModeUIOnly()); 
+	}
+
+	StartButton = Cast<UButton>(TextWidget->GetWidgetFromName(TEXT("StartButton")));
+	if (StartButton)
+	{
+		StartButton->OnClicked.AddDynamic(this, &AASGameMode::OnStartButtonClicked);
+	}
+
 	PlayBackgroundMusic();
 }
 
@@ -82,4 +97,21 @@ void AASGameMode::OnSequenceFinished()
 {
 	TextWidget->RemoveFromParent();
 	TextWidget = nullptr;
+}
+
+void AASGameMode::OnStartButtonClicked()
+{
+	if (TextWidget)
+	{
+		TextWidget->RemoveFromParent();
+		TextWidget = nullptr;
+	}
+
+	// 마우스 커서 숨기기 및 입력 모드 변경
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (PlayerController)
+	{
+		PlayerController->bShowMouseCursor = false;
+		PlayerController->SetInputMode(FInputModeGameOnly());
+	}
 }
