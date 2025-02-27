@@ -144,7 +144,7 @@ AASCharacterPlayer::AASCharacterPlayer()
 	}
 	bIsZoom = false;
 
-	static ConstructorHelpers::FObjectFinder<USoundBase> SoundRef(TEXT("/Game/BulletSFX_Ultimate/Soft_Material/CUE/Lead_in/Bullet_SFX_LeadIn_Soft_Material_11_Cue.Bullet_SFX_LeadIn_Soft_Material_11_Cue"));
+	static ConstructorHelpers::FObjectFinder<USoundBase> SoundRef(TEXT("/Game/Sound/Bullet_SFX_LeadIn_Soft_Material_11_Cue.Bullet_SFX_LeadIn_Soft_Material_11_Cue"));
 	if (SoundRef.Succeeded())
 	{
 		AttackSound = SoundRef.Object;
