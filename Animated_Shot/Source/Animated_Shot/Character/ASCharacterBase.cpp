@@ -163,7 +163,6 @@ void AASCharacterBase::ComboActionBegin()
 	const float AttackSpeedRate = Stat->GetTotalStat().AttackSpeed;
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Play(ComboActionMontage, AttackSpeedRate);
-
 	FOnMontageEnded EndDelegate;
 	EndDelegate.BindUObject(this, &AASCharacterBase::ComboActionEnd);
 	AnimInstance->Montage_SetEndDelegate(EndDelegate, ComboActionMontage);
@@ -310,7 +309,7 @@ void AASCharacterBase::EquipWeapon(UASItemData* InItemData)
 		}
 		else
 		{
-			FASCharacterStat NewModifierStat(0, 50, 20, 0);
+			FASCharacterStat NewModifierStat(0, 0, 2000, 0);
 			Stat->SetModifierStat(NewModifierStat);
 		}
 	}

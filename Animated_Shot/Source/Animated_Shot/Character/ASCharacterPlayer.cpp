@@ -13,10 +13,13 @@
 #include "Components/Button.h"
 #include "Player/ASPlayerController.h"
 #include "CharacterStat/ASCharacterStatComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Sound/SoundBase.h"
 
 AASCharacterPlayer::AASCharacterPlayer()
 {
+	//PrimaryActorTick.bCanEverTick = true;
 	//Camera
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -56,6 +59,12 @@ AASCharacterPlayer::AASCharacterPlayer()
 	if (nullptr != InputActionQuaterMoveRef.Object)
 	{
 		QuaterMoveAction = InputActionQuaterMoveRef.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionScopeRef(TEXT("/Script/EnhancedInput.InputAction'/Game/MyCharacter/Input/Actions/IA_Scope.IA_Scope'"));
+	if (nullptr != InputActionScopeRef.Object)
+	{
+		ScopeAction = InputActionScopeRef.Object;
 	}
 
 	//static ConstructorHelpers::FObjectFinder<UInputAction> InputActionQuaterLookRef(TEXT("/Script/EnhancedInput.InputAction'/Game/MyCharacter/Input/Actions/IA_QuaterLook.IA_QuaterLook'"));
@@ -114,7 +123,7 @@ AASCharacterPlayer::AASCharacterPlayer()
 	static ConstructorHelpers::FObjectFinder<UPaperSprite> PlayerIconSpriteRef(TEXT("/Game/UI/PlayerIcon_Sprite.PlayerIcon_Sprite"));
 	if (PlayerIconSpriteRef.Succeeded())
 	{
-		MinimapIcon->SetSprite(PlayerIconSpriteRef.Object); 
+		MinimapIcon->SetSprite(PlayerIconSpriteRef.Object);
 	}
 
 	/** 아이콘 크기 조정 */
@@ -127,6 +136,20 @@ AASCharacterPlayer::AASCharacterPlayer()
 	{
 		RespawnWidgetClass = WidgetClass.Class;
 	}
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> ScopeWidgetClassRef(TEXT("/Game/UI/WBP_Scope.WBP_Scope_C"));
+	if (ScopeWidgetClassRef.Succeeded())
+	{
+		ScopeWidgetClass = ScopeWidgetClassRef.Class;
+	}
+	bIsZoom = false;
+
+	static ConstructorHelpers::FObjectFinder<USoundBase> SoundRef(TEXT("/Game/BulletSFX_Ultimate/Soft_Material/CUE/Lead_in/Bullet_SFX_LeadIn_Soft_Material_11_Cue.Bullet_SFX_LeadIn_Soft_Material_11_Cue"));
+	if (SoundRef.Succeeded())
+	{
+		AttackSound = SoundRef.Object;
+	}
+
 }
 
 void AASCharacterPlayer::BeginPlay()
@@ -144,6 +167,13 @@ void AASCharacterPlayer::BeginPlay()
 	if (MinimapCanvasRenderTarget)
 	{
 		MinimapCapture->TextureTarget = MinimapCanvasRenderTarget;
+	}
+
+	// 플레이어 카메라 가져오기
+	CameraComponent = FindComponentByClass<UCameraComponent>();
+	if (CameraComponent)
+	{
+		DefaultFOV = CameraComponent->FieldOfView; // 기본 FOV 저장
 	}
 }
 
@@ -192,6 +222,7 @@ void AASCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(ShoulderLookAction, ETriggerEvent::Triggered, this, &AASCharacterPlayer::ShoulderLook);
 	EnhancedInputComponent->BindAction(QuaterMoveAction, ETriggerEvent::Triggered, this, &AASCharacterPlayer::QuaterMove);
 	EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AASCharacterPlayer::Attack);
+	EnhancedInputComponent->BindAction(ScopeAction, ETriggerEvent::Started, this, &AASCharacterPlayer::Zoom);
 	//EnhancedInputComponent->BindAction(QuaterLookAction, ETriggerEvent::Triggered, this, &AASCharacterPlayer::QuaterLook);
 }
 
@@ -288,7 +319,55 @@ void AASCharacterPlayer::QuaterMove(const FInputActionValue& Value)
 
 void AASCharacterPlayer::Attack()
 {
+	if (bIsZoom)
+	{
+		APlayerController* PC = Cast<APlayerController>(GetController());
+		if (!PC) return;
+
+		// 반동값을 랜덤하게 생성 (X는 좌우, Y는 상하)
+		float RecoilX = FMath::RandRange(-1.5f, 1.5f) * 1.5f;
+		float RecoilY = FMath::RandRange(1.0f, 3.0f) * 1.5f;
+
+		// 카메라 흔들기 (조준점 위치 변경)
+		PC->AddPitchInput(-RecoilY); // 위로 튀는 반동
+		PC->AddYawInput(RecoilX); // 좌우 랜덤 반동
+	}
+
+	if (AttackSound)
+	{
+		UGameplayStatics::PlaySound2D(this,AttackSound);
+	}
 	ProcessComboCommand();
+}
+
+void AASCharacterPlayer::Zoom()
+{
+	bIsZoom =  !bIsZoom;
+
+	float TargetFOV = bIsZoom ? ZoomedFOV : DefaultFOV;
+	FVector TargetOffset = bIsZoom ? FVector(50.f, 0.0f, 15.f) : FVector::ZeroVector;
+	if (bIsZoom)
+	{
+		if (ScopeWidgetClass)
+		{
+			CameraBoom->TargetArmLength = 0.f;
+			ScopeWidget = CreateWidget<UUserWidget>(GetWorld(), ScopeWidgetClass);
+			if (ScopeWidget) ScopeWidget->AddToViewport();
+		}
+	}
+	else 
+	{
+		if (ScopeWidget)
+		{
+			CameraBoom->TargetArmLength = 350.f;
+			ScopeWidget->RemoveFromViewport();
+		}
+	}
+	if (CameraComponent)
+	{
+		CameraBoom->TargetOffset = TargetOffset;
+		CameraComponent->SetFieldOfView(TargetFOV);
+	}
 }
 
 float AASCharacterPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

@@ -72,6 +72,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> AttackAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> ScopeAction;
+
 	void ShoulderMove(const FInputActionValue& Value);
 	void ShoulderLook(const FInputActionValue& Value);
 
@@ -81,8 +84,16 @@ protected:
 	ECharacterControlType CurrentCharacterControlType;
 
 	void Attack();
+	void Zoom();
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> ScopeWidgetClass;
 
-//Animation
+	UUserWidget* ScopeWidget;
+
+	bool bIsZoom;
+
+	//Animation
 private:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = Animation, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> DamageMontage;
@@ -123,4 +134,20 @@ private:
 
 	FVector InitialSpawnLocation;
 	FRotator InitialSpawnRotation;
+
+private:
+	UPROPERTY(EditAnywhere, Category = "Zoom")
+	float DefaultFOV;  // 기본 FOV
+
+	UPROPERTY(EditAnywhere, Category = "Zoom")
+	float ZoomedFOV = 50.0f;   // 줌 시 FOV
+
+	UPROPERTY(EditAnywhere, Category = "Zoom")
+	float ZoomInterpSpeed = 10.0f;  // 줌 속도
+
+	UPROPERTY()
+	UCameraComponent* CameraComponent; // 카메라 참조
+
+	UPROPERTY(EditAnywhere)
+	USoundBase* AttackSound;
 };
