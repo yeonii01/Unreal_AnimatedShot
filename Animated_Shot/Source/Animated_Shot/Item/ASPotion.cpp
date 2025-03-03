@@ -15,7 +15,8 @@ AASPotion::AASPotion()
         PotionMesh->SetStaticMesh(MeshAsset.Object);
     }
 
-    SetActorScale3D(FVector(0.5, 0.5f, 0.5f));
+    SetActorScale3D(FVector(0.2f, 0.2f, 0.2f));
+    PotionMesh->SetRelativeLocation(FVector(0, 700, 0)); // Z축으로 50 이동
     PrimaryActorTick.bCanEverTick = true;
 }
 

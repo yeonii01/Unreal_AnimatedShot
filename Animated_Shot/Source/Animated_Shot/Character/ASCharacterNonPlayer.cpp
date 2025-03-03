@@ -100,13 +100,14 @@ AASCharacterNonPlayer::AASCharacterNonPlayer()
 		StaticMeshComponent->SetStaticMesh(PlaneMesh.Object);
 	}
 
-	// 머터리얼 로드 및 적용
-	static ConstructorHelpers::FObjectFinder<UMaterialInterface> MaskedMaterial(TEXT("/Script/Engine.Material'/Game/Monster/M_AttackRange.M_AttackRange'"));
-	if (MaskedMaterial.Succeeded())
-	{
-		MaskedMaterialInstance = UMaterialInstanceDynamic::Create(MaskedMaterial.Object, this);
-		StaticMeshComponent->SetMaterial(0, MaskedMaterialInstance);
-	}
+	//// 머터리얼 로드 및 적용
+	//static ConstructorHelpers::FObjectFinder<UMaterialInterface> MaskedMaterial(TEXT("/Script/Engine.Material'/Game/Monster/M_AttackRange.M_AttackRange'"));
+	//if (MaskedMaterial.Succeeded())
+	//{
+	//	MaskedMaterialInstance = UMaterialInstanceDynamic::Create(MaskedMaterial.Object, this);
+	//	StaticMeshComponent->SetMaterial(0, MaskedMaterialInstance);
+	//}
+
 
 	// 크기 및 회전 설정
 	StaticMeshComponent->SetRelativeScale3D(FVector(3.0f, 3.0f, 1.0f));  // Plane 크기 조절
@@ -126,6 +127,13 @@ void AASCharacterNonPlayer::PostInitializeComponents()
 	DeadMontage = DeadMontages[RandIndex];
 	ComboActionMontage = ComboActionMontages[RandIndex];
 
+
+		UMaterialInterface* MaskedMaterial = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Monster/M_AttackRange.M_AttackRange"));
+		if (MaskedMaterial)
+		{
+			MaskedMaterialInstance = UMaterialInstanceDynamic::Create(MaskedMaterial, this);
+			StaticMeshComponent->SetMaterial(0, MaskedMaterialInstance);
+		}
 	StaticMeshComponent->SetRelativeScale3D(FVector(GetAIAttackRange() / 50.f, GetAIAttackRange() / 50.f, 1.f));
 }
 

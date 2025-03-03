@@ -18,7 +18,7 @@ AASGameMode::AASGameMode()
 	if (DefaultPawnClassRef.Class)
 	{
 		DefaultPawnClass = DefaultPawnClassRef.Class;
-	}	
+	}
 
 	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerClassRef(TEXT("/Script/Animated_Shot.ASPlayerController"));
 	if (PlayerControllerClassRef.Class)
@@ -31,6 +31,12 @@ AASGameMode::AASGameMode()
 	{
 		TextWidgetClass = WidgetClass.Class;
 	}
+
+	/*static ConstructorHelpers::FClassFinder<UUserWidget> WidgetClass(TEXT("/Game/InventorySystem/UI/WBP_Inventory.WBP_Inventory_C"));
+	if (WidgetClass.Succeeded())
+	{
+		TextWidgetClass = WidgetClass.Class;
+	}*/
 	static ConstructorHelpers::FObjectFinder<USoundCue> BGMAsset(TEXT("/Game/Sound/AS_Bgm.AS_Bgm"));
 	if (BGMAsset.Succeeded())
 	{

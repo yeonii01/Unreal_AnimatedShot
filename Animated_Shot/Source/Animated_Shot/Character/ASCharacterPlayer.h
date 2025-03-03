@@ -75,6 +75,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> ScopeAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> InventoryAction;
+
 	void ShoulderMove(const FInputActionValue& Value);
 	void ShoulderLook(const FInputActionValue& Value);
 
@@ -85,6 +88,7 @@ protected:
 
 	void Attack();
 	void Zoom();
+	void Inventory();
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> ScopeWidgetClass;
@@ -92,7 +96,6 @@ private:
 	UUserWidget* ScopeWidget;
 
 	bool bIsZoom;
-
 	//Animation
 private:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = Animation, Meta = (AllowPrivateAccess = "true"))

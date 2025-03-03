@@ -56,9 +56,7 @@ void AASPotionItemBox::OnEffectFinished(UParticleSystemComponent* ParticleSystem
 
 void AASPotionItemBox::OpenBox()
 {
-	FVector SpawnLocation1 = GetActorLocation() + FVector(0, 0, 80);
-
-	FRotator SpawnRotation = GetActorRotation() + FRotator(0, 90, -90);
-
+	FVector SpawnLocation1 = GetActorLocation() + FVector(0, 0, -420);
+	FRotator SpawnRotation = GetActorRotation() + FRotator(0, 0, -90);
 	AASPotion* SpawnPotion = GetWorld()->SpawnActor<AASPotion>(PotionClass, SpawnLocation1, SpawnRotation);
 }

@@ -223,6 +223,7 @@ void AASCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(QuaterMoveAction, ETriggerEvent::Triggered, this, &AASCharacterPlayer::QuaterMove);
 	EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AASCharacterPlayer::Attack);
 	EnhancedInputComponent->BindAction(ScopeAction, ETriggerEvent::Started, this, &AASCharacterPlayer::Zoom);
+	EnhancedInputComponent->BindAction(InventoryAction, ETriggerEvent::Started, this, &AASCharacterPlayer::Zoom);
 	//EnhancedInputComponent->BindAction(QuaterLookAction, ETriggerEvent::Triggered, this, &AASCharacterPlayer::QuaterLook);
 }
 
@@ -368,6 +369,13 @@ void AASCharacterPlayer::Zoom()
 		CameraBoom->TargetOffset = TargetOffset;
 		CameraComponent->SetFieldOfView(TargetFOV);
 	}
+}
+
+void AASCharacterPlayer::Inventory()
+{
+
+
+
 }
 
 float AASCharacterPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
