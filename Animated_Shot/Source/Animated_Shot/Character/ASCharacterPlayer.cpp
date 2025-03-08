@@ -26,6 +26,9 @@ AASCharacterPlayer::AASCharacterPlayer()
 	CameraBoom->TargetArmLength = 350.f;
 	CameraBoom->bUsePawnControlRotation = true;
 	CameraBoom->SetRelativeLocation(FVector(0.f, 0.f, 50.f));
+	CameraBoom->bDoCollisionTest = true;  
+	CameraBoom->ProbeSize = 10.f;         
+	CameraBoom->ProbeChannel = ECC_Camera; 
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
@@ -91,7 +94,7 @@ AASCharacterPlayer::AASCharacterPlayer()
 	/** 미니맵용 스프링암 생성 */
 	MinimapSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("MinimapSpringArm"));
 	MinimapSpringArm->SetupAttachment(RootComponent);
-	MinimapSpringArm->TargetArmLength = 2000.0f; // 위쪽으로 멀리 떨어진 거리
+	MinimapSpringArm->TargetArmLength = 3500.0f; // 위쪽으로 멀리 떨어진 거리
 	MinimapSpringArm->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f)); // 아래를 바라보도록 회전
 	MinimapSpringArm->bDoCollisionTest = false;
 	MinimapSpringArm->bEnableCameraLag = false;
@@ -388,7 +391,7 @@ float AASCharacterPlayer::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 			AnimInstance->Montage_Play(DamageMontage);
 		}
 	}
-	return AASCharacterBase::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	return AASCharacterBase::TakeDamage(DamageAmount/2, DamageEvent, EventInstigator, DamageCauser);
 }
 
 void AASCharacterPlayer::SetupHUDWidget(UASHUDWidget* InHUDWidget)

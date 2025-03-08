@@ -334,12 +334,14 @@ bool AASCharacterBase::IsEquipWeapon()
 
 int32 AASCharacterBase::GetLevel()
 {
-	return Stat->GetCurrentLevel();
+	return CurLevel;
+		//Stat->GetCurrentLevel();
 }
 
 void AASCharacterBase::SetLevel(int32 InNewLevel)
 {
-	Stat->SetLevelStat(InNewLevel);
+	CurLevel = InNewLevel;
+	Stat->SetLevelStat(CurLevel);
 }
 
 void AASCharacterBase::ApplyStat(const FASCharacterStat& BaseStat, const FASCharacterStat& ModifierStat)

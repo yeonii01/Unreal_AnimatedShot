@@ -41,7 +41,7 @@ protected:
 	FDataTableRowHandle ItemDataHandle;
 	
 	UPROPERTY(EditAnywhere, BluePrintReadWrite, Category = Type)
-	int32 ItemQuantity = 1;
+	int32 ItemQuantity = 10;
 
 	TObjectPtr<UASItemData> ItemData = nullptr;
 };

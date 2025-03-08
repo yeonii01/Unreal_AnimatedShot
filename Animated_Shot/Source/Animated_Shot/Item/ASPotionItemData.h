@@ -23,6 +23,10 @@ public:
 	}
 
 public:
+	UFUNCTION(BlueprintCallable)
+	float GetHealAmount() { return HealAmount; }
+
 	UPROPERTY(EditAnywhere, Category = Hp)
 	float HealAmount;
+
 };

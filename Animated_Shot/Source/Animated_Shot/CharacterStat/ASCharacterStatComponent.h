@@ -27,20 +27,31 @@ public:
 	FOnHpZeroDelegate OnHpZero;
 	FOnHpChangedDelegate OnHpChanged;
 	FOnStatChangedDelegate OnStatChanged;
-	
+
+	UFUNCTION(BlueprintCallable, Category = "Settings")
 	void SetLevelStat(int32 InNewLevel);
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float GetCurrentLevel() const { return CurrentLevel; }
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE void AddBaseStat(const FASCharacterStat& InAddBaseStat) { BaseStat = BaseStat + InAddBaseStat;  OnStatChanged.Broadcast(GetBaseStat(), GetModifierStat()); }
+
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE void SetBaseStat(const FASCharacterStat& InBaseStat) { BaseStat = InBaseStat; OnStatChanged.Broadcast(GetBaseStat(), GetModifierStat()); }
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE void SetModifierStat(const FASCharacterStat& InModifierStat) { ModifierStat = InModifierStat; OnStatChanged.Broadcast(GetBaseStat(), GetModifierStat()); }
 
 	FORCEINLINE const FASCharacterStat& GetBaseStat() const { return BaseStat; }
-	FORCEINLINE const FASCharacterStat& GetModifierStat() const { return ModifierStat; }
 
+	FORCEINLINE const FASCharacterStat& GetModifierStat() const { return ModifierStat; }
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE FASCharacterStat GetTotalStat() { return BaseStat + ModifierStat; }
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float GetCurrentHp() { return CurrentHp; }
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE void HealHp(float InHealAmount) { CurrentHp = FMath::Clamp(CurrentHp + InHealAmount, 0, GetTotalStat().MaxHp); OnHpChanged.Broadcast(CurrentHp); }
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float GetAttackRadius() { return AttackRadius; }
+	UFUNCTION(BlueprintCallable)
 	float ApplyDamage(float InDamage);
 
 protected:

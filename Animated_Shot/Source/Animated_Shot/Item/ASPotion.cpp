@@ -9,14 +9,13 @@ AASPotion::AASPotion()
     PotionMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PotionMesh"));
     RootComponent = PotionMesh;
 
-    static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Script/Engine.StaticMesh'/Game/InventorySystem/Items/material/1.1'"));
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Script/Engine.StaticMesh'/Game/Item/Potion/_simple_a_small_gl_1109180718_refine._simple_a_small_gl_1109180718_refine'"));
     if (MeshAsset.Succeeded())
     {
         PotionMesh->SetStaticMesh(MeshAsset.Object);
     }
 
     SetActorScale3D(FVector(0.2f, 0.2f, 0.2f));
-    PotionMesh->SetRelativeLocation(FVector(0, 700, 0)); // Z축으로 50 이동
     PrimaryActorTick.bCanEverTick = true;
 }
 

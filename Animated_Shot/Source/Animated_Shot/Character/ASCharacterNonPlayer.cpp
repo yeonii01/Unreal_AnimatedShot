@@ -162,6 +162,8 @@ void AASCharacterNonPlayer::PostInitializeComponents()
 		StaticMeshComponent->SetMaterial(0, MaskedMaterialInstance);
 	}
 	StaticMeshComponent->SetRelativeScale3D(FVector(GetAIAttackRange() / 50.f, GetAIAttackRange() / 50.f, 1.f));
+
+	Stat->SetLevelStat(CurLevel);
 }
 
 void AASCharacterNonPlayer::SetDead()

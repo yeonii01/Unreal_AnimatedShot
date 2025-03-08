@@ -112,8 +112,16 @@ protected:
 
 //Stat Section
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	int32 CurLevel;
+
+	//UFUNCTION(BlueprintCallable, Category = "Settings")
 	int32 GetLevel();
+
+	UFUNCTION(BlueprintCallable, Category = "Settings")
 	void SetLevel(int32 InNewLevel);
+
+	UFUNCTION(BlueprintCallable, Category = "Settings")
 	void ApplyStat(const FASCharacterStat& BaseStat, const FASCharacterStat& ModifierStat);
 
 };
