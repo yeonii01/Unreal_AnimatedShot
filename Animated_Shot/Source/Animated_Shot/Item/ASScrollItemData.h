@@ -24,6 +24,9 @@ public:
 	}
 
 public:
+	UFUNCTION(BlueprintCallable)
+	FASCharacterStat GetBaseStat() { return BaseStat; }
+
 	UPROPERTY(EditAnywhere, Category = Stat)
 	FASCharacterStat BaseStat;
 };

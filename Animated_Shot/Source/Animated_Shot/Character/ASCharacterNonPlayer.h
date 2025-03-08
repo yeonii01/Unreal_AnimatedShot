@@ -53,7 +53,7 @@ protected:
 	uint32 MaxDropItemNum = 3;
 	
 	UPROPERTY(EditAnywhere, Category=DropItem)
-	float MinDropRange = 0.f;
+	float MinDropRange = -30.f;
 	
 	UPROPERTY(EditAnywhere, Category=DropItem)
 	float MaxDropRange = 30.f;

@@ -203,7 +203,36 @@ void AASCharacterNonPlayer::NPCMeshLoadCompleted()
 
 void AASCharacterNonPlayer::DropItem()
 {
+
 	if (DropItems.IsEmpty())
+		return;
+
+	int32 DropCount = FMath::RandRange(0, MaxDropItemNum);
+	TArray<TSubclassOf<AASItemBase>> AvailableItems = DropItems; // 원본 유지
+
+	for (int32 i = 0; i < DropCount; ++i)
+	{
+		if (AvailableItems.Num() == 0) // 남은 아이템이 없으면 중단
+			break;
+
+		int32 DropItemIndex = FMath::RandRange(0, AvailableItems.Num() - 1);
+		TSubclassOf<AASItemBase> DropItem = AvailableItems[DropItemIndex];
+
+		if (!IsValid(DropItem))
+			continue;
+
+		FVector RandomDirection = FMath::VRand();
+		RandomDirection.Z = 0.f;
+		RandomDirection *= FMath::RandRange(MinDropRange, MaxDropRange);
+		FVector SpawnLocation = GetActorLocation() + RandomDirection;
+
+		GetWorld()->SpawnActor<AASItemBase>(DropItem, SpawnLocation, GetActorRotation());
+
+		AvailableItems.RemoveAt(DropItemIndex); // 중복 제거
+	}
+
+
+	/*if (DropItems.IsEmpty())
 		return;
 
 	int32 DropCount = FMath::RandRange(0, MaxDropItemNum);
@@ -224,7 +253,7 @@ void AASCharacterNonPlayer::DropItem()
 		FVector SpawnLocation = GetActorLocation() + RandomDirection;
 
 		GetWorld()->SpawnActor<AASItemBase>(DropItem, SpawnLocation, GetActorRotation());
-	}
+	}*/
 }
 
 void AASCharacterNonPlayer::DropCoin()

@@ -20,6 +20,10 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+public:
 	UFUNCTION(BlueprintCallable)
 	void SetCoin(int32 CoinValue) { Coin = CoinValue; }
 

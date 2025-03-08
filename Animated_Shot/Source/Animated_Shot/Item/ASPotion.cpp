@@ -30,7 +30,7 @@ void AASPotion::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-    FRotator NewRotation = FRotator(-50.f * DeltaTime, 0.f, 0.f);
+    FRotator NewRotation = FRotator(0.f, -50.f * DeltaTime, 0.f);
     AddActorLocalRotation(NewRotation);
 }
 
