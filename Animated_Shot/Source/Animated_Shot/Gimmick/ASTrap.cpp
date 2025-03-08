@@ -46,9 +46,9 @@ void AASTrap::Tick(float DeltaTime)
     if (bPlayerOnTrigger)
     {
         CurrentCharge += ChargeSpeed * DeltaTime;
-        CurrentCharge = FMath::Clamp(CurrentCharge, 0.0f, 50.f);
+        CurrentCharge = FMath::Clamp(CurrentCharge, 0.0f, 25.f);
 
-        if (CurrentCharge >= 50.f)
+        if (CurrentCharge >= 25.f)
         {
             ActivateTrap();
         }
