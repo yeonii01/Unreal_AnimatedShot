@@ -31,12 +31,21 @@ protected:
 	void DropItem();
 	void DropCoin();
 
-	UPROPERTY(config)
-	TArray<FSoftObjectPath> NPCMeshes;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Settings")
+	//TArray<FSoftObjectPath> NPCMeshes;	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Settings")
+	USkeletalMesh* NPCMesh;
 
-	TArray<UClass*> AnimClasses;
-	TArray<UAnimMontage*> DeadMontages;
-	TArray<UAnimMontage*> ComboActionMontages;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Settings")
+	//TSubclassOf<UClass*> AnimClasses;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Settings")
+	TSubclassOf<UAnimInstance> AnimClasses;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Settings")
+	UAnimMontage* DeadMontages;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Settings")
+	UAnimMontage*  ComboActionMontages;
 
 	TSharedPtr<FStreamableHandle> NPCMeshHandle;
 
