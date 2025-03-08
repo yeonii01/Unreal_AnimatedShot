@@ -7,6 +7,9 @@
 #include "AI/ASAIController.h"
 #include "Components/DecalComponent.h"
 #include "CharacterStat/ASCharacterStatComponent.h"
+#include "ASComboActionData.h"
+#include "../Item/ASItemBase.h"
+#include "../Item/ASCoin.h"
 
 AASCharacterNonPlayer::AASCharacterNonPlayer()
 {
@@ -147,6 +150,9 @@ void AASCharacterNonPlayer::SetDead()
 		ASAIController->StopAI();
 	}
 
+	DropItem();
+	DropCoin();
+
 	FTimerHandle DeadTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([&](){
 		Destroy();
@@ -167,6 +173,48 @@ void AASCharacterNonPlayer::NPCMeshLoadCompleted()
 	}
 
 	NPCMeshHandle->ReleaseHandle();
+}
+
+void AASCharacterNonPlayer::DropItem()
+{
+	if (DropItems.IsEmpty())
+		return;
+
+	int32 DropCount = FMath::RandRange(0, MaxDropItemNum);
+
+	for (int32 i = 0; i < DropCount; ++i)
+	{
+		int32 DropItemIndex = FMath::RandRange(0, DropItems.Num() - 1);
+
+		TSubclassOf<AASItemBase> DropItem = DropItems[DropItemIndex];
+
+		if (!IsValid(DropItem))
+			continue;
+
+		FVector RandomDirection = FMath::VRand();
+		RandomDirection.Z = 0.f;
+		RandomDirection *= FMath::RandRange(MinDropRange, MaxDropRange);
+
+		FVector SpawnLocation = GetActorLocation() + RandomDirection;
+
+		GetWorld()->SpawnActor<AASItemBase>(DropItem, SpawnLocation, GetActorRotation());
+	}
+}
+
+void AASCharacterNonPlayer::DropCoin()
+{
+	if (!IsValid(CoinClass))
+		return;
+
+	FVector RandomDirection = FMath::VRand();
+	RandomDirection.Z = 0.f;
+	RandomDirection *= FMath::RandRange(MinDropRange, MaxDropRange);
+
+	FVector SpawnLocation = GetActorLocation() + RandomDirection;
+
+	AASCoin* Coin = GetWorld()->SpawnActor<AASCoin>(CoinClass, SpawnLocation, GetActorRotation());
+	if(IsValid(Coin))
+		Coin->SetCoin(FMath::RandRange(MinCoinValue, MaxCoinValue));
 }
 
 void AASCharacterNonPlayer::SetCircleColor(FLinearColor NewColor)

@@ -39,6 +39,9 @@ public:
 	AASCharacterBase();
 
 	virtual void PostInitializeComponents() override;
+	
+	UFUNCTION(BlueprintCallable)
+	bool IsEquipWeapon();
 
 protected:
 	virtual void SetCharacterControlData(const class UASCharacterControlData* CharacterControlData);

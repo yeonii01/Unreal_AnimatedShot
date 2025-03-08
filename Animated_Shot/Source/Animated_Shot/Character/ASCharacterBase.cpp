@@ -324,6 +324,14 @@ void AASCharacterBase::ReadScroll(UASItemData* InItemData)
 	}
 }
 
+bool AASCharacterBase::IsEquipWeapon()
+{
+	if (Weapon1->GetStaticMesh())
+		return true;
+
+	return false;
+}
+
 int32 AASCharacterBase::GetLevel()
 {
 	return Stat->GetCurrentLevel();

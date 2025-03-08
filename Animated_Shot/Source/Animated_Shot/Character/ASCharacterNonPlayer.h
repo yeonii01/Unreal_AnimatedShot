@@ -8,6 +8,9 @@
 #include "Interface/ASCharacterAIInterface.h"
 #include "ASCharacterNonPlayer.generated.h"
 
+class AASItemBase;
+class AASCoin;
+
 /**
  * 
  */
@@ -25,6 +28,8 @@ protected:
 protected:
 	virtual void SetDead() override;
 	void NPCMeshLoadCompleted();
+	void DropItem();
+	void DropCoin();
 
 	UPROPERTY(config)
 	TArray<FSoftObjectPath> NPCMeshes;
@@ -34,6 +39,27 @@ protected:
 	TArray<UAnimMontage*> ComboActionMontages;
 
 	TSharedPtr<FStreamableHandle> NPCMeshHandle;
+
+	UPROPERTY(EditAnywhere, Category=DropItem)
+	uint32 MaxDropItemNum = 3;
+	
+	UPROPERTY(EditAnywhere, Category=DropItem)
+	float MinDropRange = 0.f;
+	
+	UPROPERTY(EditAnywhere, Category=DropItem)
+	float MaxDropRange = 30.f;
+
+	UPROPERTY(EditAnywhere, Category=DropItem)
+	TArray<TSubclassOf<AASItemBase>> DropItems;
+	
+	UPROPERTY(EditAnywhere, Category=DropItem)
+	int32 MinCoinValue = 20;
+	
+	UPROPERTY(EditAnywhere, Category=DropItem)
+	int32 MaxCoinValue = 100;
+
+	UPROPERTY(EditAnywhere, Category=DropItem)
+	TSubclassOf<AASCoin> CoinClass = nullptr;
 
 public:
 	UPROPERTY(VisibleAnywhere, Category = "Components")

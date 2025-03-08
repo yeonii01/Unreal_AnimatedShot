@@ -30,6 +30,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AASAWeapon> WeaponClass;
 
+	TArray<AASAWeapon*> SpawnWeapons;
+
 	UFUNCTION()
 	void OpenBox();
 

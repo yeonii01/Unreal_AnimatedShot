@@ -36,18 +36,16 @@ void AAASItemWeaponBox::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	AASItemBox::Tick(DeltaTime);
-
 	if (bIsOpening)
 	{
 		AASPlayerController* PlayerController = Cast<AASPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		if (PlayerController && PlayerController->IsInputKeyDown(EKeys::Q))
 		{
-			SelectWeapon(1);
+			SelectWeapon(0);
 		}
 		if (PlayerController && PlayerController->IsInputKeyDown(EKeys::E))
 		{
-			SelectWeapon(2);
+			SelectWeapon(1);
 		}
 	}
 }
@@ -69,42 +67,45 @@ void AAASItemWeaponBox::OnEffectFinished(UParticleSystemComponent* ParticleSyste
 
 void AAASItemWeaponBox::OpenBox()
 {
+	if (!SpawnWeapons.IsEmpty())
+		return;
+
 	FVector SpawnLocation1 = GetActorLocation() + FVector(60, 0, 80);
 	FVector SpawnLocation2 = GetActorLocation() + FVector(-60, 0, 80);
 	FRotator SpawnRotation = GetActorRotation() + FRotator(0, 90, -90);
 
 	UStaticMesh* NewMesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/MyCharacter/weapon_02"));
+	
+	SpawnWeapons.Reset(2);
 
-	AASAWeapon* SpawnWeapon1 = GetWorld()->SpawnActor<AASAWeapon>(WeaponClass, SpawnLocation1, SpawnRotation);
-	SpawnWeapon1->WeaponMesh->SetStaticMesh(NewMesh);
-	AASAWeapon* SpawnWeapon2 = GetWorld()->SpawnActor<AASAWeapon>(WeaponClass, SpawnLocation2, SpawnRotation);
+	SpawnWeapons.Add(GetWorld()->SpawnActor<AASAWeapon>(WeaponClass, SpawnLocation1, SpawnRotation));
+	SpawnWeapons[0]->WeaponMesh->SetStaticMesh(NewMesh);
+	SpawnWeapons[0]->SetWeaponType(EItemType::Weapon1);
+	SpawnWeapons.Add(GetWorld()->SpawnActor<AASAWeapon>(WeaponClass, SpawnLocation2, SpawnRotation));
+	SpawnWeapons[1]->SetWeaponType(EItemType::Weapon2);
+
+	for (auto& iter : SpawnWeapons)
+	{
+		if (IsValid(iter))
+			iter->IsInBox = true;
+	}
 }
 
 void AAASItemWeaponBox::SelectWeapon(int _key)
 {
-	UStaticMesh* NewMesh1 = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/MyCharacter/weapon_01"));
-	UStaticMesh* NewMesh2 = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/MyCharacter/weapon_02"));
+	if (SpawnWeapons.IsEmpty())
+		return;
 
-	if (_key == 1)
+	if (!IsValid(SpawnWeapons[_key]))
+		return;
+
+	SpawnWeapons[_key]->IsInBox = false;
+	SpawnWeapons[_key]->PickUp(OverlapActor);
+
+	for (auto& iter : SpawnWeapons)
 	{
-		UASWeaponItemData* NewItem = NewObject<UASWeaponItemData>();
-		NewItem->SetItemType(EItemType::Weapon1);
-		NewItem->WeaponMesh = NewMesh1;
-		Item = NewItem;
+		if(IsValid(iter))
+			iter->Destroy();
 	}
-
-	else if (_key == 2)
-	{
-		UASWeaponItemData* NewItem = NewObject<UASWeaponItemData>();
-		NewItem->SetItemType(EItemType::Weapon2);
-
-		NewItem->WeaponMesh = NewMesh2;
-		Item = NewItem;
-	}
-
-	IASCharacterItemInterface* OverlappingPawn = Cast<IASCharacterItemInterface>(OverlapActor);
-	if (OverlappingPawn)
-	{
-		OverlappingPawn->TakeItem(Item);
-	}
+	SpawnWeapons.Reset(2);
 }

@@ -3,11 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "ASItemBase.h"
 #include "ASAWeapon.generated.h"
 
+enum class EItemType : uint8;
+
 UCLASS()
-class ANIMATED_SHOT_API AASAWeapon : public AActor
+class ANIMATED_SHOT_API AASAWeapon : public AASItemBase
 {
 	GENERATED_BODY()
 	
@@ -23,7 +25,13 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void SetWeaponType(EItemType Type);
+
+	virtual void PickUp(AActor* Actor) override;
+
 public:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* WeaponMesh;
+
+	bool IsInBox = false;
 };

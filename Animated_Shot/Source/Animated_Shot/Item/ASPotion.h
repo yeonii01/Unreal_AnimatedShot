@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "ASItemBase.h"
 #include "ASPotion.generated.h"
 
 UCLASS()
-class ANIMATED_SHOT_API AASPotion : public AActor
+class ANIMATED_SHOT_API AASPotion : public AASItemBase
 {
 	GENERATED_BODY()
 	
