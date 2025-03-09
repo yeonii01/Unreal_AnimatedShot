@@ -21,11 +21,15 @@ public:
 public:
 	void UpdateStat(const FASCharacterStat& BaseStat, const FASCharacterStat& ModifierStat);
 	void UpdateHpBar(float NewCurrentHp);
+	void UpdateQuestText(const FString& QuestText);
 
 protected:
 	virtual void NativeConstruct() override;
 
 protected:
+	UPROPERTY()
+	TObjectPtr<class UASQuestSystemUI> QuestWidget;
+
 	UPROPERTY()
 	TObjectPtr<class UASHpBarWidget> HpBar;
 

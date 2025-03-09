@@ -16,6 +16,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundBase.h"
+#include "Gimmick/QuestSystem.h"
 
 AASCharacterPlayer::AASCharacterPlayer()
 {

@@ -5,6 +5,7 @@
 #include "Interface/ASCharacterHUDInterface.h"
 #include "ASHpBarWidget.h"
 #include "ASCharacterStatWidget.h"
+#include "UI/ASQuestSystemUI.h"
 
 
 UASHUDWidget::UASHUDWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -23,6 +24,14 @@ void UASHUDWidget::UpdateHpBar(float NewCurrentHp)
 	HpBar->UpdateHpBar(NewCurrentHp);
 }
 
+void UASHUDWidget::UpdateQuestText(const FString& QuestText)
+{
+	if (QuestWidget)
+	{
+		QuestWidget->UpdateQuestText(QuestText);
+	}
+}
+
 void UASHUDWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -32,6 +41,8 @@ void UASHUDWidget::NativeConstruct()
 
 	CharacterStat = Cast<UASCharacterStatWidget>(GetWidgetFromName(TEXT("WidgetCharacterStat")));
 	ensure(CharacterStat);
+
+	QuestWidget = Cast<UASQuestSystemUI>(GetWidgetFromName(TEXT("QuestWidgetUI")));
 
 	IASCharacterHUDInterface* HUDPawn = Cast<IASCharacterHUDInterface>(GetOwningPlayerPawn());
 	if (HUDPawn)

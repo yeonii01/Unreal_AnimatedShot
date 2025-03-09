@@ -14,6 +14,8 @@
 #include "UI/ASWidgetComponent.h"
 #include "UI/ASHpBarWidget.h"
 #include "Item/ASItems.h"
+#include "Gimmick/QuestSystem.h"
+#include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(LogASCharacter);
 
@@ -293,7 +295,7 @@ void AASCharacterBase::DrinkPotion(UASItemData* InItemData)
 void AASCharacterBase::EquipWeapon(UASItemData* InItemData)
 {
 	UASWeaponItemData* WeaponItemData = Cast<UASWeaponItemData>(InItemData);
-	
+
 	if (WeaponItemData)
 	{
 		if (WeaponItemData->WeaponMesh.IsPending())
@@ -312,6 +314,12 @@ void AASCharacterBase::EquipWeapon(UASItemData* InItemData)
 			FASCharacterStat NewModifierStat(0, 0, 2000, 0);
 			Stat->SetModifierStat(NewModifierStat);
 		}
+	}
+
+	AQuestSystem* QuestSystem = Cast<AQuestSystem>(UGameplayStatics::GetActorOfClass(GetWorld(), AQuestSystem::StaticClass()));
+	if (QuestSystem && QuestSystem->CurrentQuest == EQuestType::QUEST_PickUpWeapon)
+	{
+		QuestSystem->AdvanceQuest();
 	}
 }
 

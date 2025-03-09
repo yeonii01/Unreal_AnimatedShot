@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "UI/ASHUDWidget.h"
 #include "ASPlayerController.generated.h"
 
 /**
@@ -16,6 +17,9 @@ class ANIMATED_SHOT_API AASPlayerController : public APlayerController
 
 public:
 	AASPlayerController();
+
+public:
+	UASHUDWidget* GetHUDWidget() const { return ASHUDWidget; }
 
 protected:
 	virtual void BeginPlay() override;
