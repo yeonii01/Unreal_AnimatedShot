@@ -4,6 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/StaticMeshComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "RollingBall.generated.h"
 
 UCLASS()
@@ -19,13 +23,37 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+protected:
+    virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, Category = "Components")
-	UStaticMeshComponent* BallMesh;
+    void ResetBranch();
+private:
+    // 나뭇가지 메쉬
+    UPROPERTY(EditAnywhere, Category = "Components")
+    UStaticMeshComponent* BranchMesh;
 
-	UPROPERTY(EditAnywhere, Category = "Movement")
-	float RollingForce = 1000.0f;  // 힘의 크기
+    // 물리 이동 적용
+    UPROPERTY(VisibleAnywhere, Category = "Movement")
+    UProjectileMovementComponent* MovementComponent;
+
+    // 최초 위치 저장 (사라질 거리 계산용)
+    FVector InitialLocation;
+    FRotator InitialRotator;
+
+    // 사라질 거리 (기본값: 2000)
+    UPROPERTY(EditAnywhere, Category = "Settings")
+    float DestroyDistance = 2000.0f;
+
+    // 충돌 시 데미지
+    UPROPERTY(EditAnywhere, Category = "Damage")
+    float DamageAmount = 20.0f;
+
+    // 충돌 시 파티클 (블루프린트에서 설정 가능)
+    UPROPERTY(EditAnywhere, Category = "Effects")
+    UParticleSystem* ImpactParticle;
+
+    // 충돌 이벤트 함수
+    UFUNCTION()
+    void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+        UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 };

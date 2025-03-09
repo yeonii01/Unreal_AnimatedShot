@@ -48,7 +48,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float GetCurrentHp() { return CurrentHp; }
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE void HealHp(float InHealAmount) { CurrentHp = FMath::Clamp(CurrentHp + InHealAmount, 0, GetTotalStat().MaxHp); OnHpChanged.Broadcast(CurrentHp); }
+	void HealHp(float InHealAmount);
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float GetAttackRadius() { return AttackRadius; }
 	UFUNCTION(BlueprintCallable)

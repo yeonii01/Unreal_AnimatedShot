@@ -3,6 +3,8 @@
 
 #include "CharacterStat/ASCharacterStatComponent.h"
 #include "GameData/ASGameSingleton.h"
+#include "Gimmick/QuestSystem.h"
+#include "Kismet/GameplayStatics.h"
 #include "ASCharacterStatComponent.h"
 
 // Sets default values for this component's properties
@@ -27,6 +29,16 @@ void UASCharacterStatComponent::SetLevelStat(int32 InNewLevel)
 	CurrentLevel = FMath::Clamp(InNewLevel, 1, UASGameSingleton::Get().CharacterMaxLevel);
 	SetBaseStat(UASGameSingleton::Get().GetCharacterStat(CurrentLevel));
 	check(BaseStat.MaxHp > 0.f)
+}
+
+void UASCharacterStatComponent::HealHp(float InHealAmount)
+{
+	CurrentHp = FMath::Clamp(CurrentHp + InHealAmount, 0, GetTotalStat().MaxHp); OnHpChanged.Broadcast(CurrentHp); 
+	AQuestSystem* QuestSystem = Cast<AQuestSystem>(UGameplayStatics::GetActorOfClass(GetWorld(), AQuestSystem::StaticClass()));
+	if (QuestSystem && QuestSystem->CurrentQuest == EQuestType::QUEST_UsePotion)
+	{
+		QuestSystem->AdvanceQuest();
+	}
 }
 
 float UASCharacterStatComponent::ApplyDamage(float InDamage)

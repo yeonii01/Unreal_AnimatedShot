@@ -3,34 +3,38 @@
 
 #include "Gimmick/RollingBall.h"
 #include "Components/StaticMeshComponent.h"
+#include "Character/ASCharacterPlayer.h"
+#include "Kismet/GameplayStatics.h"
+#include "Engine/DamageEvents.h"
 
 ARollingBall::ARollingBall()
 {
     PrimaryActorTick.bCanEverTick = true;
 
-    // 구체 메시 생성
-    BallMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BallMesh"));
-    RootComponent = BallMesh;
+    // 나뭇가지 메쉬 생성
+    BranchMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BranchMesh"));
+    RootComponent = BranchMesh;
 
-    // 물리 시뮬레이션 활성화
-    BallMesh->SetSimulatePhysics(true);
-    BallMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-    BallMesh->SetCollisionObjectType(ECC_PhysicsBody);
+    // 물리 적용 활성화
+    BranchMesh->SetSimulatePhysics(true);
+    BranchMesh->SetCollisionProfileName(TEXT("PhysicsActor"));
 
-    // 물리 설정 (중력 적용)
-    BallMesh->SetMassOverrideInKg(NAME_None, 1000.0f); // 공의 무게 설정
-    BallMesh->BodyInstance.AngularDamping = 0.01f;   // 회전 감속 설정
-    BallMesh->BodyInstance.LinearDamping = 0.05f;    // 직선 감속 설정
+    // ProjectileMovementComponent 추가 (중력 적용)
+    MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MovementComponent"));
+    MovementComponent->bShouldBounce = false;  // 튀지 않도록 설정
+    MovementComponent->ProjectileGravityScale = 1.0f; // 중력 적용
 
-    // 공이 더 자연스럽게 구르도록 탄성 적용
-    BallMesh->SetPhysMaterialOverride(nullptr); // 나중에 물리 재질 설정 가능
+    // 충돌 이벤트 바인딩
+    BranchMesh->OnComponentHit.AddDynamic(this, &ARollingBall::OnHit);
 }
 
 // Called when the game starts or when spawned
 void ARollingBall::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+    InitialLocation = GetActorLocation();
+    InitialRotator = GetActorRotation();
 }
 
 // Called every frame
@@ -38,5 +42,42 @@ void ARollingBall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+    FVector CurrentLocation = GetActorLocation();
+    float DistanceMoved = FVector::Dist(InitialLocation, CurrentLocation);
+
+    // 일정 거리 이상 이동하면 삭제
+    if (DistanceMoved >= DestroyDistance)
+    {
+        ResetBranch();
+    }
+}
+
+void ARollingBall::ResetBranch()
+{
+    SetActorLocation(InitialLocation);
+    SetActorRotation(InitialRotator);
+    BranchMesh->SetPhysicsLinearVelocity(FVector::ZeroVector); // 속도 초기화
+    BranchMesh->SetPhysicsAngularVelocityInDegrees(FVector::ZeroVector); // 회전 초기화
+}
+
+void ARollingBall::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+    if (OtherActor && OtherActor != this)
+    {
+        // 플레이어가 맞았을 경우 데미지 적용
+        AASCharacterPlayer* Player = Cast<AASCharacterPlayer>(OtherActor);
+        if (Player)
+        {
+            FDamageEvent DamageEvent;
+            Player->TakeDamage(DamageAmount, DamageEvent, Player->GetController(), this);
+        }
+
+        // 충돌 시 파티클 생성
+        if (ImpactParticle)
+        {
+            UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticle, GetActorLocation());
+        }
+        ResetBranch();
+    }
 }
 
