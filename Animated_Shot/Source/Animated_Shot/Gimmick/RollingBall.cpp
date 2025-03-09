@@ -18,7 +18,7 @@ ARollingBall::ARollingBall()
     BallMesh->SetCollisionObjectType(ECC_PhysicsBody);
 
     // 물리 설정 (중력 적용)
-    BallMesh->SetMassOverrideInKg(NAME_None, 2000.0f); // 공의 무게 설정
+    BallMesh->SetMassOverrideInKg(NAME_None, 1000.0f); // 공의 무게 설정
     BallMesh->BodyInstance.AngularDamping = 0.01f;   // 회전 감속 설정
     BallMesh->BodyInstance.LinearDamping = 0.05f;    // 직선 감속 설정
 

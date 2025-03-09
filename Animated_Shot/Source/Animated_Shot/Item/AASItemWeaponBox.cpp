@@ -52,12 +52,15 @@ void AAASItemWeaponBox::Tick(float DeltaTime)
 
 void AAASItemWeaponBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult)
 {
-	Effect->Activate(true);
-	bIsOpening = true;
-	SetActorEnableCollision(false);
-	Effect->OnSystemFinished.AddDynamic(this, &AAASItemWeaponBox::OnEffectFinished);
-	OverlapActor = OtherActor;
-	OpenBox();
+	if (!bIsOpening)
+	{
+		Effect->Activate(true);
+		bIsOpening = true;
+		SetActorEnableCollision(false);
+		Effect->OnSystemFinished.AddDynamic(this, &AAASItemWeaponBox::OnEffectFinished);
+		OverlapActor = OtherActor;
+		OpenBox();
+	}
 }
 
 void AAASItemWeaponBox::OnEffectFinished(UParticleSystemComponent* ParticleSystem)
