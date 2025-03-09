@@ -17,10 +17,10 @@ AFireTrap::AFireTrap()
     DamageZone->OnComponentBeginOverlap.AddDynamic(this, &AFireTrap::OnOverlapBegin);
     DamageZone->SetCollisionEnabled(ECollisionEnabled::NoCollision); // 처음엔 비활성화
 
-    FireEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("FireEffect"));
-    FireEffect->SetupAttachment(RootComponent);
-    FireEffect->bAutoActivate = false; // 처음에는 비활성화
-    FireEffect->SetVisibility(false);
+    FireParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("FireParticle"));
+    FireParticle->SetupAttachment(RootComponent);
+    FireParticle->bAutoActivate = false; // 처음에는 비활성화
+    FireParticle->SetVisibility(false);
 
     // 기본 변수 설정
     bIsFlameActive = false;
@@ -48,8 +48,8 @@ void AFireTrap::Tick(float DeltaTime)
         if (TimeSinceLastToggle >= FireActiveTime) // 시간이 지나면 꺼짐
         {
             bIsFlameActive = false;
-            FireEffect->Deactivate();
-            FireEffect->SetVisibility(false);
+            FireParticle->Deactivate();
+            FireParticle->SetVisibility(false);
             DamageZone->SetCollisionEnabled(ECollisionEnabled::NoCollision);
             TimeSinceLastToggle = 0.0f; // 타이머 초기화
         }
@@ -60,8 +60,8 @@ void AFireTrap::Tick(float DeltaTime)
         if (TimeSinceLastToggle >= FireInactiveTime) // 시간이 지나면 켜짐
         {
             bIsFlameActive = true;
-            FireEffect->ActivateSystem();
-            FireEffect->SetVisibility(true);
+            FireParticle->ActivateSystem();
+            FireParticle->SetVisibility(true);
             DamageZone->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
             TimeSinceLastToggle = 0.0f; // 타이머 초기화
         }

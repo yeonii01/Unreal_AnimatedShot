@@ -16,6 +16,7 @@ enum class EQuestType : uint8
 	QUEST_UsePotion UMETA(DisplayName = "Use Potion"),
 	QUEST_ReachBossRoom UMETA(DisplayName = "Reach Boss Room"),
 	QUEST_DefeatBoss UMETA(DisplayName = "Defeat Final Boss"),
+    QUEST_Finish UMETA(DisplayName = "Finish"),
 };
 
 UCLASS()

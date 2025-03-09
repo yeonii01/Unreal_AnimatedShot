@@ -16,7 +16,9 @@ public:
 	AASSpawner();
 
 public:
+	UFUNCTION()
 	FORCEINLINE int32 GetStageNum() const { return CurrentStageNum; }
+	UFUNCTION()
 	FORCEINLINE void SetStageNum(int32 NewStageNum) { CurrentStageNum = NewStageNum; }
 
 protected:

@@ -6,6 +6,8 @@
 #include "Character/ASCharacterNonPlayer.h"
 #include "Engine/OverlapResult.h"
 #include "Item/ASItemBox.h"
+#include "Gimmick/QuestSystem.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AASSpawner::AASSpawner()
@@ -19,6 +21,7 @@ void AASSpawner::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	OnOpponentSpawn();
 }
 
 // Called every frame
@@ -30,6 +33,11 @@ void AASSpawner::Tick(float DeltaTime)
 
 void AASSpawner::OnOpponentDestroyed(AActor* DestroyedActor)
 {
+	AQuestSystem* QuestSystem = Cast<AQuestSystem>(UGameplayStatics::GetActorOfClass(GetWorld(), AQuestSystem::StaticClass()));
+	if (QuestSystem && QuestSystem->CurrentQuest == EQuestType::QUEST_DefeatBoss)
+	{
+		QuestSystem->AdvanceQuest();
+	}
 }
 
 void AASSpawner::OnOpponentSpawn()
@@ -40,7 +48,6 @@ void AASSpawner::OnOpponentSpawn()
 	if (ASOpponentCharacter)
 	{
 		ASOpponentCharacter->OnDestroyed.AddDynamic(this, &AASSpawner::OnOpponentDestroyed);
-		//CurrentStageNum = 2;								//수정해야함
 		ASOpponentCharacter->SetLevel(CurrentStageNum);		//npc 레벨 설정
 		ASOpponentCharacter->FinishSpawning(SpawnTransform);
 	}

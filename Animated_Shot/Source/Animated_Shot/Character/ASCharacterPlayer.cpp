@@ -28,7 +28,7 @@ AASCharacterPlayer::AASCharacterPlayer()
 	CameraBoom->bUsePawnControlRotation = true;
 	CameraBoom->SetRelativeLocation(FVector(0.f, 0.f, 50.f));
 	CameraBoom->bDoCollisionTest = true;  
-	CameraBoom->ProbeSize = 10.f;         
+	CameraBoom->ProbeSize = 30.f;         
 	CameraBoom->ProbeChannel = ECC_Camera; 
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
@@ -277,6 +277,7 @@ void AASCharacterPlayer::SetCharacterControlData(const UASCharacterControlData* 
 	CameraBoom->bInheritRoll = CharacterControlData->bInheritRoll;
 	CameraBoom->bDoCollisionTest = CharacterControlData->bDoCollisionTest;
 }
+
 
 void AASCharacterPlayer::ShoulderMove(const FInputActionValue& Value)
 {

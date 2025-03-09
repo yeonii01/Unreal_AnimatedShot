@@ -52,6 +52,7 @@ void AQuestSystem::AdvanceQuest()
         break;
 
     case EQuestType::QUEST_DefeatBoss:
+        CurrentQuest = EQuestType::QUEST_Finish;
         //UE_LOG(LogTemp, Log, TEXT("게임 클리어! 퀘스트 완료!"));
         break;
 
@@ -64,7 +65,7 @@ void AQuestSystem::AdvanceQuest()
 
 bool AQuestSystem::IsQuestCompleted()
 {
-    return CurrentQuest == EQuestType::QUEST_DefeatBoss;
+    return CurrentQuest == EQuestType::QUEST_Finish;
 }
 
 void AQuestSystem::UpdateQuestUI()
@@ -90,7 +91,7 @@ void AQuestSystem::UpdateQuestUI()
             QuestText = "Quest 4: Reach the boss room while avoiding fire traps";
             break;
         case EQuestType::QUEST_DefeatBoss:
-            QuestText = "Quest 5: Defeat the final boss";
+            QuestText = "Final Quest 5: Defeat the final boss";
             break;
         default:
             QuestText = "No active quest";

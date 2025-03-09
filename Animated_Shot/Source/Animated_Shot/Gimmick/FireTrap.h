@@ -26,7 +26,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
     UPROPERTY(EditAnywhere, Category = "Components")
-    UParticleSystemComponent* FireEffect;
+    UParticleSystemComponent* FireParticle;
 
     UPROPERTY(BlueprintReadWrite, Category = "Components")
     UBoxComponent* DamageZone;
