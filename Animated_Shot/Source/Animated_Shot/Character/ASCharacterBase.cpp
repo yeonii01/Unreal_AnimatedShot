@@ -306,7 +306,7 @@ void AASCharacterBase::EquipWeapon(UASItemData* InItemData)
 		Weapon2->SetStaticMesh(WeaponItemData->WeaponMesh.Get());
 		if (InItemData->Type == EItemType::Weapon1)
 		{
-			FASCharacterStat NewModifierStat(0, 100, 0, 0);
+			FASCharacterStat NewModifierStat(0, 30, 0, 0);
 			Stat->SetModifierStat(NewModifierStat);
 		}
 		else
@@ -325,11 +325,11 @@ void AASCharacterBase::EquipWeapon(UASItemData* InItemData)
 
 void AASCharacterBase::ReadScroll(UASItemData* InItemData)
 {
-	UASScrollItemData* ScrollItemData = Cast<UASScrollItemData>(InItemData);
-	if (ScrollItemData)
-	{
-		Stat->AddBaseStat(ScrollItemData->BaseStat);
-	}
+	//UASScrollItemData* ScrollItemData = Cast<UASScrollItemData>(InItemData);
+	//if (ScrollItemData)
+	//{
+	//	Stat->AddBaseStat(ScrollItemData->BaseStat);
+	//}
 }
 
 bool AASCharacterBase::IsEquipWeapon()
@@ -354,6 +354,6 @@ void AASCharacterBase::SetLevel(int32 InNewLevel)
 
 void AASCharacterBase::ApplyStat(const FASCharacterStat& BaseStat, const FASCharacterStat& ModifierStat)
 {
-	float MovementSpeed = (BaseStat + ModifierStat).MovementSpeed;
-	GetCharacterMovement()->MaxWalkSpeed = MovementSpeed;
+	//float MovementSpeed = (BaseStat + ModifierStat).MovementSpeed;
+	//GetCharacterMovement()->MaxWalkSpeed = MovementSpeed;
 }

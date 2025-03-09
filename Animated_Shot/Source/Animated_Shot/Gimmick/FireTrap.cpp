@@ -19,8 +19,22 @@ AFireTrap::AFireTrap()
 
     FireParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("FireParticle"));
     FireParticle->SetupAttachment(RootComponent);
-    FireParticle->bAutoActivate = false; // 처음에는 비활성화
-    FireParticle->SetVisibility(false);
+
+    // 기본 파티클 시스템 로드
+    static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("/Script/Engine.ParticleSystem'/Game/Realistic_Starter_VFX_Pack_Vol2/Particles/Fire/P_flamethrower.P_Flamethrower'"));
+    if (ParticleAsset.Succeeded())
+    {
+        FireParticle->SetTemplate(ParticleAsset.Object);
+    }
+
+    // 파티클 기본 설정
+    FireParticle->bAutoActivate = false;  // 처음에는 비활성화
+    FireParticle->SetVisibility(true);    // 기본적으로 보이게 설정
+    FireParticle->SetRelativeLocation(FVector(-70, 0, -5)); // 위치 조정
+    FireParticle->SetRelativeRotation(FRotator(-90, 0, 0)); // 위치 조정
+    FireParticle->SetRelativeScale3D(FVector(1.f, 1.f, 1.f)); // 위치 조정
+    FireParticle->SetAbsolute(false, false, false); // 부모의 영향을 받도록 설정
+    FireParticle->SetWorldScale3D(FVector(1.f, 1.f, 1.f)); // 위치 조정
 
     // 기본 변수 설정
     bIsFlameActive = false;
