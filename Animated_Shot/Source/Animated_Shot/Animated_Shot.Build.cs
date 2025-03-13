@@ -10,8 +10,13 @@ public class Animated_Shot : ModuleRules
 
 		PublicIncludePaths.AddRange(new string[] { "Animated_Shot" });
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "MovieScene", "LevelSequence", "MovieSceneTracks", "UMG", "Niagara", "NavigationSystem","AIModule", "GameplayTasks", "Paper2D"});
+		PublicDependencyModuleNames.AddRange(new string[] { "ProtobufCore","Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "MovieScene", "LevelSequence", "MovieSceneTracks", "UMG", "Niagara", "NavigationSystem","AIModule", "GameplayTasks", "Paper2D"});
 
+		PrivateIncludePaths.AddRange(new string[]
+		{	"Animated_Shot/",
+			"Animated_Shot/Network/",
+		});
+		
 		PublicDefinitions.Add("ENABLE_DRAW_DEBUG=1");
 	}
 }
