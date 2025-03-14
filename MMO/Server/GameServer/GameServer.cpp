@@ -52,7 +52,18 @@ int main()
 	}
 
 	// Main Thread
-	DoWorkerJob(service);
+	//DoWorkerJob(service);
+
+
+	while (true)
+	{
+		Protocol::S_CHAT pkt;
+		pkt.set_msg("HelloWorld");
+		auto sendBuffer = ServerPacketHandler::MakeSendBuffer(pkt);
+
+		GSessionManager.Broadcast(sendBuffer);
+		this_thread::sleep_for(1s);
+	}
 
 	GThreadManager->Join();
 }
