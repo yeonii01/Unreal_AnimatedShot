@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "Animated_Shot.h"
+#include "Character/ASCharacterBase.h"
+#include "Character/ASPartyCharacterPlayer.h"
 #include "ASGameInstance.generated.h"
 
 /**
@@ -14,6 +16,9 @@ UCLASS()
 class ANIMATED_SHOT_API UASGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
+
+public:
+	UASGameInstance();
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -28,7 +33,7 @@ public:
 	void SendPacket(SendBufferRef SendBuffer);
 
 public:
-	void HandleSpawn(const Protocol::PlayerInfo& PlayerInfo);
+	void HandleSpawn(const Protocol::PlayerInfo& PlayerInfo, bool IsMine);
 	void HandleSpawn(const Protocol::S_ENTER_GAME& EnterGamePkt);
 	void HandleSpawn(const Protocol::S_SPAWN& SpawnPkt);
 
@@ -43,7 +48,9 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> PlayerClass;
+	TSubclassOf<AASPartyCharacterPlayer> OtherPlayerClass;
 
-	TMap<uint64, AActor*>Players;
+	AASCharacterBase* MyPlayer;
+
+	TMap<uint64, AASCharacterBase*>Players;
 };

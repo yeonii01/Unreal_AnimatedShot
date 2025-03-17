@@ -15,6 +15,7 @@ public class Animated_Shot : ModuleRules
 		PrivateIncludePaths.AddRange(new string[]
 		{	"Animated_Shot/",
 			"Animated_Shot/Network/",
+			"Animated_Shot/Game/"
 		});
 		
 		PublicDefinitions.Add("ENABLE_DRAW_DEBUG=1");

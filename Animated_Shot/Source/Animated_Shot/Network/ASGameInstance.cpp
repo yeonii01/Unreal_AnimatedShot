@@ -8,7 +8,13 @@
 #include "SocketSubsystem.h"
 #include "PacketSession.h"
 #include "ClientPacketHandler.h"
+#include "Character/ASCharacterPlayer.h"
 #include "Protocol.pb.h"
+
+UASGameInstance::UASGameInstance()
+{
+	OtherPlayerClass = AASPartyCharacterPlayer::StaticClass();
+}
 
 void UASGameInstance::ConnectToGameServer()
 {
@@ -78,7 +84,7 @@ void UASGameInstance::SendPacket(SendBufferRef SendBuffer)
 	GameServerSession->SendPacket(SendBuffer);
 }
 
-void UASGameInstance::HandleSpawn(const Protocol::PlayerInfo& PlayerInfo)
+void UASGameInstance::HandleSpawn(const Protocol::PlayerInfo& PlayerInfo, bool IsMine)
 {
 	if (Socket == nullptr || GameServerSession == nullptr)
 		return;
@@ -92,21 +98,43 @@ void UASGameInstance::HandleSpawn(const Protocol::PlayerInfo& PlayerInfo)
 		return;
 
 	FVector SpawnLocation(PlayerInfo.x(), PlayerInfo.y(), PlayerInfo.z());
-	AActor* Actor = World->SpawnActor(PlayerClass, &SpawnLocation);
 
-	Players.Add(PlayerInfo.object_id(), Actor);
+	if (IsMine)
+	{
+		auto* PC = UGameplayStatics::GetPlayerController(this, 0);
+		AASCharacterPlayer* Player = Cast<AASCharacterPlayer>(PC->GetPawn());
+		if (Player == nullptr) return;
+
+		MyPlayer = Player;
+		Players.Add(PlayerInfo.object_id(), Player);
+	}
+	else
+	{
+		AASPartyCharacterPlayer* Player = Cast<AASPartyCharacterPlayer>(World->SpawnActor(OtherPlayerClass, &SpawnLocation));
+
+		if (!OtherPlayerClass)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Spawn Failed: OtherPlayerClass is nullptr!"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("OtherPlayerClass: % s"), *GetNameSafe(OtherPlayerClass));
+		}
+
+		Players.Add(PlayerInfo.object_id(), Player);
+	}
 }
 
 void UASGameInstance::HandleSpawn(const Protocol::S_ENTER_GAME& EnterGamePkt)
 {
-	HandleSpawn(EnterGamePkt.player());
+	HandleSpawn(EnterGamePkt.player(), true);
 }
 
 void UASGameInstance::HandleSpawn(const Protocol::S_SPAWN& SpawnPkt)
 {
 	for (auto& player : SpawnPkt.players())
 	{
-		HandleSpawn(player);
+		HandleSpawn(player, false);
 	}
 }
 
@@ -120,7 +148,7 @@ void UASGameInstance::HandleDespawn(uint64 ObjectId)
 
 	//Despawn
 
-	AActor** FindActor = Players.Find(ObjectId);
+	AASCharacterBase** FindActor = Players.Find(ObjectId);
 	if (FindActor == nullptr)
 		return;
 

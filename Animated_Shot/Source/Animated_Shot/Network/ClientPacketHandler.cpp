@@ -33,7 +33,7 @@ bool Handle_S_ENTER_GAME(PacketSessionRef& session, Protocol::S_ENTER_GAME& pkt)
 {
 	if (auto* GameInstance = Cast<UASGameInstance>(GWorld->GetGameInstance()))
 	{
-		GameInstance->HandleSpawn(pkt.player());
+		GameInstance->HandleSpawn(pkt);
 	}
 
 	return true;
@@ -61,7 +61,7 @@ bool Handle_S_DESPAWN(PacketSessionRef& session, Protocol::S_DESPAWN& pkt)
 {
 	if (auto* GameInstance = Cast<UASGameInstance>(GWorld->GetGameInstance()))
 	{
-		GameInstance->HandleDeSpawn(pkt);
+		GameInstance->HandleDespawn(pkt);
 	}
 	return true;
 }
