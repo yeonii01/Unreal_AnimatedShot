@@ -7,6 +7,8 @@
 #include "Serialization/ArrayWriter.h"
 #include "SocketSubsystem.h"
 #include "PacketSession.h"
+#include "ClientPacketHandler.h"
+#include "Protocol.pb.h"
 
 void UASGameInstance::ConnectToGameServer()
 {
@@ -30,6 +32,13 @@ void UASGameInstance::ConnectToGameServer()
 		//Session
 		GameServerSession = MakeShared<PacketSession>(Socket);
 		GameServerSession->Run();
+
+		//Lobby packetsend
+		{
+			Protocol::C_LOGIN Pkt;
+			SendBufferRef SendBuffer = ClientPacketHandler::MakeSendBuffer(Pkt);
+			SendPacket(SendBuffer);
+		}
 	}
 	else
 	{
@@ -39,12 +48,17 @@ void UASGameInstance::ConnectToGameServer()
 
 void UASGameInstance::DisConnectFromGameServer()
 {
-	if (Socket)
-	{
-		ISocketSubsystem* SocketSubsystem = ISocketSubsystem::Get();
-		SocketSubsystem->DestroySocket(Socket);
-		Socket = nullptr;
-	}
+	if (Socket == nullptr || GameServerSession == nullptr)
+		return;
+
+	Protocol::C_LEAVE_GAME LeavePkt;
+	SEND_PACKET(LeavePkt);
+	//if (Socket)
+	//{
+	//	ISocketSubsystem* SocketSubsystem = ISocketSubsystem::Get();
+	//	SocketSubsystem->DestroySocket(Socket);
+	//	Socket = nullptr;
+	//}
 }
 
 void UASGameInstance::HandleRecvPackets()
@@ -62,4 +76,61 @@ void UASGameInstance::SendPacket(SendBufferRef SendBuffer)
 		return;
 
 	GameServerSession->SendPacket(SendBuffer);
+}
+
+void UASGameInstance::HandleSpawn(const Protocol::PlayerInfo& PlayerInfo)
+{
+	if (Socket == nullptr || GameServerSession == nullptr)
+		return;
+
+	auto* World = GetWorld();
+	if (World == nullptr)
+		return;
+
+	const int64 ObjectId = PlayerInfo.object_id();
+	if (Players.Find(ObjectId) != nullptr)
+		return;
+
+	FVector SpawnLocation(PlayerInfo.x(), PlayerInfo.y(), PlayerInfo.z());
+	AActor* Actor = World->SpawnActor(PlayerClass, &SpawnLocation);
+
+	Players.Add(PlayerInfo.object_id(), Actor);
+}
+
+void UASGameInstance::HandleSpawn(const Protocol::S_ENTER_GAME& EnterGamePkt)
+{
+	HandleSpawn(EnterGamePkt.player());
+}
+
+void UASGameInstance::HandleSpawn(const Protocol::S_SPAWN& SpawnPkt)
+{
+	for (auto& player : SpawnPkt.players())
+	{
+		HandleSpawn(player);
+	}
+}
+
+void UASGameInstance::HandleDespawn(uint64 ObjectId)
+{
+	if (Socket == nullptr || GameServerSession == nullptr)
+		return;
+
+	auto* World = GetWorld();
+	if (World == nullptr) return;
+
+	//Despawn
+
+	AActor** FindActor = Players.Find(ObjectId);
+	if (FindActor == nullptr)
+		return;
+
+	World->DestroyActor(*FindActor);
+}
+
+void UASGameInstance::HandleDespawn(const Protocol::S_DESPAWN& DespawnPkt)
+{
+	for (auto& ObjectId : DespawnPkt.object_ids())
+	{
+		HandleDespawn(ObjectId);
+	}
 }

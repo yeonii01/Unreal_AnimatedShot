@@ -25,6 +25,14 @@ XCOPY /Y Protocol.pb.h "../../../DummyClient"
 XCOPY /Y Protocol.pb.cc "../../../DummyClient"
 XCOPY /Y ClientPacketHandler.h "../../../DummyClient"
 
+XCOPY /Y Enum.pb.h "../../../../../Animated_Shot/Source/Animated_Shot/Network"
+XCOPY /Y Enum.pb.cc "../../../../../Animated_Shot/Source/Animated_Shot/Network"
+XCOPY /Y Struct.pb.h "../../../../../Animated_Shot/Source/Animated_Shot/Network"
+XCOPY /Y Struct.pb.cc "../../../../../Animated_Shot/Source/Animated_Shot/Network"
+XCOPY /Y Protocol.pb.h "../../../../../Animated_Shot/Source/Animated_Shot/Network"
+XCOPY /Y Protocol.pb.cc "../../../../../Animated_Shot/Source/Animated_Shot/Network"
+XCOPY /Y ClientPacketHandler.h "../../../../../Animated_Shot/Source/Animated_Shot/Network"
+
 DEL /Q /F *.pb.h
 DEL /Q /F *.pb.cc
 DEL /Q /F *.h

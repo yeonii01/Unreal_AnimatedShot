@@ -153,7 +153,6 @@ AASCharacterPlayer::AASCharacterPlayer()
 	{
 		AttackSound = SoundRef.Object;
 	}
-
 }
 
 void AASCharacterPlayer::BeginPlay()

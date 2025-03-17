@@ -8,6 +8,8 @@
 #include "Serialization/ArrayWriter.h"
 #include "SocketSubsystem.h"
 #include "Network/ClientPacketHandler.h"
+#include "Protocol.pb.h"
+#include "Network/ASGameInstance.h"
 
 PacketSession::PacketSession(class FSocket* Socket) : Socket(Socket)
 {

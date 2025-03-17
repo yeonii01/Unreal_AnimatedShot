@@ -1,5 +1,9 @@
 #include "ClientPacketHandler.h"
 #include "BufferReader.h"
+#include "Animated_Shot.h"
+#include "ASGameInstance.h"
+#include "Protocol.pb.h"
+#include "Network/ASGameInstance.h"
 
 PacketHandlerFunc GPacketHandler[UINT16_MAX];
 
@@ -10,11 +14,55 @@ bool Handle_INVALID(PacketSessionRef& session, BYTE* buffer, int32 len)
 
 bool Handle_S_LOGIN(PacketSessionRef& session, Protocol::S_LOGIN& pkt)
 {
+	for (auto& Player : pkt.players())
+	{
+	}
+
+	for (int32 i = 0; i < pkt.players_size(); ++i)
+	{
+		const Protocol::PlayerInfo& Player = pkt.players(i);
+	}
+	//로비에서 캐릭터 선택해서 인덱스 전송
+	Protocol::C_ENTER_GAME EnterGamePkt;
+	EnterGamePkt.set_playerindex(0);
+	SEND_PACKET(EnterGamePkt);
 	return true;
 }
 
 bool Handle_S_ENTER_GAME(PacketSessionRef& session, Protocol::S_ENTER_GAME& pkt)
 {
+	if (auto* GameInstance = Cast<UASGameInstance>(GWorld->GetGameInstance()))
+	{
+		GameInstance->HandleSpawn(pkt.player());
+	}
+
+	return true;
+}
+
+bool Handle_S_LEAVE_GAME(PacketSessionRef& session, Protocol::S_LEAVE_GAME& pkt)
+{
+	if (auto* GameInstance = Cast<UASGameInstance>(GWorld->GetGameInstance()))
+	{
+
+	}
+	return true;
+}
+
+bool Handle_S_SPAWN(PacketSessionRef& session, Protocol::S_SPAWN& pkt)
+{
+	if (auto* GameInstance = Cast<UASGameInstance>(GWorld->GetGameInstance()))
+	{
+		GameInstance->HandleSpawn(pkt);
+	}
+	return true;
+}
+
+bool Handle_S_DESPAWN(PacketSessionRef& session, Protocol::S_DESPAWN& pkt)
+{
+	if (auto* GameInstance = Cast<UASGameInstance>(GWorld->GetGameInstance()))
+	{
+		GameInstance->HandleDeSpawn(pkt);
+	}
 	return true;
 }
 

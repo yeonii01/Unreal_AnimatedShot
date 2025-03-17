@@ -26,9 +26,9 @@ void AASNetTestActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	Protocol::C_CHAT Msg;
-	Msg.set_msg("hello");
-	SendBufferRef SendBuffer = ClientPacketHandler::MakeSendBuffer(Msg);
-	Cast<UASGameInstance>(GetGameInstance())->SendPacket(SendBuffer);
+	//Protocol::C_CHAT Msg;
+	//Msg.set_msg("hello");
+	//SendBufferRef SendBuffer = ClientPacketHandler::MakeSendBuffer(Msg);
+	//Cast<UASGameInstance>(GetGameInstance())->SendPacket(SendBuffer);
 }
 
