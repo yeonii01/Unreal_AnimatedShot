@@ -17,10 +17,12 @@
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundBase.h"
 #include "Gimmick/QuestSystem.h"
+#include "Animated_Shot.h"
+#include "Network/ASGameInstance.h"
 
 AASCharacterPlayer::AASCharacterPlayer()
 {
-	//PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = true;
 	//Camera
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -84,7 +86,6 @@ AASCharacterPlayer::AASCharacterPlayer()
 	}
 
 	CurrentCharacterControlType = ECharacterControlType::Shoulder;
-	PrimaryActorTick.bCanEverTick = false;
 
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> DamageMontageRef(TEXT("/Game/MyCharacter/Animations/AM_Damage.AM_Damage"));
 	if (DamageMontageRef.Object)
@@ -178,6 +179,8 @@ void AASCharacterPlayer::BeginPlay()
 	{
 		DefaultFOV = CameraComponent->FieldOfView; // 기본 FOV 저장
 	}
+
+	SetActorTickEnabled(true);
 }
 
 void AASCharacterPlayer::SetDead()
@@ -210,6 +213,22 @@ void AASCharacterPlayer::SetDead()
 void AASCharacterPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	MovePacketSendTimer -= DeltaTime;
+
+	if (MovePacketSendTimer <= 0)
+	{
+		MovePacketSendTimer = MOVE_PACKET_SEND_DELAY;
+
+		Protocol::C_MOVE MovePkt;
+
+		{
+			Protocol::PlayerInfo* Info = MovePkt.mutable_info();
+			Info->CopyFrom(*PlayerInfo);
+		}
+
+		SEND_PACKET(MovePkt);
+	}
 }
 
 void AASCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

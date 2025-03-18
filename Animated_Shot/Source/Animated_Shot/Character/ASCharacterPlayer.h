@@ -154,4 +154,8 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	USoundBase* AttackSound;
+
+protected:
+	const float MOVE_PACKET_SEND_DELAY = 0.2f;
+	float MovePacketSendTimer = MOVE_PACKET_SEND_DELAY;
 };

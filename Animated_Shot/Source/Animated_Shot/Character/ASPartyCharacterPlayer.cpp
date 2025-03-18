@@ -3,7 +3,22 @@
 
 #include "Character/ASPartyCharacterPlayer.h"
 
+AASPartyCharacterPlayer::AASPartyCharacterPlayer()
+{
+	PrimaryActorTick.bCanEverTick = true;
+}
+
 void AASPartyCharacterPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SetActorTickEnabled(true);
 }
+
+void AASPartyCharacterPlayer::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	
+}
+

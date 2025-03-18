@@ -13,7 +13,11 @@ UCLASS()
 class ANIMATED_SHOT_API AASPartyCharacterPlayer : public AASCharacterBase
 {
 	GENERATED_BODY()
-	
+
+public:
+	AASPartyCharacterPlayer();
+
 protected:
 	virtual void BeginPlay();
+	virtual void Tick(float DeltaTime) override;
 };

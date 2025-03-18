@@ -7,6 +7,9 @@ public:
 
 	bool HandleEnterPlayerLocked(PlayerRef player);
 	bool HandleLeavePlayerLocked(PlayerRef player);
+
+	void HandleMoveLocked(Protocol::C_MOVE& pkt);
+
 private:
 	bool EnterPlayer(PlayerRef player);
 	bool LeavePlayer(uint64 objectId);

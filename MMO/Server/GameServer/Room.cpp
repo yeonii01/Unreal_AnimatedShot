@@ -102,6 +102,28 @@ bool Room::HandleLeavePlayerLocked(PlayerRef player)
 	return success;
 }
 
+void Room::HandleMoveLocked(Protocol::C_MOVE& pkt)
+{
+	WRITE_LOCK;
+
+	const uint64 objectId = pkt.info().object_id();
+	if (_players.find(objectId) == _players.end())
+		return;
+
+	PlayerRef& player = _players[objectId];
+	player->playerInfo->CopyFrom(pkt.info());
+
+	{
+		Protocol::S_MOVE movePkt;
+		{
+			Protocol::PlayerInfo* info = movePkt.mutable_info();
+			info->CopyFrom(pkt.info());
+		}
+		SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(movePkt);
+		Broadcast(sendBuffer);
+	}
+}
+
 bool Room::EnterPlayer(PlayerRef player)
 {
 	if (_players.find(player->playerInfo->object_id()) != _players.end())

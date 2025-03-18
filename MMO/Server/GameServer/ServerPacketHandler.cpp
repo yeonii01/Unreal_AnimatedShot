@@ -22,7 +22,7 @@ bool Handle_C_LOGIN(PacketSessionRef& session, Protocol::C_LOGIN& pkt)
 
 	Protocol::S_LOGIN loginPkt;
 	
-	for (int32 i = 0; i < 3; ++i)
+	for (int32 i = 0; i < 2; ++i)
 	{
 		Protocol::PlayerInfo* player = loginPkt.add_players();
 		player->set_x(Utils::GetRandom(0.f, 100.f));
@@ -59,6 +59,21 @@ bool Handle_C_LEAVE_GAME(PacketSessionRef& session, Protocol::C_LEAVE_GAME& pkt)
 	if (room == nullptr) return false;
 
 	room->HandleLeavePlayerLocked(player);
+	return true;
+}
+
+bool Handle_C_MOVE(PacketSessionRef& session, Protocol::C_MOVE& pkt)
+{
+	auto gameSession = static_pointer_cast<GameSession>(session);
+
+	PlayerRef player = gameSession->player.load();
+	if (player == nullptr)
+		return false;
+
+	RoomRef room = player->room.load().lock();
+	if (room == nullptr) return false;
+
+	room->HandleMoveLocked(pkt);
 	return true;
 }
 

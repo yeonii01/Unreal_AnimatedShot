@@ -16,12 +16,15 @@
 #include "Item/ASItems.h"
 #include "Gimmick/QuestSystem.h"
 #include "Kismet/GameplayStatics.h"
+#include "Character/ASCharacterPlayer.h"
+#include "Character/ASPartyCharacterPlayer.h"
 
 DEFINE_LOG_CATEGORY(LogASCharacter);
 
 // Sets default values
 AASCharacterBase::AASCharacterBase()
 {
+	PrimaryActorTick.bCanEverTick = true;
 	//Pawn
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -114,6 +117,14 @@ AASCharacterBase::AASCharacterBase()
 	Weapon1->SetupAttachment(GetMesh(), TEXT("Bip002_L_HandSocket"));
 	Weapon2 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon2"));
 	Weapon2->SetupAttachment(GetMesh(), TEXT("Bip002_R_HandSocket"));
+
+	PlayerInfo = new Protocol::PlayerInfo();
+}
+
+AASCharacterBase::~AASCharacterBase()
+{
+	delete PlayerInfo;
+	PlayerInfo = nullptr;
 }
 
 void AASCharacterBase::PostInitializeComponents()
@@ -122,6 +133,19 @@ void AASCharacterBase::PostInitializeComponents()
 
 	Stat->OnHpZero.AddUObject(this, &AASCharacterBase::SetDead);
 	Stat->OnStatChanged.AddUObject(this, &AASCharacterBase::ApplyStat);
+}
+
+void AASCharacterBase::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	{
+		FVector Location = GetActorLocation();
+		PlayerInfo->set_x(Location.X);
+		PlayerInfo->set_y(Location.Y);
+		PlayerInfo->set_z(Location.Z);
+		PlayerInfo->set_yaw(GetControlRotation().Yaw);
+	}
 }
 
 void AASCharacterBase::SetCharacterControlData(const UASCharacterControlData* CharacterControlData)
@@ -356,4 +380,28 @@ void AASCharacterBase::ApplyStat(const FASCharacterStat& BaseStat, const FASChar
 {
 	//float MovementSpeed = (BaseStat + ModifierStat).MovementSpeed;
 	//GetCharacterMovement()->MaxWalkSpeed = MovementSpeed;
+}
+
+bool AASCharacterBase::IsMyPlayer()
+{
+	return Cast<AASCharacterPlayer>(this) != nullptr;
+}
+
+bool AASCharacterBase::IsPartyPlayer()
+{
+	return Cast<AASPartyCharacterPlayer>(this) != nullptr;
+}
+
+void AASCharacterBase::SetPlayerInfo(const Protocol::PlayerInfo& Info)
+{
+	//TODO
+	if(PlayerInfo->object_id()!= 0)
+	{
+		assert(PlayerInfo->object_id() == Info.object_id());
+	}
+
+	PlayerInfo->CopyFrom(Info);
+
+	FVector Location(Info.x(), Info.y(), Info.z());
+	SetActorLocation(Location);
 }

@@ -105,13 +105,15 @@ void UASGameInstance::HandleSpawn(const Protocol::PlayerInfo& PlayerInfo, bool I
 		AASCharacterPlayer* Player = Cast<AASCharacterPlayer>(PC->GetPawn());
 		if (Player == nullptr) return;
 
+		Player->SetPlayerInfo(PlayerInfo);
+
 		MyPlayer = Player;
 		Players.Add(PlayerInfo.object_id(), Player);
 	}
 	else
 	{
 		AASPartyCharacterPlayer* Player = Cast<AASPartyCharacterPlayer>(World->SpawnActor(OtherPlayerClass, &SpawnLocation));
-
+		Player->SetPlayerInfo(PlayerInfo);
 		if (!OtherPlayerClass)
 		{
 			UE_LOG(LogTemp, Error, TEXT("Spawn Failed: OtherPlayerClass is nullptr!"));
@@ -161,4 +163,26 @@ void UASGameInstance::HandleDespawn(const Protocol::S_DESPAWN& DespawnPkt)
 	{
 		HandleDespawn(ObjectId);
 	}
+}
+
+void UASGameInstance::HandleMove(const Protocol::S_MOVE& MovePkt)
+{
+	if (Socket == nullptr || GameServerSession == nullptr)
+		return;
+
+	auto* World = GetWorld();
+	if (World == nullptr) return;
+
+	const uint64 ObjectId = MovePkt.info().object_id();
+
+	AASCharacterBase** FindActor = Players.Find(ObjectId);
+	if (FindActor == nullptr)
+		return;
+
+	AASCharacterBase* Player = (*FindActor);
+	if (Player->IsMyPlayer()) 
+		return;
+
+	const Protocol::PlayerInfo& Info = MovePkt.info();
+	Player->SetPlayerInfo(Info);
 }
