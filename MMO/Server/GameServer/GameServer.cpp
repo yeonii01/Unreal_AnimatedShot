@@ -41,7 +41,7 @@ int main()
 		[=]() { return make_shared<GameSession>(); }, // TODO : SessionManager 등
 		100);
 
-	ASSERT_CRASH(service->Start());
+	/*ASSERT_CRASH(*/service->Start();//);
 
 	for (int32 i = 0; i < 5; i++)
 	{

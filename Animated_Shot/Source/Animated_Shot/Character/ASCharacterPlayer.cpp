@@ -19,6 +19,7 @@
 #include "Gimmick/QuestSystem.h"
 #include "Animated_Shot.h"
 #include "Network/ASGameInstance.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AASCharacterPlayer::AASCharacterPlayer()
 {
@@ -214,9 +215,22 @@ void AASCharacterPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	bool ForceSendPacket = false;
+
+	if (LastDesiredInput != DesiredInput)
+	{
+		ForceSendPacket = true;
+		LastDesiredInput = DesiredInput;
+	}
+
+	if (DesiredInput == FVector2D::Zero())
+		SetMoveState(Protocol::MOVE_STATE_IDLE);
+	else
+		SetMoveState(Protocol::MOVE_STATE_RUN);
+
 	MovePacketSendTimer -= DeltaTime;
 
-	if (MovePacketSendTimer <= 0)
+	if (MovePacketSendTimer <= 0 || ForceSendPacket)
 	{
 		MovePacketSendTimer = MOVE_PACKET_SEND_DELAY;
 
@@ -225,6 +239,8 @@ void AASCharacterPlayer::Tick(float DeltaTime)
 		{
 			Protocol::PlayerInfo* Info = MovePkt.mutable_info();
 			Info->CopyFrom(*PlayerInfo);
+			Info->set_yaw(DesiredYaw);
+			Info->set_state(GetMoveState());
 		}
 
 		SEND_PACKET(MovePkt);
@@ -241,6 +257,7 @@ void AASCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 	EnhancedInputComponent->BindAction(ChangeControlAction, ETriggerEvent::Triggered, this, &AASCharacterPlayer::ChangeCharacterControl);
 	EnhancedInputComponent->BindAction(ShoulderMoveAction, ETriggerEvent::Triggered, this, &AASCharacterPlayer::ShoulderMove);
+	EnhancedInputComponent->BindAction(ShoulderMoveAction, ETriggerEvent::Completed, this, &AASCharacterPlayer::ShoulderMove);
 	EnhancedInputComponent->BindAction(ShoulderLookAction, ETriggerEvent::Triggered, this, &AASCharacterPlayer::ShoulderLook);
 	EnhancedInputComponent->BindAction(QuaterMoveAction, ETriggerEvent::Triggered, this, &AASCharacterPlayer::QuaterMove);
 	EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AASCharacterPlayer::Attack);
@@ -309,6 +326,18 @@ void AASCharacterPlayer::ShoulderMove(const FInputActionValue& Value)
 
 	AddMovementInput(ForwardDirection, MovementVector.X);
 	AddMovementInput(RightDirection, MovementVector.Y);
+
+	{
+		DesiredInput = MovementVector;
+
+		DesiredMoveDirection += ForwardDirection * MovementVector.X;
+		DesiredMoveDirection += RightDirection * MovementVector.Y;
+		DesiredMoveDirection.Normalize();
+
+		const FVector Location = GetActorLocation();
+		FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(Location, Location + DesiredMoveDirection);
+		DesiredYaw = Rotator.Yaw;
+	}
 }
 
 void AASCharacterPlayer::ShoulderLook(const FInputActionValue& Value)

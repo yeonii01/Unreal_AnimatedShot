@@ -41,8 +41,8 @@ public:
 	virtual ~AASCharacterBase();
 
 	virtual void PostInitializeComponents() override;
+	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-
 	UFUNCTION(BlueprintCallable)
 	bool IsEquipWeapon();
 
@@ -130,11 +130,17 @@ public:
 public:
 	bool IsMyPlayer();
 	bool IsPartyPlayer();
+	bool IsNPC();
+
+	Protocol::MoveState GetMoveState() { return PlayerInfo->state(); }
+	void SetMoveState(Protocol::MoveState State);
 
 public:
 	void SetPlayerInfo(const Protocol::PlayerInfo& InInfo);
+	void SetDestInfo(const Protocol::PlayerInfo& InInfo);
 	Protocol::PlayerInfo* GetPlayerInfo() { return PlayerInfo; }
 
 protected:
-	class Protocol::PlayerInfo* PlayerInfo;
+	class Protocol::PlayerInfo* PlayerInfo;	
+	class Protocol::PlayerInfo* DestInfo;		//¸ñÀûÁö
 };

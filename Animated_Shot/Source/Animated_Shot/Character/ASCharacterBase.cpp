@@ -18,6 +18,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Character/ASCharacterPlayer.h"
 #include "Character/ASPartyCharacterPlayer.h"
+#include "Character/ASCharacterNonPlayer.h"
 
 DEFINE_LOG_CATEGORY(LogASCharacter);
 
@@ -42,7 +43,7 @@ AASCharacterBase::AASCharacterBase()
 	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
-	
+	GetCharacterMovement()->bRunPhysicsWithNoController = true;
 	//Mesh
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -100.f), FRotator(0.f, -90.f, 0.f));
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
@@ -119,12 +120,15 @@ AASCharacterBase::AASCharacterBase()
 	Weapon2->SetupAttachment(GetMesh(), TEXT("Bip002_R_HandSocket"));
 
 	PlayerInfo = new Protocol::PlayerInfo();
+	DestInfo = new Protocol::PlayerInfo();
 }
 
 AASCharacterBase::~AASCharacterBase()
 {
 	delete PlayerInfo;
+	delete DestInfo;
 	PlayerInfo = nullptr;
+	DestInfo = nullptr;
 }
 
 void AASCharacterBase::PostInitializeComponents()
@@ -133,6 +137,21 @@ void AASCharacterBase::PostInitializeComponents()
 
 	Stat->OnHpZero.AddUObject(this, &AASCharacterBase::SetDead);
 	Stat->OnStatChanged.AddUObject(this, &AASCharacterBase::ApplyStat);
+}
+
+void AASCharacterBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	{
+		FVector Location = GetActorLocation();
+		DestInfo->set_x(Location.X);
+		DestInfo->set_y(Location.Y);
+		DestInfo->set_z(Location.Z);
+		DestInfo->set_yaw(GetControlRotation().Yaw);
+
+		SetMoveState(Protocol::MOVE_STATE_IDLE);
+	}
 }
 
 void AASCharacterBase::Tick(float DeltaTime)
@@ -145,6 +164,35 @@ void AASCharacterBase::Tick(float DeltaTime)
 		PlayerInfo->set_y(Location.Y);
 		PlayerInfo->set_z(Location.Z);
 		PlayerInfo->set_yaw(GetControlRotation().Yaw);
+	}
+	
+	if (!IsMyPlayer() && !IsNPC())
+	{
+		//FVector Location = GetActorLocation();
+		//FVector DestLocation = FVector(DestInfo->x(), DestInfo->y(), DestInfo->z());
+		//
+		//FVector MoveDir = (DestLocation - Location);
+		//
+		//const float DistToDest = MoveDir.Length();
+		//MoveDir.Normalize();
+		//
+		//float MoveDist = (MoveDir * 500.f * DeltaTime).Length();
+		//MoveDist = FMath::Min(MoveDist, DistToDest);
+		//FVector NextLocation = Location + MoveDir * MoveDist;
+		//
+		//SetActorLocation(NextLocation);
+
+		const Protocol::MoveState State = PlayerInfo->state();
+
+		if (State == Protocol::MOVE_STATE_RUN)
+		{
+			SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
+			AddMovementInput(GetActorForwardVector());
+		}
+		else
+		{
+
+		}
 	}
 }
 
@@ -392,6 +440,19 @@ bool AASCharacterBase::IsPartyPlayer()
 	return Cast<AASPartyCharacterPlayer>(this) != nullptr;
 }
 
+bool AASCharacterBase::IsNPC()
+{
+	return Cast<AASCharacterNonPlayer>(this) != nullptr;
+}
+
+void AASCharacterBase::SetMoveState(Protocol::MoveState State)
+{
+	if (PlayerInfo->state() == State)
+		return;
+
+	PlayerInfo->set_state(State);
+}
+
 void AASCharacterBase::SetPlayerInfo(const Protocol::PlayerInfo& Info)
 {
 	//TODO
@@ -404,4 +465,16 @@ void AASCharacterBase::SetPlayerInfo(const Protocol::PlayerInfo& Info)
 
 	FVector Location(Info.x(), Info.y(), Info.z());
 	SetActorLocation(Location);
+}
+
+void AASCharacterBase::SetDestInfo(const Protocol::PlayerInfo& Info)
+{
+	if (PlayerInfo->object_id() != 0)
+	{
+		assert(PlayerInfo->object_id() == Info.object_id());
+	}
+
+	DestInfo->CopyFrom(Info);
+
+	SetMoveState(Info.state());
 }
