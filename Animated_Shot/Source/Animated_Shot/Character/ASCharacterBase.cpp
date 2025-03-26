@@ -189,6 +189,10 @@ void AASCharacterBase::Tick(float DeltaTime)
 			SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
 			AddMovementInput(GetActorForwardVector());
 		}
+		else if(State == Protocol::MOVE_STATE_ATTACK)
+		{
+			ProcessComboCommand();
+		}
 		else
 		{
 

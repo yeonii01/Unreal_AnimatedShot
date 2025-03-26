@@ -14,10 +14,8 @@ Room::~Room()
 {
 }
 
-bool Room::HandleEnterPlayerLocked(PlayerRef player)
+bool Room::HandleEnterPlayer(PlayerRef player)
 {
-	WRITE_LOCK;
-
 	bool success = EnterPlayer(player);
 
 	// ·£´ý À§Ä¡
@@ -70,12 +68,10 @@ bool Room::HandleEnterPlayerLocked(PlayerRef player)
 	return success;
 }
 
-bool Room::HandleLeavePlayerLocked(PlayerRef player)
+bool Room::HandleLeavePlayer(PlayerRef player)
 {
 	if (player == nullptr)
 		return false;
-
-	WRITE_LOCK;
 
 	const uint64 objectId = player->playerInfo->object_id();
 	bool success = LeavePlayer(objectId);
@@ -102,10 +98,8 @@ bool Room::HandleLeavePlayerLocked(PlayerRef player)
 	return success;
 }
 
-void Room::HandleMoveLocked(Protocol::C_MOVE& pkt)
+void Room::HandleMove(Protocol::C_MOVE pkt)
 {
-	WRITE_LOCK;
-
 	const uint64 objectId = pkt.info().object_id();
 	if (_players.find(objectId) == _players.end())
 		return;
@@ -122,6 +116,11 @@ void Room::HandleMoveLocked(Protocol::C_MOVE& pkt)
 		SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(movePkt);
 		Broadcast(sendBuffer);
 	}
+}
+
+RoomRef Room::GetRoomRef()
+{
+	return static_pointer_cast<Room>(shared_from_this());
 }
 
 bool Room::EnterPlayer(PlayerRef player)

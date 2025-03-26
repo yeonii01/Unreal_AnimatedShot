@@ -372,6 +372,20 @@ void AASCharacterPlayer::QuaterMove(const FInputActionValue& Value)
 
 void AASCharacterPlayer::Attack()
 {
+	SetMoveState(Protocol::MOVE_STATE_ATTACK);
+	{
+		MovePacketSendTimer = MOVE_PACKET_SEND_DELAY;
+		Protocol::C_MOVE MovePkt;
+		{
+			Protocol::PlayerInfo* Info = MovePkt.mutable_info();
+			Info->CopyFrom(*PlayerInfo);
+			Info->set_yaw(DesiredYaw);
+			Info->set_state(GetMoveState());
+		}
+
+		SEND_PACKET(MovePkt);
+	}
+
 	if (bIsZoom)
 	{
 		APlayerController* PC = Cast<APlayerController>(GetController());

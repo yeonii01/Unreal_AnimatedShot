@@ -13,6 +13,9 @@ public:
 	Protocol::PlayerInfo* playerInfo;
 	weak_ptr<GameSession> session;
 
+	//이상상태
+	//vector<int32> buffs;
+
 public:
 	atomic<weak_ptr<Room>> room;
 };
