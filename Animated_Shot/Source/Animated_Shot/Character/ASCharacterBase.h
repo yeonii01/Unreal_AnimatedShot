@@ -143,4 +143,8 @@ public:
 protected:
 	class Protocol::PlayerInfo* PlayerInfo;	
 	class Protocol::PlayerInfo* DestInfo;		//¸ñÀûÁö
+
+private:
+	const float CORRECT_POSITION_DELAY = 0.5f;
+	float CorrectPosition = CORRECT_POSITION_DELAY;
 };

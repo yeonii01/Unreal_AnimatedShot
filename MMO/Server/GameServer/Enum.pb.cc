@@ -32,14 +32,15 @@ const char descriptor_table_protodef_Enum_2eproto[] PROTOBUF_SECTION_VARIABLE(pr
   "\n\nEnum.proto\022\010Protocol*h\n\nPlayerType\022\024\n\020"
   "PLAYER_TYPE_NONE\020\000\022\026\n\022PLAYER_TYPE_KNIGHT"
   "\020\001\022\024\n\020PLAYER_TYPE_MAGE\020\002\022\026\n\022PLAYER_TYPE_"
-  "ARCHER\020\003*u\n\tMoveState\022\023\n\017MOVE_STATE_NONE"
-  "\020\000\022\023\n\017MOVE_STATE_IDLE\020\001\022\022\n\016MOVE_STATE_RU"
-  "N\020\002\022\023\n\017MOVE_STATE_JUMP\020\003\022\025\n\021MOVE_STATE_A"
-  "TTACK\020\004b\006proto3"
+  "ARCHER\020\003*\241\001\n\tMoveState\022\023\n\017MOVE_STATE_NON"
+  "E\020\000\022\023\n\017MOVE_STATE_IDLE\020\001\022\022\n\016MOVE_STATE_R"
+  "UN\020\002\022\023\n\017MOVE_STATE_JUMP\020\003\022\025\n\021MOVE_STATE_"
+  "ATTACK\020\004\022\025\n\021MOVE_STATE_DAMAGE\020\005\022\023\n\017MOVE_"
+  "STATE_DEAD\020\006b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_Enum_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Enum_2eproto = {
-    false, false, 255, descriptor_table_protodef_Enum_2eproto,
+    false, false, 300, descriptor_table_protodef_Enum_2eproto,
     "Enum.proto",
     &descriptor_table_Enum_2eproto_once, nullptr, 0, 0,
     schemas, file_default_instances, TableStruct_Enum_2eproto::offsets,
@@ -80,6 +81,8 @@ bool MoveState_IsValid(int value) {
     case 2:
     case 3:
     case 4:
+    case 5:
+    case 6:
       return true;
     default:
       return false;

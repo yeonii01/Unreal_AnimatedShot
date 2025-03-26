@@ -22,7 +22,8 @@ bool Room::HandleEnterPlayer(PlayerRef player)
 	player->playerInfo->set_x(Utils::GetRandom(2900.f, 3100.f));
 	player->playerInfo->set_y(4480.f);
 	player->playerInfo->set_z(108.f);
-	player->playerInfo->set_yaw(Utils::GetRandom(0.f, 100.f));
+	player->playerInfo->set_yaw(90.f);
+	player->playerInfo->set_hp(150.f);
 
 	// 입장 사실을 신입 플레이어에게 알린다
 	{

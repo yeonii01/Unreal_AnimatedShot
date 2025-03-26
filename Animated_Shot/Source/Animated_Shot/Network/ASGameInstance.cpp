@@ -98,6 +98,8 @@ void UASGameInstance::HandleSpawn(const Protocol::PlayerInfo& PlayerInfo, bool I
 		return;
 
 	FVector SpawnLocation(PlayerInfo.x(), PlayerInfo.y(), PlayerInfo.z());
+	FRotator SpawnRotation(0.0f, 90.f, 0.0f);
+	FTransform SpawnTransform(SpawnRotation, SpawnLocation);
 
 	if (IsMine)
 	{
@@ -112,7 +114,7 @@ void UASGameInstance::HandleSpawn(const Protocol::PlayerInfo& PlayerInfo, bool I
 	}
 	else
 	{
-		AASPartyCharacterPlayer* Player = Cast<AASPartyCharacterPlayer>(World->SpawnActor(OtherPlayerClass, &SpawnLocation));
+		AASPartyCharacterPlayer* Player = Cast<AASPartyCharacterPlayer>(World->SpawnActor(OtherPlayerClass, &SpawnTransform));
 		Player->SetPlayerInfo(PlayerInfo);
 		if (!OtherPlayerClass)
 		{

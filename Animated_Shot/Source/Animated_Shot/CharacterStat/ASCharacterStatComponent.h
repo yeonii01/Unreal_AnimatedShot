@@ -54,8 +54,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float ApplyDamage(float InDamage);
 
-protected:
 	void SetHp(float NewHp);
+protected:
 
 	UPROPERTY(Transient, VisibleInstanceOnly, Category = Stat)
 	float CurrentHp;

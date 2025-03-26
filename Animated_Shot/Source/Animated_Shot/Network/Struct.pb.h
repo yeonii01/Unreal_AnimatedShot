@@ -183,7 +183,8 @@ class PlayerInfo final :
     kYFieldNumber = 3,
     kZFieldNumber = 4,
     kYawFieldNumber = 5,
-    kStateFieldNumber = 6,
+    kHpFieldNumber = 6,
+    kStateFieldNumber = 7,
   };
   // uint64 object_Id = 1;
   void clear_object_id();
@@ -230,7 +231,16 @@ class PlayerInfo final :
   void _internal_set_yaw(float value);
   public:
 
-  // .Protocol.MoveState state = 6;
+  // float hp = 6;
+  void clear_hp();
+  float hp() const;
+  void set_hp(float value);
+  private:
+  float _internal_hp() const;
+  void _internal_set_hp(float value);
+  public:
+
+  // .Protocol.MoveState state = 7;
   void clear_state();
   ::Protocol::MoveState state() const;
   void set_state(::Protocol::MoveState value);
@@ -252,6 +262,7 @@ class PlayerInfo final :
     float y_;
     float z_;
     float yaw_;
+    float hp_;
     int state_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -369,7 +380,27 @@ inline void PlayerInfo::set_yaw(float value) {
   // @@protoc_insertion_point(field_set:Protocol.PlayerInfo.yaw)
 }
 
-// .Protocol.MoveState state = 6;
+// float hp = 6;
+inline void PlayerInfo::clear_hp() {
+  _impl_.hp_ = 0;
+}
+inline float PlayerInfo::_internal_hp() const {
+  return _impl_.hp_;
+}
+inline float PlayerInfo::hp() const {
+  // @@protoc_insertion_point(field_get:Protocol.PlayerInfo.hp)
+  return _internal_hp();
+}
+inline void PlayerInfo::_internal_set_hp(float value) {
+  
+  _impl_.hp_ = value;
+}
+inline void PlayerInfo::set_hp(float value) {
+  _internal_set_hp(value);
+  // @@protoc_insertion_point(field_set:Protocol.PlayerInfo.hp)
+}
+
+// .Protocol.MoveState state = 7;
 inline void PlayerInfo::clear_state() {
   _impl_.state_ = 0;
 }

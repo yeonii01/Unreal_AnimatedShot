@@ -28,6 +28,7 @@ PROTOBUF_CONSTEXPR PlayerInfo::PlayerInfo(
   , /*decltype(_impl_.y_)*/0
   , /*decltype(_impl_.z_)*/0
   , /*decltype(_impl_.yaw_)*/0
+  , /*decltype(_impl_.hp_)*/0
   , /*decltype(_impl_.state_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct PlayerInfoDefaultTypeInternal {
@@ -56,6 +57,7 @@ const uint32_t TableStruct_Struct_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   PROTOBUF_FIELD_OFFSET(::Protocol::PlayerInfo, _impl_.y_),
   PROTOBUF_FIELD_OFFSET(::Protocol::PlayerInfo, _impl_.z_),
   PROTOBUF_FIELD_OFFSET(::Protocol::PlayerInfo, _impl_.yaw_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::PlayerInfo, _impl_.hp_),
   PROTOBUF_FIELD_OFFSET(::Protocol::PlayerInfo, _impl_.state_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -67,17 +69,18 @@ static const ::_pb::Message* const file_default_instances[] = {
 };
 
 const char descriptor_table_protodef_Struct_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\014Struct.proto\022\010Protocol\032\nEnum.proto\"q\n\n"
+  "\n\014Struct.proto\022\010Protocol\032\nEnum.proto\"}\n\n"
   "PlayerInfo\022\021\n\tobject_Id\030\001 \001(\004\022\t\n\001x\030\002 \001(\002"
-  "\022\t\n\001y\030\003 \001(\002\022\t\n\001z\030\004 \001(\002\022\013\n\003yaw\030\005 \001(\002\022\"\n\005s"
-  "tate\030\006 \001(\0162\023.Protocol.MoveStateb\006proto3"
+  "\022\t\n\001y\030\003 \001(\002\022\t\n\001z\030\004 \001(\002\022\013\n\003yaw\030\005 \001(\002\022\n\n\002h"
+  "p\030\006 \001(\002\022\"\n\005state\030\007 \001(\0162\023.Protocol.MoveSt"
+  "ateb\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Struct_2eproto_deps[1] = {
   &::descriptor_table_Enum_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_Struct_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Struct_2eproto = {
-    false, false, 159, descriptor_table_protodef_Struct_2eproto,
+    false, false, 171, descriptor_table_protodef_Struct_2eproto,
     "Struct.proto",
     &descriptor_table_Struct_2eproto_once, descriptor_table_Struct_2eproto_deps, 1, 1,
     schemas, file_default_instances, TableStruct_Struct_2eproto::offsets,
@@ -113,6 +116,7 @@ PlayerInfo::PlayerInfo(const PlayerInfo& from)
     , decltype(_impl_.y_){}
     , decltype(_impl_.z_){}
     , decltype(_impl_.yaw_){}
+    , decltype(_impl_.hp_){}
     , decltype(_impl_.state_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
@@ -133,6 +137,7 @@ inline void PlayerInfo::SharedCtor(
     , decltype(_impl_.y_){0}
     , decltype(_impl_.z_){0}
     , decltype(_impl_.yaw_){0}
+    , decltype(_impl_.hp_){0}
     , decltype(_impl_.state_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
@@ -213,9 +218,17 @@ const char* PlayerInfo::_InternalParse(const char* ptr, ::_pbi::ParseContext* ct
         } else
           goto handle_unusual;
         continue;
-      // .Protocol.MoveState state = 6;
+      // float hp = 6;
       case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 53)) {
+          _impl_.hp_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
+        } else
+          goto handle_unusual;
+        continue;
+      // .Protocol.MoveState state = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 56)) {
           uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
           _internal_set_state(static_cast<::Protocol::MoveState>(val));
@@ -297,11 +310,21 @@ uint8_t* PlayerInfo::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteFloatToArray(5, this->_internal_yaw(), target);
   }
 
-  // .Protocol.MoveState state = 6;
+  // float hp = 6;
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_hp = this->_internal_hp();
+  uint32_t raw_hp;
+  memcpy(&raw_hp, &tmp_hp, sizeof(tmp_hp));
+  if (raw_hp != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteFloatToArray(6, this->_internal_hp(), target);
+  }
+
+  // .Protocol.MoveState state = 7;
   if (this->_internal_state() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteEnumToArray(
-      6, this->_internal_state(), target);
+      7, this->_internal_state(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -361,7 +384,16 @@ size_t PlayerInfo::ByteSizeLong() const {
     total_size += 1 + 4;
   }
 
-  // .Protocol.MoveState state = 6;
+  // float hp = 6;
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_hp = this->_internal_hp();
+  uint32_t raw_hp;
+  memcpy(&raw_hp, &tmp_hp, sizeof(tmp_hp));
+  if (raw_hp != 0) {
+    total_size += 1 + 4;
+  }
+
+  // .Protocol.MoveState state = 7;
   if (this->_internal_state() != 0) {
     total_size += 1 +
       ::_pbi::WireFormatLite::EnumSize(this->_internal_state());
@@ -415,6 +447,13 @@ void PlayerInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PRO
   memcpy(&raw_yaw, &tmp_yaw, sizeof(tmp_yaw));
   if (raw_yaw != 0) {
     _this->_internal_set_yaw(from._internal_yaw());
+  }
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_hp = from._internal_hp();
+  uint32_t raw_hp;
+  memcpy(&raw_hp, &tmp_hp, sizeof(tmp_hp));
+  if (raw_hp != 0) {
+    _this->_internal_set_hp(from._internal_hp());
   }
   if (from._internal_state() != 0) {
     _this->_internal_set_state(from._internal_state());

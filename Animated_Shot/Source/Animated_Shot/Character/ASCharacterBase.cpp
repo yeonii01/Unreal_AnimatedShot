@@ -184,18 +184,45 @@ void AASCharacterBase::Tick(float DeltaTime)
 
 		const Protocol::MoveState State = PlayerInfo->state();
 
-		if (State == Protocol::MOVE_STATE_RUN)
+		switch (State)
 		{
+		case Protocol::MOVE_STATE_RUN:
 			SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
 			AddMovementInput(GetActorForwardVector());
-		}
-		else if(State == Protocol::MOVE_STATE_ATTACK)
-		{
-			ProcessComboCommand();
-		}
-		else
-		{
 
+			break;
+		case Protocol::MOVE_STATE_JUMP:
+			Jump();
+			break;
+		case Protocol::MOVE_STATE_ATTACK:
+			ProcessComboCommand();
+			break;
+		case Protocol::MOVE_STATE_DAMAGE:
+			if (AASPartyCharacterPlayer* PartyPlayer = Cast<AASPartyCharacterPlayer>(this))
+			{
+				PartyPlayer->PlayDamageMontage();
+			}
+			break;
+		case Protocol::MOVE_STATE_DEAD:
+			SetDead();
+			break;
+		default:
+			break;
+		}
+
+		Stat->SetHp(PlayerInfo->hp());
+
+		CorrectPosition -= DeltaTime;
+
+		if (CorrectPosition <= 0)
+		{
+			CorrectPosition = CORRECT_POSITION_DELAY;
+			{
+				FVector Location = GetActorLocation();
+				DestInfo->set_x(Location.X);
+				DestInfo->set_y(Location.Y);
+				DestInfo->set_z(Location.Z);
+			}
 		}
 	}
 }
@@ -320,6 +347,7 @@ void AASCharacterBase::AttackHitCheck()
 float AASCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
 	Stat->ApplyDamage(DamageAmount);
 	return DamageAmount;
 }
