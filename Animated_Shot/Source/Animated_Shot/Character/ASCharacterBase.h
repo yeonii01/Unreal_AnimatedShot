@@ -8,6 +8,7 @@
 #include "Interface/ASCharacterWidgetInterface.h"
 #include "Interface/ASCharacterItemInterface.h"
 #include "GameData/ASCharacterStat.h"
+#include "Protocol.pb.h"
 #include "ASCharacterBase.generated.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogASCharacter, Log, All);
@@ -37,9 +38,11 @@ class ANIMATED_SHOT_API AASCharacterBase : public ACharacter, public IASAnimatio
 public:
 	// Sets default values for this character's properties
 	AASCharacterBase();
+	virtual ~AASCharacterBase();
 
 	virtual void PostInitializeComponents() override;
-	
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 	UFUNCTION(BlueprintCallable)
 	bool IsEquipWeapon();
 
@@ -124,4 +127,20 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Settings")
 	void ApplyStat(const FASCharacterStat& BaseStat, const FASCharacterStat& ModifierStat);
 
+public:
+	bool IsMyPlayer();
+	bool IsPartyPlayer();
+	bool IsNPC();
+
+	Protocol::MoveState GetMoveState() { return PlayerInfo->state(); }
+	void SetMoveState(Protocol::MoveState State);
+
+public:
+	void SetPlayerInfo(const Protocol::PlayerInfo& InInfo);
+	void SetDestInfo(const Protocol::PlayerInfo& InInfo);
+	Protocol::PlayerInfo* GetPlayerInfo() { return PlayerInfo; }
+
+protected:
+	class Protocol::PlayerInfo* PlayerInfo;	
+	class Protocol::PlayerInfo* DestInfo;		//¸ñÀûÁö
 };

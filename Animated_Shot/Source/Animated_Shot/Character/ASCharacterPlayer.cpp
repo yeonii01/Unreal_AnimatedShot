@@ -17,10 +17,13 @@
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundBase.h"
 #include "Gimmick/QuestSystem.h"
+#include "Animated_Shot.h"
+#include "Network/ASGameInstance.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AASCharacterPlayer::AASCharacterPlayer()
 {
-	//PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = true;
 	//Camera
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -84,7 +87,6 @@ AASCharacterPlayer::AASCharacterPlayer()
 	}
 
 	CurrentCharacterControlType = ECharacterControlType::Shoulder;
-	PrimaryActorTick.bCanEverTick = false;
 
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> DamageMontageRef(TEXT("/Game/MyCharacter/Animations/AM_Damage.AM_Damage"));
 	if (DamageMontageRef.Object)
@@ -153,7 +155,6 @@ AASCharacterPlayer::AASCharacterPlayer()
 	{
 		AttackSound = SoundRef.Object;
 	}
-
 }
 
 void AASCharacterPlayer::BeginPlay()
@@ -179,6 +180,8 @@ void AASCharacterPlayer::BeginPlay()
 	{
 		DefaultFOV = CameraComponent->FieldOfView; // 기본 FOV 저장
 	}
+
+	SetActorTickEnabled(true);
 }
 
 void AASCharacterPlayer::SetDead()
@@ -211,6 +214,37 @@ void AASCharacterPlayer::SetDead()
 void AASCharacterPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	bool ForceSendPacket = false;
+
+	if (LastDesiredInput != DesiredInput)
+	{
+		ForceSendPacket = true;
+		LastDesiredInput = DesiredInput;
+	}
+
+	if (DesiredInput == FVector2D::Zero())
+		SetMoveState(Protocol::MOVE_STATE_IDLE);
+	else
+		SetMoveState(Protocol::MOVE_STATE_RUN);
+
+	MovePacketSendTimer -= DeltaTime;
+
+	if (MovePacketSendTimer <= 0 || ForceSendPacket)
+	{
+		MovePacketSendTimer = MOVE_PACKET_SEND_DELAY;
+
+		Protocol::C_MOVE MovePkt;
+
+		{
+			Protocol::PlayerInfo* Info = MovePkt.mutable_info();
+			Info->CopyFrom(*PlayerInfo);
+			Info->set_yaw(DesiredYaw);
+			Info->set_state(GetMoveState());
+		}
+
+		SEND_PACKET(MovePkt);
+	}
 }
 
 void AASCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -223,6 +257,7 @@ void AASCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 	EnhancedInputComponent->BindAction(ChangeControlAction, ETriggerEvent::Triggered, this, &AASCharacterPlayer::ChangeCharacterControl);
 	EnhancedInputComponent->BindAction(ShoulderMoveAction, ETriggerEvent::Triggered, this, &AASCharacterPlayer::ShoulderMove);
+	EnhancedInputComponent->BindAction(ShoulderMoveAction, ETriggerEvent::Completed, this, &AASCharacterPlayer::ShoulderMove);
 	EnhancedInputComponent->BindAction(ShoulderLookAction, ETriggerEvent::Triggered, this, &AASCharacterPlayer::ShoulderLook);
 	EnhancedInputComponent->BindAction(QuaterMoveAction, ETriggerEvent::Triggered, this, &AASCharacterPlayer::QuaterMove);
 	EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AASCharacterPlayer::Attack);
@@ -291,6 +326,18 @@ void AASCharacterPlayer::ShoulderMove(const FInputActionValue& Value)
 
 	AddMovementInput(ForwardDirection, MovementVector.X);
 	AddMovementInput(RightDirection, MovementVector.Y);
+
+	{
+		DesiredInput = MovementVector;
+
+		DesiredMoveDirection += ForwardDirection * MovementVector.X;
+		DesiredMoveDirection += RightDirection * MovementVector.Y;
+		DesiredMoveDirection.Normalize();
+
+		const FVector Location = GetActorLocation();
+		FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(Location, Location + DesiredMoveDirection);
+		DesiredYaw = Rotator.Yaw;
+	}
 }
 
 void AASCharacterPlayer::ShoulderLook(const FInputActionValue& Value)
@@ -325,6 +372,20 @@ void AASCharacterPlayer::QuaterMove(const FInputActionValue& Value)
 
 void AASCharacterPlayer::Attack()
 {
+	SetMoveState(Protocol::MOVE_STATE_ATTACK);
+	{
+		MovePacketSendTimer = MOVE_PACKET_SEND_DELAY;
+		Protocol::C_MOVE MovePkt;
+		{
+			Protocol::PlayerInfo* Info = MovePkt.mutable_info();
+			Info->CopyFrom(*PlayerInfo);
+			Info->set_yaw(DesiredYaw);
+			Info->set_state(GetMoveState());
+		}
+
+		SEND_PACKET(MovePkt);
+	}
+
 	if (bIsZoom)
 	{
 		APlayerController* PC = Cast<APlayerController>(GetController());
