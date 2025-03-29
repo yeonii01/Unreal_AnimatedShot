@@ -9,6 +9,8 @@
 #include "Physics/ASCollision.h"
 #include "DrawDebugHelpers.h"
 #include "Engine/OverlapResult.h"
+#include "Character/ASCharacterPlayer.h"
+#include "Character/ASPartyCharacterPlayer.h"
 #include "Character/ASCharacterNonPlayer.h"
 
 UBTService_Detect::UBTService_Detect()
@@ -52,7 +54,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 		for (auto const& OverlapResult : OverlapResults)
 		{
 			APawn* Pawn = Cast<APawn>(OverlapResult.GetActor());
-			if (Pawn && Pawn->GetController()->IsPlayerController())
+			if (Cast<AASCharacterPlayer>(Pawn) || Cast<AASPartyCharacterPlayer>(Pawn))
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject(BBKEY_TARGET, Pawn);
 				//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);

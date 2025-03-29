@@ -36,7 +36,6 @@ void Session::Send(SendBufferRef sendBuffer)
 		if (registerSend)
 			RegisterSend();
 	}
-	
 }
 
 bool Session::Connect()
@@ -276,6 +275,7 @@ void Session::ProcessSend(int32 numOfBytes)
 	OnSend(numOfBytes);
 
 	WRITE_LOCK;
+
 	if (_sendQueue.empty())
 		_sendRegistered.store(false);
 	else

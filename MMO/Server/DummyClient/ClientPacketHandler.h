@@ -8,6 +8,9 @@
 using PacketHandlerFunc = std::function<bool(PacketSessionRef&, BYTE*, int32)>;
 extern PacketHandlerFunc GPacketHandler[UINT16_MAX];
 
+// Utils Func
+class US1NetworkManager* GetWorldNetwork(const PacketSessionRef& Session);
+
 enum : uint16
 {
 	PKT_C_LOGIN = 1000,
@@ -83,6 +86,7 @@ private:
 #else
 		SendBufferRef sendBuffer = make_shared<SendBuffer>(packetSize);
 #endif
+
 		PacketHeader* header = reinterpret_cast<PacketHeader*>(sendBuffer->Buffer());
 		header->size = packetSize;
 		header->id = pktId;

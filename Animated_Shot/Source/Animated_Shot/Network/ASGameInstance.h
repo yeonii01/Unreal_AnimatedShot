@@ -7,6 +7,7 @@
 #include "Animated_Shot.h"
 #include "Character/ASCharacterBase.h"
 #include "Character/ASPartyCharacterPlayer.h"
+#include "Character/ASCharacterNonPlayer.h"
 #include "ASGameInstance.generated.h"
 
 /**
@@ -33,7 +34,7 @@ public:
 	void SendPacket(SendBufferRef SendBuffer);
 
 public:
-	void HandleSpawn(const Protocol::PlayerInfo& PlayerInfo, bool IsMine);
+	void HandleSpawn(const Protocol::ObjectInfo& PlayerInfo, bool IsMine);
 	void HandleSpawn(const Protocol::S_ENTER_GAME& EnterGamePkt);
 	void HandleSpawn(const Protocol::S_SPAWN& SpawnPkt);
 
@@ -51,6 +52,9 @@ public:
 public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AASPartyCharacterPlayer> OtherPlayerClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AASCharacterNonPlayer> MonsterClass;
 
 	AASCharacterBase* MyPlayer;
 

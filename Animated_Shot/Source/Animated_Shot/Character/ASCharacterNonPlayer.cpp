@@ -22,7 +22,7 @@ AASCharacterNonPlayer::AASCharacterNonPlayer()
 	//DeadMontages.SetNum(12);
 	//ComboActionMontages.SetNum(12);
 
-	//static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand0(TEXT("/Game/Monster/Animation/Beez/ABP_AS_Beez1.ABP_AS_Beez1_C"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand0(TEXT("/Game/Monster/Animation/Beez/ABP_AS_Beez1.ABP_AS_Beez1_C"));
 	//static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand1(TEXT("/Game/Monster/Animation/DevilTree/ABP_AS_Deviltree1.ABP_AS_Deviltree1_C"));
 	//static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand2(TEXT("/Game/Monster/Animation/FlowerDyad/ABP_AS_FlowerDyad1.ABP_AS_FlowerDyad1_C"));
 	//static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand3(TEXT("/Game/Monster/Animation/PlantaGeezer/ABP_AS_Planta1.ABP_AS_Planta1_C"));
@@ -35,7 +35,7 @@ AASCharacterNonPlayer::AASCharacterNonPlayer()
 	//static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand10(TEXT("/Game/Monster/Animation/RabbyYoung/ABP_AS_RabbyYoung.ABP_AS_RabbyYoung_C"));
 	//static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand11(TEXT("/Game/Monster/Animation/Turnipa/ABP_AS_Turnipa.ABP_AS_Turnipa_C"));
 
-	//AnimClasses[0] = AnimInstanceClassRefRand0.Class;
+	AnimClasses = AnimInstanceClassRefRand0.Class;
 	//AnimClasses[1] = AnimInstanceClassRefRand1.Class;
 	//AnimClasses[2] = AnimInstanceClassRefRand2.Class;
 	//AnimClasses[3] = AnimInstanceClassRefRand3.Class;
@@ -48,7 +48,7 @@ AASCharacterNonPlayer::AASCharacterNonPlayer()
 	//AnimClasses[10] = AnimInstanceClassRefRand10.Class;
 	//AnimClasses[11] = AnimInstanceClassRefRand11.Class;
 
-	//static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand0(TEXT("/Game/Monster/Animation/Beez/DeadMontage.DeadMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand0(TEXT("/Game/Monster/Animation/Beez/DeadMontage.DeadMontage"));
 	//static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand1(TEXT("/Game/Monster/Animation/DevilTree/DeadMontage.DeadMontage"));
 	//static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand2(TEXT("/Game/Monster/Animation/FlowerDyad/DeadMontage.DeadMontage"));
 	//static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand3(TEXT("/Game/Monster/Animation/PlantaGeezer/DeadMontage.DeadMontage"));
@@ -61,7 +61,7 @@ AASCharacterNonPlayer::AASCharacterNonPlayer()
 	//static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand10(TEXT("/Game/Monster/Animation/RabbyYoung/DeadMontage.DeadMontage"));
 	//static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand11(TEXT("/Game/Monster/Animation/Turnipa/DeadMontage.DeadMontage"));
 
-	//DeadMontages[0] = DeadMontageRefRand0.Object;
+	DeadMontages = DeadMontageRefRand0.Object;
 	//DeadMontages[1] = DeadMontageRefRand1.Object;
 	//DeadMontages[2] = DeadMontageRefRand2.Object;
 	//DeadMontages[3] = DeadMontageRefRand3.Object;
@@ -74,13 +74,13 @@ AASCharacterNonPlayer::AASCharacterNonPlayer()
 	//DeadMontages[10] = DeadMontageRefRand10.Object;
 	//DeadMontages[11] = DeadMontageRefRand11.Object;
 
-	//static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand0(TEXT("/Game/Monster/Animation/Beez/AM_AttackMontage.AM_AttackMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand0(TEXT("/Game/Monster/Animation/Beez/AM_AttackMontage.AM_AttackMontage"));
 	//static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand1(TEXT("/Game/Monster/Animation/DevilTree/AM_AttackMontage.AM_AttackMontage"));
 	//static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand2(TEXT("/Game/Monster/Animation/FlowerDyad/AM_AttackMontage.AM_AttackMontage"));
 	//static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand3(TEXT("/Game/Monster/Animation/PlantaGeezer/AM_AttackMontage.AM_AttackMontage"));
 	//static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand5(TEXT("/Game/Monster/Animation/PlantaGeezer/AM_AttackMontage.AM_AttackMontage"));
 
-	//ComboActionMontages[0] = ComboActionMontageRefRand0.Object;
+	ComboActionMontages = ComboActionMontageRefRand0.Object;
 	//ComboActionMontages[1] = ComboActionMontageRefRand1.Object;
 	//ComboActionMontages[2] = ComboActionMontageRefRand2.Object;
 	//ComboActionMontages[3] = ComboActionMontageRefRand3.Object;
@@ -103,6 +103,8 @@ AASCharacterNonPlayer::AASCharacterNonPlayer()
 		StaticMeshComponent->SetStaticMesh(PlaneMesh.Object);
 	}
 
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> NPCMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/Monster/Forest/Beez.Beez'"));
+	NPCMesh = NPCMeshRef.Object;
 	//// 머터리얼 로드 및 적용
 	//static ConstructorHelpers::FObjectFinder<UMaterialInterface> MaskedMaterial(TEXT("/Script/Engine.Material'/Game/Monster/M_AttackRange.M_AttackRange'"));
 	//if (MaskedMaterial.Succeeded())
@@ -139,6 +141,7 @@ void AASCharacterNonPlayer::PostInitializeComponents()
 	if (NPCMesh)
 	{
 		GetMesh()->SetSkeletalMesh(NPCMesh);
+		GetMesh()->SetVisibility(true);
 	}
 	if (AnimClasses)
 	{
@@ -203,7 +206,6 @@ void AASCharacterNonPlayer::NPCMeshLoadCompleted()
 
 void AASCharacterNonPlayer::DropItem()
 {
-
 	if (DropItems.IsEmpty())
 		return;
 

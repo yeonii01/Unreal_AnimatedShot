@@ -119,8 +119,8 @@ AASCharacterBase::AASCharacterBase()
 	Weapon2 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon2"));
 	Weapon2->SetupAttachment(GetMesh(), TEXT("Bip002_R_HandSocket"));
 
-	PlayerInfo = new Protocol::PlayerInfo();
-	DestInfo = new Protocol::PlayerInfo();
+	PlayerInfo = new Protocol::PosInfo();
+	DestInfo = new Protocol::PosInfo();
 }
 
 AASCharacterBase::~AASCharacterBase()
@@ -210,7 +210,7 @@ void AASCharacterBase::Tick(float DeltaTime)
 			break;
 		}
 
-		Stat->SetHp(PlayerInfo->hp());
+		Stat->SetHp(DestInfo->hp());
 
 		CorrectPosition -= DeltaTime;
 
@@ -485,10 +485,9 @@ void AASCharacterBase::SetMoveState(Protocol::MoveState State)
 	PlayerInfo->set_state(State);
 }
 
-void AASCharacterBase::SetPlayerInfo(const Protocol::PlayerInfo& Info)
+void AASCharacterBase::SetObjectInfo(const Protocol::PosInfo& Info)
 {
-	//TODO
-	if(PlayerInfo->object_id()!= 0)
+	if (PlayerInfo->object_id() != 0)
 	{
 		assert(PlayerInfo->object_id() == Info.object_id());
 	}
@@ -499,14 +498,16 @@ void AASCharacterBase::SetPlayerInfo(const Protocol::PlayerInfo& Info)
 	SetActorLocation(Location);
 }
 
-void AASCharacterBase::SetDestInfo(const Protocol::PlayerInfo& Info)
+void AASCharacterBase::SetDestInfo(const Protocol::PosInfo& Info)
 {
 	if (PlayerInfo->object_id() != 0)
 	{
 		assert(PlayerInfo->object_id() == Info.object_id());
 	}
 
+	// Dest에 최종 상태 복사.
 	DestInfo->CopyFrom(Info);
 
+	// 상태만 바로 적용하자.
 	SetMoveState(Info.state());
 }

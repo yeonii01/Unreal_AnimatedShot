@@ -8,6 +8,8 @@
 //#include "ClientPacketHandler.h"
 #include <tchar.h>
 #include "Job.h"
+#include "Protocol.pb.h"
+#include "Room.h"
 
 enum
 {
@@ -41,7 +43,7 @@ int main()
 		[=]() { return make_shared<GameSession>(); }, // TODO : SessionManager 등
 		100);
 
-	/*ASSERT_CRASH(*/service->Start();//);
+	ASSERT_CRASH(service->Start());
 
 	for (int32 i = 0; i < 5; i++)
 	{
@@ -54,10 +56,16 @@ int main()
 	// Main Thread
 	//DoWorkerJob(service);
 
+	GRoom->DoAsync(&Room::UpdateTick);
 
 	while (true)
 	{
-		this_thread::sleep_for(1s);
+		//Protocol::S_CHAT pkt;
+		//pkt.set_msg("HelloWorld");
+		//auto sendBuffer = ServerPacketHandler::MakeSendBuffer(pkt);
+
+		//GSessionManager.Broadcast(sendBuffer);
+		this_thread::sleep_for(0.1s);
 	}
 
 	GThreadManager->Join();

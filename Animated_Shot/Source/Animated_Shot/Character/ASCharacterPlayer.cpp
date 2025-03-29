@@ -192,7 +192,7 @@ void AASCharacterPlayer::SetDead()
 		MovePacketSendTimer = MOVE_PACKET_SEND_DELAY;
 		Protocol::C_MOVE MovePkt;
 		{
-			Protocol::PlayerInfo* Info = MovePkt.mutable_info();
+			Protocol::PosInfo* Info = MovePkt.mutable_info();
 			Info->CopyFrom(*PlayerInfo);
 			Info->set_yaw(DesiredYaw);
 			Info->set_state(GetMoveState());
@@ -250,7 +250,7 @@ void AASCharacterPlayer::Tick(float DeltaTime)
 		Protocol::C_MOVE MovePkt;
 
 		{
-			Protocol::PlayerInfo* Info = MovePkt.mutable_info();
+			Protocol::PosInfo* Info = MovePkt.mutable_info();
 			Info->CopyFrom(*PlayerInfo);
 			Info->set_yaw(DesiredYaw);
 			Info->set_state(GetMoveState());
@@ -391,7 +391,7 @@ void AASCharacterPlayer::Attack()
 		MovePacketSendTimer = MOVE_PACKET_SEND_DELAY;
 		Protocol::C_MOVE MovePkt;
 		{
-			Protocol::PlayerInfo* Info = MovePkt.mutable_info();
+			Protocol::PosInfo* Info = MovePkt.mutable_info();
 			Info->CopyFrom(*PlayerInfo);
 			Info->set_yaw(DesiredYaw);
 			Info->set_state(GetMoveState());
@@ -466,7 +466,7 @@ float AASCharacterPlayer::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 		MovePacketSendTimer = MOVE_PACKET_SEND_DELAY;
 		Protocol::C_MOVE MovePkt;
 		{
-			Protocol::PlayerInfo* Info = MovePkt.mutable_info();
+			Protocol::PosInfo* Info = MovePkt.mutable_info();
 			Info->CopyFrom(*PlayerInfo);
 			Info->set_yaw(DesiredYaw);
 			Info->set_state(GetMoveState());
