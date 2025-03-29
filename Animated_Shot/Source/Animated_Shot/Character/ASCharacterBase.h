@@ -136,11 +136,15 @@ public:
 	void SetMoveState(Protocol::MoveState State);
 
 public:
-	void SetPlayerInfo(const Protocol::PlayerInfo& InInfo);
-	void SetDestInfo(const Protocol::PlayerInfo& InInfo);
-	Protocol::PlayerInfo* GetPlayerInfo() { return PlayerInfo; }
+	void SetObjectInfo(const Protocol::PosInfo& InInfo);
+	void SetDestInfo(const Protocol::PosInfo& InInfo);
+	Protocol::PosInfo* GetPlayerInfo() { return PlayerInfo; }
 
 protected:
-	class Protocol::PlayerInfo* PlayerInfo;	
-	class Protocol::PlayerInfo* DestInfo;		//格利瘤
+	class Protocol::PosInfo* PlayerInfo;	
+	class Protocol::PosInfo* DestInfo;		//格利瘤
+
+private:
+	const float CORRECT_POSITION_DELAY = 0.5f;
+	float CorrectPosition = CORRECT_POSITION_DELAY;
 };

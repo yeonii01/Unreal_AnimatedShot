@@ -9,11 +9,13 @@
 #include "PacketSession.h"
 #include "ClientPacketHandler.h"
 #include "Character/ASCharacterPlayer.h"
+#include "Character/ASCharacterNonPlayer.h"
 #include "Protocol.pb.h"
 
 UASGameInstance::UASGameInstance()
 {
 	OtherPlayerClass = AASPartyCharacterPlayer::StaticClass();
+	MonsterClass = AASCharacterNonPlayer::StaticClass();
 }
 
 void UASGameInstance::ConnectToGameServer()
@@ -84,7 +86,7 @@ void UASGameInstance::SendPacket(SendBufferRef SendBuffer)
 	GameServerSession->SendPacket(SendBuffer);
 }
 
-void UASGameInstance::HandleSpawn(const Protocol::PlayerInfo& PlayerInfo, bool IsMine)
+void UASGameInstance::HandleSpawn(const Protocol::ObjectInfo& ObjectInfo, bool IsMine)
 {
 	if (Socket == nullptr || GameServerSession == nullptr)
 		return;
@@ -93,37 +95,59 @@ void UASGameInstance::HandleSpawn(const Protocol::PlayerInfo& PlayerInfo, bool I
 	if (World == nullptr)
 		return;
 
-	const int64 ObjectId = PlayerInfo.object_id();
+	const int64 ObjectId = ObjectInfo.object_id();
 	if (Players.Find(ObjectId) != nullptr)
 		return;
 
-	FVector SpawnLocation(PlayerInfo.x(), PlayerInfo.y(), PlayerInfo.z());
-
-	if (IsMine)
+	FVector SpawnLocation(ObjectInfo.pos_info().x(), ObjectInfo.pos_info().y(), ObjectInfo.pos_info().z());
+	FRotator SpawnRotation(0.0f, 90.f, 0.0f);
+	FTransform SpawnTransform(SpawnRotation, SpawnLocation);
+	switch (ObjectInfo.creature_type())
 	{
-		auto* PC = UGameplayStatics::GetPlayerController(this, 0);
-		AASCharacterPlayer* Player = Cast<AASCharacterPlayer>(PC->GetPawn());
-		if (Player == nullptr) return;
-
-		Player->SetPlayerInfo(PlayerInfo);
-
-		MyPlayer = Player;
-		Players.Add(PlayerInfo.object_id(), Player);
-	}
-	else
-	{
-		AASPartyCharacterPlayer* Player = Cast<AASPartyCharacterPlayer>(World->SpawnActor(OtherPlayerClass, &SpawnLocation));
-		Player->SetPlayerInfo(PlayerInfo);
-		if (!OtherPlayerClass)
+	case Protocol::CREATURE_TYPE_PLAYER:
+		if (IsMine)
 		{
-			UE_LOG(LogTemp, Error, TEXT("Spawn Failed: OtherPlayerClass is nullptr!"));
+			auto* PC = UGameplayStatics::GetPlayerController(this, 0);
+			AASCharacterPlayer* Player = Cast<AASCharacterPlayer>(PC->GetPawn());
+			if (Player == nullptr) return;
+
+			Player->SetObjectInfo(ObjectInfo.pos_info());
+
+			MyPlayer = Player;
+			Players.Add(ObjectInfo.object_id(), Player);
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("OtherPlayerClass: % s"), *GetNameSafe(OtherPlayerClass));
+			AASPartyCharacterPlayer* Player = Cast<AASPartyCharacterPlayer>(World->SpawnActor(OtherPlayerClass, &SpawnTransform));
+			Player->SetObjectInfo(ObjectInfo.pos_info());
+			Players.Add(ObjectInfo.object_id(), Player);
 		}
+		break;
+	case Protocol::CREATURE_TYPE_MONSTER:
+	{
+		AASCharacterNonPlayer* Monster = Cast<AASCharacterNonPlayer>(World->SpawnActor(MonsterClass, &SpawnTransform));
+		if (Monster)
+		{
+			if (!ObjectInfo.has_pos_info())
+			{
+				UE_LOG(LogTemp, Error, TEXT("ObjectInfo has no pos_info!"));
+			}
 
-		Players.Add(PlayerInfo.object_id(), Player);
+			Monster->SetObjectInfo(ObjectInfo.pos_info());
+			Players.Add(ObjectId, Monster);
+
+			Monster->GetMesh()->SetVisibility(true);
+			Monster->GetMesh()->SetHiddenInGame(false);
+			Monster->SetActorHiddenInGame(false);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to spawn Monster!"));
+		}
+	}
+		break;
+	default:
+		break;
 	}
 }
 
@@ -137,6 +161,10 @@ void UASGameInstance::HandleSpawn(const Protocol::S_SPAWN& SpawnPkt)
 	for (auto& player : SpawnPkt.players())
 	{
 		HandleSpawn(player, false);
+	}
+	for (auto& monster : SpawnPkt.monsters())
+	{
+		HandleSpawn(monster, false);
 	}
 }
 
@@ -183,7 +211,7 @@ void UASGameInstance::HandleMove(const Protocol::S_MOVE& MovePkt)
 	if (Player->IsMyPlayer()) 
 		return;
 
-	const Protocol::PlayerInfo& Info = MovePkt.info();
+	const Protocol::PosInfo& Info = MovePkt.info();
 	//Player->SetPlayerInfo(Info);
 	Player->SetDestInfo(Info);
 }

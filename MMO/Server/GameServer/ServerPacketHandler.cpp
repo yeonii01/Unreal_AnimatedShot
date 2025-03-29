@@ -2,10 +2,12 @@
 #include "ServerPacketHandler.h"
 #include "BufferReader.h"
 #include "BufferWriter.h"
-#include "ObjectUtils.h"
+#include "Protocol.pb.h"
 #include "Room.h"
-#include "GameSession.h"
+#include "ObjectUtils.h"
+#include "Monster.h"
 #include "Player.h"
+#include "GameSession.h"
 
 PacketHandlerFunc GPacketHandler[UINT16_MAX];
 
@@ -18,20 +20,23 @@ bool Handle_INVALID(PacketSessionRef& session, BYTE* buffer, int32 len)
 
 bool Handle_C_LOGIN(PacketSessionRef& session, Protocol::C_LOGIN& pkt)
 {
-	//TODO : DB에서 Account 및 유저 정보 가져오기
-
+	// TODO : DB에서 Account 정보 긁어온다
+	// TODO : DB에서 유저 정보 긁어온다
 	Protocol::S_LOGIN loginPkt;
-	
-	for (int32 i = 0; i < 2; ++i)
+
+	for (int32 i = 0; i < 3; i++)
 	{
-		Protocol::PlayerInfo* player = loginPkt.add_players();
-		player->set_x(Utils::GetRandom(0.f, 100.f));
-		player->set_y(Utils::GetRandom(0.f, 100.f));
-		player->set_z(Utils::GetRandom(0.f, 100.f));
-		player->set_yaw(Utils::GetRandom(0.f, 45.f));
+		Protocol::ObjectInfo* player = loginPkt.add_players();
+		Protocol::PosInfo* posInfo = player->mutable_pos_info();
+
+		posInfo->set_x(Utils::GetRandom(0.f, 100.f));
+		posInfo->set_y(Utils::GetRandom(0.f, 100.f));
+		posInfo->set_z(Utils::GetRandom(0.f, 100.f));
+		posInfo->set_yaw(Utils::GetRandom(0.f, 45.f));
 	}
-	
+
 	loginPkt.set_success(true);
+
 	SEND_PACKET(loginPkt);
 
 	return true;
@@ -39,11 +44,45 @@ bool Handle_C_LOGIN(PacketSessionRef& session, Protocol::C_LOGIN& pkt)
 
 bool Handle_C_ENTER_GAME(PacketSessionRef& session, Protocol::C_ENTER_GAME& pkt)
 {
-	//플레이어 생성
-	PlayerRef player = ObjectUtils::CreatePlayer(static_pointer_cast<GameSession>(session));
+	// 플레이어 생성
+	ObjectRef object = ObjectUtils::CreateObject(static_pointer_cast<GameSession>(session), Protocol::CREATURE_TYPE_PLAYER);
+	//PlayerRef player = dynamic_pointer_cast<Player>(object);
+	// 방에 입장
+	GRoom->DoAsync(&Room::HandleEnterObject, object);
 
-	//방에 입장
-	GRoom->DoAsync(&Room::HandleEnterPlayer, player);
+	for (int i = 0; i < 13; ++i)
+	{
+		ObjectRef monObj = ObjectUtils::CreateObject(nullptr, Protocol::CREATURE_TYPE_MONSTER);
+		MonsterRef monster = dynamic_pointer_cast<Monster>(monObj);
+		auto pos = new Protocol::PosInfo();
+		switch (i)
+		{
+		case 0:
+			pos->set_x(4920.0);
+			pos->set_y(7360.000016);
+			pos->set_z(306.00001);
+			pos->set_yaw(-90.f);
+			pos->set_hp(150.f);
+			break;
+		case 1:
+			pos->set_x(5979.999897);
+			pos->set_y(6967.698496);
+			pos->set_z(507.698568);
+			pos->set_yaw(90.f);
+			pos->set_hp(150.f);
+			break;
+		default:
+			pos->set_x(0);
+			pos->set_y(0);
+			pos->set_z(0);
+			pos->set_yaw(0);
+			pos->set_hp(0);
+			break;
+		}
+		monster->objectInfo->set_allocated_pos_info(pos);
+		GRoom->DoAsync(&Room::HandleEnterObject, monObj);
+	}
+	//GRoom->HandleEnterPlayerLocked(player);
 
 	return true;
 }
@@ -57,10 +96,11 @@ bool Handle_C_LEAVE_GAME(PacketSessionRef& session, Protocol::C_LEAVE_GAME& pkt)
 		return false;
 
 	RoomRef room = player->room.load().lock();
-	if (room == nullptr) return false;
+	if (room == nullptr)
+		return false;
 
-	GRoom->DoAsync(&Room::HandleLeavePlayer, player);
-	
+	room->HandleLeavePlayer(player);
+
 	return true;
 }
 
@@ -73,10 +113,12 @@ bool Handle_C_MOVE(PacketSessionRef& session, Protocol::C_MOVE& pkt)
 		return false;
 
 	RoomRef room = player->room.load().lock();
-	if (room == nullptr) return false;
+	if (room == nullptr)
+		return false;
 
-	GRoom->DoAsync(&Room::HandleMove, pkt);
-	//room->HandleMoveLocked(pkt);
+	room->DoAsync(&Room::HandleMove, pkt);
+	//room->HandleMove(pkt);
+
 	return true;
 }
 
