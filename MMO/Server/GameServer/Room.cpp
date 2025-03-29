@@ -163,9 +163,33 @@ void Room::HandleMove(Protocol::C_MOVE pkt)
 
 void Room::UpdateTick()
 {
-	cout << "Update Room" << endl;
+	//cout << "Update Room" << endl;
 
-	DoTimer(100, &Room::UpdateTick);
+	Protocol::S_MONSTER_MOVE monsterpkt;
+	for (auto& item : _objects)
+	{
+		if (item.second->objectInfo == nullptr || item.second->objectInfo->has_pos_info() == false)
+			continue;
+
+		MonsterRef monster = dynamic_pointer_cast<Monster>(item.second);
+		if (monster == nullptr)
+			continue;
+
+		Protocol::PosInfo* monsterInfo = monsterpkt.add_monsters();
+		monsterInfo->CopyFrom(item.second->objectInfo->pos_info());
+		float offsetX = Utils::GetRandom(-500.f, 500.f);
+		float offsetY = Utils::GetRandom(-500.f, 500.f);
+
+		monsterInfo->set_object_id(item.second->objectInfo->object_id());
+		monsterInfo->set_x(monsterInfo->x() + offsetX);
+		monsterInfo->set_y(monsterInfo->y() + offsetY);
+		monsterInfo->set_z(monsterInfo->z());
+		//cout << monsterInfo->x() << ", " << monsterInfo->y() << ", " << monsterInfo->z() << endl;
+	}
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(monsterpkt);
+	Broadcast(sendBuffer);
+
+	DoTimer(3000, &Room::UpdateTick);
 }
 
 RoomRef Room::GetRoomRef()

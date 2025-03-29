@@ -75,6 +75,15 @@ bool Handle_S_MOVE(PacketSessionRef& session, Protocol::S_MOVE& pkt)
 	return true;
 }
 
+bool Handle_S_MONSTER_MOVE(PacketSessionRef& session, Protocol::S_MONSTER_MOVE& pkt)
+{
+	if (auto* GameInstance = Cast<UASGameInstance>(GWorld->GetGameInstance()))
+	{
+		GameInstance->HandleMonsterMove(pkt);
+	}
+	return true;
+}
+
 bool Handle_S_CHAT(PacketSessionRef& session, Protocol::S_CHAT& pkt)
 {
 	auto Msg = pkt.msg();

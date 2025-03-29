@@ -19,6 +19,7 @@ ObjectRef ObjectUtils::CreateObject(GameSessionRef session, Protocol::CreatureTy
 		break;
 	case Protocol::CREATURE_TYPE_MONSTER:
 		object = make_shared<Monster>();
+		cout << newId << endl;
 		break;
 	default:
 		object = make_shared<Object>();

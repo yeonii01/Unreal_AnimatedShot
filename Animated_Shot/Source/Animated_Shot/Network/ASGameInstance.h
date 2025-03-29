@@ -42,6 +42,7 @@ public:
 	void HandleDespawn(const Protocol::S_DESPAWN& DespawnPkt);
 
 	void HandleMove(const Protocol::S_MOVE& MovePkt);
+	void HandleMonsterMove(const Protocol::S_MONSTER_MOVE& MonsterPkt);
 public:
 	//GameServer
 	class FSocket* Socket;

@@ -125,6 +125,11 @@ void UASGameInstance::HandleSpawn(const Protocol::ObjectInfo& ObjectInfo, bool I
 		break;
 	case Protocol::CREATURE_TYPE_MONSTER:
 	{
+		if (ObjectInfo.object_id() == 0 || Players.Contains(ObjectInfo.object_id()))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Monster with ObjectId %lld already exists. Skipping spawn."), ObjectInfo.object_id());
+			return;
+		}
 		AASCharacterNonPlayer* Monster = Cast<AASCharacterNonPlayer>(World->SpawnActor(MonsterClass, &SpawnTransform));
 		if (Monster)
 		{
@@ -134,7 +139,7 @@ void UASGameInstance::HandleSpawn(const Protocol::ObjectInfo& ObjectInfo, bool I
 			}
 
 			Monster->SetObjectInfo(ObjectInfo.pos_info());
-			Players.Add(ObjectId, Monster);
+			Players.Add(ObjectInfo.object_id(), Monster);
 
 			Monster->GetMesh()->SetVisibility(true);
 			Monster->GetMesh()->SetHiddenInGame(false);
@@ -214,4 +219,28 @@ void UASGameInstance::HandleMove(const Protocol::S_MOVE& MovePkt)
 	const Protocol::PosInfo& Info = MovePkt.info();
 	//Player->SetPlayerInfo(Info);
 	Player->SetDestInfo(Info);
+}
+
+void UASGameInstance::HandleMonsterMove(const Protocol::S_MONSTER_MOVE& MonsterPkt)
+{
+	for (const Protocol::PosInfo& pos : MonsterPkt.monsters())
+	{
+		const int64 objectId = pos.object_id();
+
+		AASCharacterBase** BasePtr = Players.Find(objectId);
+		if (BasePtr == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[MONSTER_MOVE] objectId %lld not found in Players map!"), objectId);
+			continue;
+		}
+
+
+		AASCharacterNonPlayer* Monster = Cast<AASCharacterNonPlayer>(*BasePtr);
+		if (Monster == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[MONSTER_MOVE] objectId %lld is not a Monster!"), objectId);
+			continue;
+		}
+		Monster->SetTargetPos(pos);
+	}
 }

@@ -92,4 +92,6 @@ protected:
 	FAICharacterAttackFinished OnAttackFinished;
 
 	virtual void NotifyComboActionEnd() override;
+public:
+	void SetTargetPos(const Protocol::PosInfo& pos);
 };

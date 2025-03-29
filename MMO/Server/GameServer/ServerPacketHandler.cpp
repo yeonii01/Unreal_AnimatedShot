@@ -44,46 +44,56 @@ bool Handle_C_LOGIN(PacketSessionRef& session, Protocol::C_LOGIN& pkt)
 
 bool Handle_C_ENTER_GAME(PacketSessionRef& session, Protocol::C_ENTER_GAME& pkt)
 {
+	static bool bMonsterSpawned = false;
 	// 플레이어 생성
 	ObjectRef object = ObjectUtils::CreateObject(static_pointer_cast<GameSession>(session), Protocol::CREATURE_TYPE_PLAYER);
 	//PlayerRef player = dynamic_pointer_cast<Player>(object);
 	// 방에 입장
 	GRoom->DoAsync(&Room::HandleEnterObject, object);
 
-	for (int i = 0; i < 13; ++i)
+	if (!bMonsterSpawned)
 	{
-		ObjectRef monObj = ObjectUtils::CreateObject(nullptr, Protocol::CREATURE_TYPE_MONSTER);
-		MonsterRef monster = dynamic_pointer_cast<Monster>(monObj);
-		auto pos = new Protocol::PosInfo();
-		switch (i)
+		for (int i = 0; i < 2; ++i)
 		{
-		case 0:
-			pos->set_x(4920.0);
-			pos->set_y(7360.000016);
-			pos->set_z(306.00001);
-			pos->set_yaw(-90.f);
-			pos->set_hp(150.f);
-			break;
-		case 1:
-			pos->set_x(5979.999897);
-			pos->set_y(6967.698496);
-			pos->set_z(507.698568);
-			pos->set_yaw(90.f);
-			pos->set_hp(150.f);
-			break;
-		default:
-			pos->set_x(0);
-			pos->set_y(0);
-			pos->set_z(0);
-			pos->set_yaw(0);
-			pos->set_hp(0);
-			break;
+			ObjectRef monObj = ObjectUtils::CreateObject(nullptr, Protocol::CREATURE_TYPE_MONSTER);
+			MonsterRef monster = dynamic_pointer_cast<Monster>(monObj);
+			auto pos = new Protocol::PosInfo();
+			switch (i)
+			{
+			case 0:
+				pos->set_x(4920.0);
+				pos->set_y(7360.000016);
+				pos->set_z(306.00001);
+				pos->set_yaw(-90.f);
+				pos->set_hp(150.f);
+				break;
+			case 1:
+				pos->set_x(5979.999897);
+				pos->set_y(6967.698496);
+				pos->set_z(507.698568);
+				pos->set_yaw(90.f);
+				pos->set_hp(150.f);
+				break;
+			default:
+				pos->set_x(0);
+				pos->set_y(0);
+				pos->set_z(0);
+				pos->set_yaw(0);
+				pos->set_hp(0);
+				break;
+			}
+			monster->objectInfo->set_allocated_pos_info(pos);
+			GRoom->DoAsync(&Room::HandleEnterObject, monObj);
 		}
-		monster->objectInfo->set_allocated_pos_info(pos);
-		GRoom->DoAsync(&Room::HandleEnterObject, monObj);
+		bMonsterSpawned = true;
 	}
 	//GRoom->HandleEnterPlayerLocked(player);
 
+	return true;
+}
+
+bool Handle_C_REGISTER_MONSTER(PacketSessionRef& session, Protocol::C_REGISTER_MONSTER& pkt)
+{
 	return true;
 }
 
@@ -119,6 +129,11 @@ bool Handle_C_MOVE(PacketSessionRef& session, Protocol::C_MOVE& pkt)
 	room->DoAsync(&Room::HandleMove, pkt);
 	//room->HandleMove(pkt);
 
+	return true;
+}
+
+bool Handle_C_MONSTER_MOVE(PacketSessionRef& session, Protocol::C_MONSTER_MOVE& pkt)
+{
 	return true;
 }
 

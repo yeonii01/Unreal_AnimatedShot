@@ -26,6 +26,11 @@ message S_ENTER_GAME
 	ObjectInfo player = 2;
 }
 
+message C_REGISTER_MONSTER
+{
+	repeated ObjectInfo monsters = 1;
+}
+
 message C_LEAVE_GAME
 {
 
@@ -55,6 +60,16 @@ message C_MOVE
 message S_MOVE
 {
 	PosInfo info = 1;
+}
+
+message S_MONSTER_MOVE
+{
+	repeated PosInfo monsters = 1;
+}
+
+message C_MONSTER_MOVE
+{
+	repeated PosInfo monsters = 1;
 }
 
 message C_CHAT

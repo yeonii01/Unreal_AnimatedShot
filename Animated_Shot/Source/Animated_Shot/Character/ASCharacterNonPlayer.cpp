@@ -7,8 +7,10 @@
 #include "AI/ASAIController.h"
 #include "Components/DecalComponent.h"
 #include "CharacterStat/ASCharacterStatComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "ASComboActionData.h"
 #include "../Item/ASItemBase.h"
+#include "AI/ASAI.h"
 #include "../Item/ASCoin.h"
 
 AASCharacterNonPlayer::AASCharacterNonPlayer()
@@ -316,4 +318,17 @@ void AASCharacterNonPlayer::NotifyComboActionEnd()
 {
 	Super::NotifyComboActionEnd();
 	OnAttackFinished.ExecuteIfBound();
+}
+
+void AASCharacterNonPlayer::SetTargetPos(const Protocol::PosInfo& pos)
+{
+	AAIController* AICon = Cast<AAIController>(GetController());
+	if (AICon == nullptr)
+		return;
+
+	UBlackboardComponent* BB = AICon->GetBlackboardComponent();
+	if (BB == nullptr)
+		return;
+	UE_LOG(LogTemp, Warning, TEXT("[SET] PosInfo (%.2f, %.2f, %.2f)"), pos.x(), pos.y(), pos.z());
+	BB->SetValueAsVector(BBKEY_PATROLPOS, FVector(pos.x(), pos.y(), pos.z()));
 }
