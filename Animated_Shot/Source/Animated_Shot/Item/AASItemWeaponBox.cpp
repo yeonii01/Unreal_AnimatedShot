@@ -12,6 +12,9 @@
 #include "Item/ASItemData.h"
 #include "CharacterStat/ASCharacterStatComponent.h"
 #include "Item/ASWeaponItemData.h"
+#include "Animated_Shot.h"
+#include "Network/ASGameInstance.h"
+#include "Character/ASCharacterPlayer.h"
 
 AAASItemWeaponBox::AAASItemWeaponBox()
 {
@@ -41,17 +44,30 @@ void AAASItemWeaponBox::Tick(float DeltaTime)
 		AASPlayerController* PlayerController = Cast<AASPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 		if (PlayerController && PlayerController->IsInputKeyDown(EKeys::Q))
 		{
-			SelectWeapon(0);
+			SelectWeapon(0, OverlapActor);
+			Protocol::C_PARTY_WEAPON WeaponPkt;
+			{
+				WeaponPkt.set_weapon(false);
+			}
+			SEND_PACKET(WeaponPkt);
 		}
 		if (PlayerController && PlayerController->IsInputKeyDown(EKeys::E))
 		{
-			SelectWeapon(1);
+			SelectWeapon(1, OverlapActor);
+			Protocol::C_PARTY_WEAPON WeaponPkt;
+			{
+				WeaponPkt.set_weapon(true);
+			}
+			SEND_PACKET(WeaponPkt);
 		}
 	}
 }
 
 void AAASItemWeaponBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult)
 {
+	AASCharacterBase* Player = Cast<AASCharacterBase>(OtherActor);
+	if (!Player->IsMyPlayer())
+		return;
 	if (!bIsOpening)
 	{
 		Effect->Activate(true);
@@ -94,7 +110,7 @@ void AAASItemWeaponBox::OpenBox()
 	}
 }
 
-void AAASItemWeaponBox::SelectWeapon(int _key)
+void AAASItemWeaponBox::SelectWeapon(int _key, AActor* Party)
 {
 	if (SpawnWeapons.IsEmpty())
 		return;
@@ -103,7 +119,11 @@ void AAASItemWeaponBox::SelectWeapon(int _key)
 		return;
 
 	SpawnWeapons[_key]->IsInBox = false;
-	SpawnWeapons[_key]->PickUp(OverlapActor);
+	if(Party == nullptr)
+		SpawnWeapons[_key]->PickUp(OverlapActor);
+	else
+		SpawnWeapons[_key]->PickUp(Party);
+
 
 	for (auto& iter : SpawnWeapons)
 	{

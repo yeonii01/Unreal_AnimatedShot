@@ -62,6 +62,17 @@ message S_MOVE
 	PosInfo info = 1;
 }
 
+message S_PARTY_WEAPON
+{
+	uint64 playerId = 1;
+	bool weapon = 2;
+}
+
+message C_PARTY_WEAPON
+{
+	bool weapon = 1;
+}
+
 message S_MONSTER_MOVE
 {
 	repeated PosInfo monsters = 1;

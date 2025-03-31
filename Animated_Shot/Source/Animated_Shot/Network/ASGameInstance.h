@@ -43,6 +43,8 @@ public:
 
 	void HandleMove(const Protocol::S_MOVE& MovePkt);
 	void HandleMonsterMove(const Protocol::S_MONSTER_MOVE& MonsterPkt);
+
+	void HandleRegisterWeapon(const Protocol::S_PARTY_WEAPON& WeaponPkt);
 public:
 	//GameServer
 	class FSocket* Socket;

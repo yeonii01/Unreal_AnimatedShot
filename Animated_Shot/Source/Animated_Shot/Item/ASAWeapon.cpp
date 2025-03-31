@@ -68,10 +68,7 @@ void AASAWeapon::PickUp(AActor* Actor)
     if (IsInBox || !IsValid(Actor))
         return;
 
-    AASCharacterPlayer* Player = Cast<AASCharacterPlayer>(Actor);
-
-    if (!IsValid(Player))
-        return;
+    AASCharacterBase* Player = Cast<AASCharacterBase>(Actor);
 
     if (Player->IsEquipWeapon())
         Super::PickUp(Actor);

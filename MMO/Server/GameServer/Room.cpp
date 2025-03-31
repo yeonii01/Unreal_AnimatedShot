@@ -149,7 +149,6 @@ void Room::HandleMove(Protocol::C_MOVE pkt)
 	PlayerRef player = dynamic_pointer_cast<Player>(_objects[objectId]);
 	player->posInfo->CopyFrom(pkt.info());
 
-	// 이동 사실을 알린다 (본인 포함? 빼고?)
 	{
 		Protocol::S_MOVE movePkt;
 		{
@@ -159,6 +158,20 @@ void Room::HandleMove(Protocol::C_MOVE pkt)
 		SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(movePkt);
 		Broadcast(sendBuffer);
 	}
+}
+
+void Room::HandleRegisterWeapon(PlayerRef player, Protocol::C_PARTY_WEAPON pkt)
+{
+	if (player == nullptr)
+		return;
+
+	Protocol::S_PARTY_WEAPON weaponPkt;
+	{
+		weaponPkt.set_playerid(player->posInfo->object_id());
+		weaponPkt.set_weapon(pkt.weapon());
+	}
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(weaponPkt);
+	Broadcast(sendBuffer);
 }
 
 void Room::UpdateTick()

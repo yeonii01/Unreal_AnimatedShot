@@ -14,6 +14,7 @@ public:
 	bool HandleEnterObject(ObjectRef object);
 	bool HandleLeavePlayer(PlayerRef player);
 	void HandleMove(Protocol::C_MOVE pkt);
+	void HandleRegisterWeapon(PlayerRef Player, Protocol::C_PARTY_WEAPON pkt);
 
 public:
 	void UpdateTick();

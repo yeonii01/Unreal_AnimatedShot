@@ -132,6 +132,22 @@ bool Handle_C_MOVE(PacketSessionRef& session, Protocol::C_MOVE& pkt)
 	return true;
 }
 
+bool Handle_C_PARTY_WEAPON(PacketSessionRef& session, Protocol::C_PARTY_WEAPON& pkt)
+{
+	auto gameSession = static_pointer_cast<GameSession>(session);
+
+	PlayerRef player = gameSession->player.load();
+	if (player == nullptr)
+		return false;
+
+	RoomRef room = player->room.load().lock();
+	if (room == nullptr)
+		return false;
+
+	room->DoAsync(&Room::HandleRegisterWeapon,player, pkt);
+	return true;
+}
+
 bool Handle_C_MONSTER_MOVE(PacketSessionRef& session, Protocol::C_MONSTER_MOVE& pkt)
 {
 	return true;

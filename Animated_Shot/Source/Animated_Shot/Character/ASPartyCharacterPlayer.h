@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/ASCharacterBase.h"
+#include "Item/AASItemWeaponBox.h"
 #include "ASPartyCharacterPlayer.generated.h"
 
 /**
@@ -23,8 +24,13 @@ protected:
 
 public:
 	void PlayDamageMontage();
+	void EquipWeapon(bool index);
 
+	void SetWeaponBox(AAASItemWeaponBox* InWeaponBox) { WeaponBox = InWeaponBox; }
 private:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = Animation, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> DamageMontage;
+
+private:
+	AAASItemWeaponBox* WeaponBox;
 };

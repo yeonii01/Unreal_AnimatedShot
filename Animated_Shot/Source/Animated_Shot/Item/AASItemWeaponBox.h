@@ -32,10 +32,10 @@ private:
 
 	TArray<AASAWeapon*> SpawnWeapons;
 
+public:
 	UFUNCTION()
 	void OpenBox();
 
 	UFUNCTION()
-	void SelectWeapon(int _key);
-	
+	void SelectWeapon(int _key, AActor* Party);
 };

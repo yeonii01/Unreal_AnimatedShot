@@ -2,6 +2,7 @@
 
 
 #include "Character/ASPartyCharacterPlayer.h"
+#include "Kismet/GameplayStatics.h"
 
 AASPartyCharacterPlayer::AASPartyCharacterPlayer()
 {
@@ -23,7 +24,7 @@ AASPartyCharacterPlayer::AASPartyCharacterPlayer()
 void AASPartyCharacterPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-
+	WeaponBox = Cast<AAASItemWeaponBox>(UGameplayStatics::GetActorOfClass(GetWorld(), AAASItemWeaponBox::StaticClass()));
 }
 
 void AASPartyCharacterPlayer::Tick(float DeltaTime)
@@ -43,3 +44,8 @@ void AASPartyCharacterPlayer::PlayDamageMontage()
 	}
 }
 
+void AASPartyCharacterPlayer::EquipWeapon(bool index)
+{
+	WeaponBox->OpenBox();
+	WeaponBox->SelectWeapon(index, this);
+}

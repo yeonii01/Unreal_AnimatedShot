@@ -244,3 +244,19 @@ void UASGameInstance::HandleMonsterMove(const Protocol::S_MONSTER_MOVE& MonsterP
 		Monster->SetTargetPos(pos);
 	}
 }
+
+void UASGameInstance::HandleRegisterWeapon(const Protocol::S_PARTY_WEAPON& WeaponPkt)
+{
+	AASCharacterBase** FindActor = Players.Find(WeaponPkt.playerid());
+	if (FindActor == nullptr || *FindActor == nullptr)
+		return;
+
+	AASPartyCharacterPlayer* Player = Cast<AASPartyCharacterPlayer>(*FindActor);
+	if (Player == nullptr)
+		return;
+
+	if (Player->IsMyPlayer())
+		return;
+
+	Player->EquipWeapon(WeaponPkt.weapon());
+}

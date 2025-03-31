@@ -24,10 +24,12 @@ enum : uint16
 	PKT_S_DESPAWN = 1008,
 	PKT_C_MOVE = 1009,
 	PKT_S_MOVE = 1010,
-	PKT_S_MONSTER_MOVE = 1011,
-	PKT_C_MONSTER_MOVE = 1012,
-	PKT_C_CHAT = 1013,
-	PKT_S_CHAT = 1014,
+	PKT_S_PARTY_WEAPON = 1011,
+	PKT_C_PARTY_WEAPON = 1012,
+	PKT_S_MONSTER_MOVE = 1013,
+	PKT_C_MONSTER_MOVE = 1014,
+	PKT_C_CHAT = 1015,
+	PKT_S_CHAT = 1016,
 };
 
 // Custom Handlers
@@ -38,6 +40,7 @@ bool Handle_S_LEAVE_GAME(PacketSessionRef& session, Protocol::S_LEAVE_GAME& pkt)
 bool Handle_S_SPAWN(PacketSessionRef& session, Protocol::S_SPAWN& pkt);
 bool Handle_S_DESPAWN(PacketSessionRef& session, Protocol::S_DESPAWN& pkt);
 bool Handle_S_MOVE(PacketSessionRef& session, Protocol::S_MOVE& pkt);
+bool Handle_S_PARTY_WEAPON(PacketSessionRef& session, Protocol::S_PARTY_WEAPON& pkt);
 bool Handle_S_MONSTER_MOVE(PacketSessionRef& session, Protocol::S_MONSTER_MOVE& pkt);
 bool Handle_S_CHAT(PacketSessionRef& session, Protocol::S_CHAT& pkt);
 
@@ -54,6 +57,7 @@ public:
 		GPacketHandler[PKT_S_SPAWN] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_SPAWN>(Handle_S_SPAWN, session, buffer, len); };
 		GPacketHandler[PKT_S_DESPAWN] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_DESPAWN>(Handle_S_DESPAWN, session, buffer, len); };
 		GPacketHandler[PKT_S_MOVE] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_MOVE>(Handle_S_MOVE, session, buffer, len); };
+		GPacketHandler[PKT_S_PARTY_WEAPON] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_PARTY_WEAPON>(Handle_S_PARTY_WEAPON, session, buffer, len); };
 		GPacketHandler[PKT_S_MONSTER_MOVE] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_MONSTER_MOVE>(Handle_S_MONSTER_MOVE, session, buffer, len); };
 		GPacketHandler[PKT_S_CHAT] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_CHAT>(Handle_S_CHAT, session, buffer, len); };
 	}
@@ -68,6 +72,7 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::C_REGISTER_MONSTER& pkt) { return MakeSendBuffer(pkt, PKT_C_REGISTER_MONSTER); }
 	static SendBufferRef MakeSendBuffer(Protocol::C_LEAVE_GAME& pkt) { return MakeSendBuffer(pkt, PKT_C_LEAVE_GAME); }
 	static SendBufferRef MakeSendBuffer(Protocol::C_MOVE& pkt) { return MakeSendBuffer(pkt, PKT_C_MOVE); }
+	static SendBufferRef MakeSendBuffer(Protocol::C_PARTY_WEAPON& pkt) { return MakeSendBuffer(pkt, PKT_C_PARTY_WEAPON); }
 	static SendBufferRef MakeSendBuffer(Protocol::C_MONSTER_MOVE& pkt) { return MakeSendBuffer(pkt, PKT_C_MONSTER_MOVE); }
 	static SendBufferRef MakeSendBuffer(Protocol::C_CHAT& pkt) { return MakeSendBuffer(pkt, PKT_C_CHAT); }
 
