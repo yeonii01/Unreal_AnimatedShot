@@ -9,26 +9,38 @@
 #include "Gimmick/QuestSystem.h"
 #include "Kismet/GameplayStatics.h"
 
-// Sets default values
+
 AASSpawner::AASSpawner()
 {
 	//Stage Stat
 	CurrentStageNum = 1;
+	//PrimaryActorTick.bCanEverTick = true;
 }
 
-// Called when the game starts or when spawned
 void AASSpawner::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	OnOpponentSpawn();
 }
 
-// Called every frame
 void AASSpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	TimeAccumulator += DeltaTime;
 
+	if (TimeAccumulator >= ActionInterval)
+	{
+		if (ASOpponentCharacter)
+		{
+			Protocol::PosInfo pos;
+			pos.set_x(0);
+			pos.set_y(0);
+			pos.set_z(0);
+			ASOpponentCharacter->SetTargetPos(pos);
+			TimeAccumulator = 0.0f;
+		}
+	}
 }
 
 void AASSpawner::OnOpponentDestroyed(AActor* DestroyedActor)
@@ -42,13 +54,13 @@ void AASSpawner::OnOpponentDestroyed(AActor* DestroyedActor)
 
 void AASSpawner::OnOpponentSpawn()
 {
-	FRotator SpawnRotation = FRotator(0.f, -90.f, 0.f);
+	FRotator SpawnRotation = FRotator(90.f, 0.f, 0.f);
 	const FTransform SpawnTransform(SpawnRotation, GetActorLocation() + FVector::UpVector * 88.f);
-	AASCharacterNonPlayer* ASOpponentCharacter = GetWorld()->SpawnActorDeferred<AASCharacterNonPlayer>(OpponentClass, SpawnTransform);
+	 ASOpponentCharacter = GetWorld()->SpawnActorDeferred<AASCharacterNonPlayer>(OpponentClass, SpawnTransform);
 	if (ASOpponentCharacter)
 	{
 		ASOpponentCharacter->OnDestroyed.AddDynamic(this, &AASSpawner::OnOpponentDestroyed);
-		ASOpponentCharacter->SetLevel(CurrentStageNum);		//npc 레벨 설정
+		ASOpponentCharacter->SetLevel(CurrentStageNum);	
 		ASOpponentCharacter->FinishSpawning(SpawnTransform);
 	}
 }

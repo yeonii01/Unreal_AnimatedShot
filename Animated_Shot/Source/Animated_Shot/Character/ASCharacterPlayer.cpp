@@ -97,7 +97,7 @@ AASCharacterPlayer::AASCharacterPlayer()
 	/** 미니맵용 스프링암 생성 */
 	MinimapSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("MinimapSpringArm"));
 	MinimapSpringArm->SetupAttachment(RootComponent);
-	MinimapSpringArm->TargetArmLength = 3500.0f; // 위쪽으로 멀리 떨어진 거리
+	MinimapSpringArm->TargetArmLength = 5000.0f; // 위쪽으로 멀리 떨어진 거리
 	MinimapSpringArm->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f)); // 아래를 바라보도록 회전
 	MinimapSpringArm->bDoCollisionTest = false;
 	MinimapSpringArm->bEnableCameraLag = false;
@@ -107,12 +107,11 @@ AASCharacterPlayer::AASCharacterPlayer()
 	MinimapSpringArm->bInheritYaw = false;
 	MinimapSpringArm->bInheritRoll = false;
 
-
 	/** Scene Capture Component 생성 */
 	MinimapCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("MinimapCapture"));
 	MinimapCapture->SetupAttachment(MinimapSpringArm);
 	MinimapCapture->ProjectionType = ECameraProjectionMode::Orthographic;
-	MinimapCapture->OrthoWidth = 3000.0f; // 미니맵의 범위
+	MinimapCapture->OrthoWidth = 5000.0f; // 미니맵의 범위
 	MinimapCapture->bCaptureEveryFrame = true;
 	MinimapCapture->bCaptureOnMovement = true;
 
@@ -174,11 +173,10 @@ void AASCharacterPlayer::BeginPlay()
 		MinimapCapture->TextureTarget = MinimapCanvasRenderTarget;
 	}
 
-	// 플레이어 카메라 가져오기
 	CameraComponent = FindComponentByClass<UCameraComponent>();
 	if (CameraComponent)
 	{
-		DefaultFOV = CameraComponent->FieldOfView; // 기본 FOV 저장
+		DefaultFOV = CameraComponent->FieldOfView; 
 	}
 
 	SetActorTickEnabled(true);

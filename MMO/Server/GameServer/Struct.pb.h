@@ -189,6 +189,7 @@ class PosInfo final :
     kYawFieldNumber = 5,
     kHpFieldNumber = 6,
     kStateFieldNumber = 7,
+    kNumFieldNumber = 8,
   };
   // uint64 object_id = 1;
   void clear_object_id();
@@ -253,6 +254,15 @@ class PosInfo final :
   void _internal_set_state(::Protocol::MoveState value);
   public:
 
+  // uint64 num = 8;
+  void clear_num();
+  uint64_t num() const;
+  void set_num(uint64_t value);
+  private:
+  uint64_t _internal_num() const;
+  void _internal_set_num(uint64_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.PosInfo)
  private:
   class _Internal;
@@ -268,6 +278,7 @@ class PosInfo final :
     float yaw_;
     float hp_;
     int state_;
+    uint64_t num_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -612,6 +623,26 @@ inline void PosInfo::_internal_set_state(::Protocol::MoveState value) {
 inline void PosInfo::set_state(::Protocol::MoveState value) {
   _internal_set_state(value);
   // @@protoc_insertion_point(field_set:Protocol.PosInfo.state)
+}
+
+// uint64 num = 8;
+inline void PosInfo::clear_num() {
+  _impl_.num_ = uint64_t{0u};
+}
+inline uint64_t PosInfo::_internal_num() const {
+  return _impl_.num_;
+}
+inline uint64_t PosInfo::num() const {
+  // @@protoc_insertion_point(field_get:Protocol.PosInfo.num)
+  return _internal_num();
+}
+inline void PosInfo::_internal_set_num(uint64_t value) {
+  
+  _impl_.num_ = value;
+}
+inline void PosInfo::set_num(uint64_t value) {
+  _internal_set_num(value);
+  // @@protoc_insertion_point(field_set:Protocol.PosInfo.num)
 }
 
 // -------------------------------------------------------------------

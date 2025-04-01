@@ -20,73 +20,73 @@ AASCharacterNonPlayer::AASCharacterNonPlayer()
 	AIControllerClass = AASAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-	//AnimClasses.SetNum(12);
-	//DeadMontages.SetNum(12);
-	//ComboActionMontages.SetNum(12);
+	AnimClasses.SetNum(11);
+	DeadMontages.SetNum(12);
+	ComboActionMontages.SetNum(12);
+	NPCMeshes.SetNum(12);
 
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand0(TEXT("/Game/Monster/Animation/Beez/ABP_AS_Beez1.ABP_AS_Beez1_C"));
-	//static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand1(TEXT("/Game/Monster/Animation/DevilTree/ABP_AS_Deviltree1.ABP_AS_Deviltree1_C"));
-	//static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand2(TEXT("/Game/Monster/Animation/FlowerDyad/ABP_AS_FlowerDyad1.ABP_AS_FlowerDyad1_C"));
-	//static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand3(TEXT("/Game/Monster/Animation/PlantaGeezer/ABP_AS_Planta1.ABP_AS_Planta1_C"));
-	//static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand4(TEXT("/Game/Monster/Animation/PlantaKid/ABP_AS_PlantaKid.ABP_AS_PlantaKid_C"));
-	//static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand5(TEXT("/Game/Monster/Animation/PlantaGeezer/ABP_AS_Planta1.ABP_AS_Planta1_C"));
-	//static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand6(TEXT("/Game/Monster/Animation/PlantaShadow/ABP_AS_PlantaShadow.ABP_AS_PlantaShadow_C"));
-	//static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand7(TEXT("/Game/Monster/Animation/PlantaSlave/ABP_AS_PlantaSlave.ABP_AS_PlantaSlave_C"));
-	//static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand8(TEXT("/Game/Monster/Animation/Rabby/ABP_AS_Rabby.ABP_AS_Rabby_C"));
-	//static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand9(TEXT("/Game/Monster/Animation/RabbyQueen/ABP_AS_RabbyQueen.ABP_AS_RabbyQueen_C"));
-	//static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand10(TEXT("/Game/Monster/Animation/RabbyYoung/ABP_AS_RabbyYoung.ABP_AS_RabbyYoung_C"));
-	//static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand11(TEXT("/Game/Monster/Animation/Turnipa/ABP_AS_Turnipa.ABP_AS_Turnipa_C"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand1(TEXT("/Game/Monster/Animation/DevilTree/ABP_AS_Deviltree1.ABP_AS_Deviltree1_C"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand2(TEXT("/Game/Monster/Desert/Animation/Anto/ABP_AS_Anto.ABP_AS_Anto"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand4(TEXT("/Game/Monster/Desert/Animation/Cactuso/ABP_AS_Cactuso.ABP_AS_Cactuso"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand3(TEXT("/Game/Monster/Animation/PlantaGeezer/ABP_AS_Planta1.ABP_AS_Planta1_C"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand5(TEXT("/Game/Monster/Animation/PlantaQueen/ABP_AS_Planta2.ABP_AS_Planta2"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand6(TEXT("/Game/Monster/Animation/PlantaShadow/ABP_AS_Planta3.ABP_AS_Planta3"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand7(TEXT("/Game/Monster/Desert/Animation/Wormo/ABP_AS_Worm.ABP_AS_Worm"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRefRand8(TEXT("/Game/Monster/Desert/Animation/Golem_Child/ABP_AS_GolemChild.ABP_AS_GolemChild"));
 
-	AnimClasses = AnimInstanceClassRefRand0.Class;
-	//AnimClasses[1] = AnimInstanceClassRefRand1.Class;
-	//AnimClasses[2] = AnimInstanceClassRefRand2.Class;
-	//AnimClasses[3] = AnimInstanceClassRefRand3.Class;
-	//AnimClasses[4] = AnimInstanceClassRefRand4.Class;
-	//AnimClasses[5] = AnimInstanceClassRefRand5.Class;
-	//AnimClasses[6] = AnimInstanceClassRefRand6.Class;
-	//AnimClasses[7] = AnimInstanceClassRefRand7.Class;
-	//AnimClasses[8] = AnimInstanceClassRefRand8.Class;
-	//AnimClasses[9] = AnimInstanceClassRefRand9.Class;
-	//AnimClasses[10] = AnimInstanceClassRefRand10.Class;
-	//AnimClasses[11] = AnimInstanceClassRefRand11.Class;
+	AnimClasses[0] = AnimInstanceClassRefRand0.Class;
+	AnimClasses[1] = AnimInstanceClassRefRand1.Class;
+	AnimClasses[2] = AnimInstanceClassRefRand2.Class;
+	AnimClasses[3] = AnimInstanceClassRefRand3.Class;
+	AnimClasses[4] = AnimInstanceClassRefRand4.Class;
+	AnimClasses[5] = AnimInstanceClassRefRand5.Class;
+	AnimClasses[6] = AnimInstanceClassRefRand6.Class;
+	AnimClasses[7] = AnimInstanceClassRefRand7.Class;
+	AnimClasses[8] = AnimInstanceClassRefRand8.Class;
+
 
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand0(TEXT("/Game/Monster/Animation/Beez/DeadMontage.DeadMontage"));
-	//static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand1(TEXT("/Game/Monster/Animation/DevilTree/DeadMontage.DeadMontage"));
-	//static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand2(TEXT("/Game/Monster/Animation/FlowerDyad/DeadMontage.DeadMontage"));
-	//static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand3(TEXT("/Game/Monster/Animation/PlantaGeezer/DeadMontage.DeadMontage"));
-	//static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand4(TEXT("/Game/Monster/Animation/PlantaKid/DeadMontage.DeadMontage"));
-	//static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand5(TEXT("/Game/Monster/Animation/PlantaQueen/DeadMontage.DeadMontage"));
-	//static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand6(TEXT("/Game/Monster/Animation/PlantaShadow/DeadMontage.DeadMontage"));
-	//static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand7(TEXT("/Game/Monster/Animation/PlantaSlave/DeadMontage.DeadMontage"));
-	//static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand8(TEXT("/Game/Monster/Animation/Rabby/DeadMontage.DeadMontage"));
-	//static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand9(TEXT("/Game/Monster/Animation/RabbyQueen/DeadMontage.DeadMontage"));
-	//static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand10(TEXT("/Game/Monster/Animation/RabbyYoung/DeadMontage.DeadMontage"));
-	//static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand11(TEXT("/Game/Monster/Animation/Turnipa/DeadMontage.DeadMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand1(TEXT("/Game/Monster/Animation/DevilTree/DeadMontage.DeadMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand2(TEXT("/Game/Monster/Desert/Animation/Anto/Anto_DeadMontage.Anto_DeadMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand3(TEXT("/Game/Monster/Desert/Animation/Cactuso/CC_DeadMontage.CC_DeadMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand4(TEXT("/Game/Monster/Animation/PlantaGeezer/DeadMontage.DeadMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand5(TEXT("/Game/Monster/Animation/PlantaGeezer/DeadMontage.DeadMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand6(TEXT("/Game/Monster/Animation/PlantaGeezer/DeadMontage.DeadMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand7(TEXT("/Game/Monster/Desert/Animation/Wormo/Wormo_DeadkMontage.Wormo_DeadkMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRefRand8(TEXT("/Game/Monster/Desert/Animation/Golem_Child/Child_DeadMontage.Child_DeadMontage"));
 
-	DeadMontages = DeadMontageRefRand0.Object;
-	//DeadMontages[1] = DeadMontageRefRand1.Object;
-	//DeadMontages[2] = DeadMontageRefRand2.Object;
-	//DeadMontages[3] = DeadMontageRefRand3.Object;
-	//DeadMontages[4] = DeadMontageRefRand4.Object;
-	//DeadMontages[5] = DeadMontageRefRand5.Object;
-	//DeadMontages[6] = DeadMontageRefRand6.Object;
-	//DeadMontages[7] = DeadMontageRefRand7.Object;
-	//DeadMontages[8] = DeadMontageRefRand8.Object;
-	//DeadMontages[9] = DeadMontageRefRand9.Object;
-	//DeadMontages[10] = DeadMontageRefRand10.Object;
-	//DeadMontages[11] = DeadMontageRefRand11.Object;
+
+	DeadMontages[0] = DeadMontageRefRand0.Object;
+	DeadMontages[1] = DeadMontageRefRand1.Object;
+	DeadMontages[2] = DeadMontageRefRand2.Object;
+	DeadMontages[3] = DeadMontageRefRand3.Object;
+	DeadMontages[4] = DeadMontageRefRand4.Object;
+	DeadMontages[5] = DeadMontageRefRand5.Object;
+	DeadMontages[6] = DeadMontageRefRand6.Object;
+	DeadMontages[7] = DeadMontageRefRand7.Object;
+	DeadMontages[8] = DeadMontageRefRand8.Object;
+
 
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand0(TEXT("/Game/Monster/Animation/Beez/AM_AttackMontage.AM_AttackMontage"));
-	//static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand1(TEXT("/Game/Monster/Animation/DevilTree/AM_AttackMontage.AM_AttackMontage"));
-	//static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand2(TEXT("/Game/Monster/Animation/FlowerDyad/AM_AttackMontage.AM_AttackMontage"));
-	//static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand3(TEXT("/Game/Monster/Animation/PlantaGeezer/AM_AttackMontage.AM_AttackMontage"));
-	//static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand5(TEXT("/Game/Monster/Animation/PlantaGeezer/AM_AttackMontage.AM_AttackMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand1(TEXT("/Game/Monster/Animation/DevilTree/AM_AttackMontage.AM_AttackMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand2(TEXT("/Game/Monster/Desert/Animation/Anto/Anto_AttackMontage.Anto_AttackMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand3(TEXT("/Game/Monster/Desert/Animation/Cactuso/CC_AttackMontage.CC_AttackMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand4(TEXT("/Game/Monster/Animation/PlantaGeezer/AM_AttackMontage.AM_AttackMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand5(TEXT("/Game/Monster/Animation/PlantaGeezer/AM_AttackMontage.AM_AttackMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand6(TEXT("/Game/Monster/Animation/PlantaGeezer/AM_AttackMontage.AM_AttackMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand7(TEXT("/Game/Monster/Desert/Animation/Wormo/Wormo_AttackMontage.Wormo_AttackMontage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRefRand8(TEXT("/Game/Monster/Desert/Animation/Golem_Child/Child_AttackMontage.Child_AttackMontage"));
 
-	ComboActionMontages = ComboActionMontageRefRand0.Object;
-	//ComboActionMontages[1] = ComboActionMontageRefRand1.Object;
-	//ComboActionMontages[2] = ComboActionMontageRefRand2.Object;
-	//ComboActionMontages[3] = ComboActionMontageRefRand3.Object;
-	//ComboActionMontages[5] = ComboActionMontageRefRand5.Object;
+	ComboActionMontages[0] = ComboActionMontageRefRand0.Object;
+	ComboActionMontages[1] = ComboActionMontageRefRand1.Object;
+	ComboActionMontages[2] = ComboActionMontageRefRand2.Object;
+	ComboActionMontages[3] = ComboActionMontageRefRand3.Object;
+	ComboActionMontages[4] = ComboActionMontageRefRand4.Object;
+	ComboActionMontages[5] = ComboActionMontageRefRand5.Object;
+	ComboActionMontages[6] = ComboActionMontageRefRand6.Object;
+	ComboActionMontages[7] = ComboActionMontageRefRand7.Object;
+	ComboActionMontages[8] = ComboActionMontageRefRand8.Object;
 
 	//static ConstructorHelpers::FObjectFinder<UASComboActionData> ComboActionDataRef(TEXT("/Script/Animated_Shot.ASComboActionData'/Game/CharacterAction/ASA_ComboAttack1.ASA_ComboAttack1'"));
 	//if (ComboActionDataRef.Object)
@@ -105,8 +105,24 @@ AASCharacterNonPlayer::AASCharacterNonPlayer()
 		StaticMeshComponent->SetStaticMesh(PlaneMesh.Object);
 	}
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> NPCMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/Monster/Forest/Beez.Beez'"));
-	NPCMesh = NPCMeshRef.Object;
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> NPCMeshRef0(TEXT("/Script/Engine.SkeletalMesh'/Game/Monster/Forest/Beez.Beez'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> NPCMeshRef1(TEXT("/Script/Engine.SkeletalMesh'/Game/Monster/Forest/Devil_Tree.Devil_Tree'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> NPCMeshRef2(TEXT("/Script/Engine.SkeletalMesh'/Game/Monster/Desert/Anto.Anto'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> NPCMeshRef3(TEXT("/Script/Engine.SkeletalMesh'/Game/Monster/Desert/Cactuso.Cactuso'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> NPCMeshRef4(TEXT("/Script/Engine.SkeletalMesh'/Game/Monster/Forest/Planta_Geezer.Planta_Geezer'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> NPCMeshRef5(TEXT("/Script/Engine.SkeletalMesh'/Game/Monster/Forest/Planta_Queen.Planta_Queen'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> NPCMeshRef6(TEXT("/Script/Engine.SkeletalMesh'/Game/Monster/Forest/Planta_Shadow.Planta_Shadow'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> NPCMeshRef7(TEXT("/Script/Engine.SkeletalMesh'/Game/Monster/Desert/Wormo.Wormo'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> NPCMeshRef8(TEXT("/Script/Engine.SkeletalMesh'/Game/Monster/Desert/Golem_Child.Golem_Child'"));
+	NPCMeshes[0] = NPCMeshRef0.Object;
+	NPCMeshes[1] = NPCMeshRef1.Object;
+	NPCMeshes[2] = NPCMeshRef2.Object;
+	NPCMeshes[3] = NPCMeshRef3.Object;
+	NPCMeshes[4] = NPCMeshRef4.Object;
+	NPCMeshes[5] = NPCMeshRef5.Object;
+	NPCMeshes[6] = NPCMeshRef6.Object;
+	NPCMeshes[7] = NPCMeshRef7.Object;
+	NPCMeshes[8] = NPCMeshRef8.Object;
 	//// 머터리얼 로드 및 적용
 	//static ConstructorHelpers::FObjectFinder<UMaterialInterface> MaskedMaterial(TEXT("/Script/Engine.Material'/Game/Monster/M_AttackRange.M_AttackRange'"));
 	//if (MaskedMaterial.Succeeded())
@@ -140,24 +156,24 @@ void AASCharacterNonPlayer::PostInitializeComponents()
 	//		FStreamableDelegate::CreateUObject(this, &AASCharacterNonPlayer::NPCMeshLoadCompleted)
 	//	);
 	//
-	if (NPCMesh)
+	if (NPCMeshes[8])
 	{
-		GetMesh()->SetSkeletalMesh(NPCMesh);
+		GetMesh()->SetSkeletalMesh(NPCMeshes[8]);
 		GetMesh()->SetVisibility(true);
 	}
-	if (AnimClasses)
+	if (AnimClasses[8])
 	{
-		GetMesh()->SetAnimInstanceClass(AnimClasses);
+		GetMesh()->SetAnimInstanceClass(AnimClasses[8]);
 	}
 
-	if (DeadMontages)
+	if (DeadMontages[8])
 	{
-		DeadMontage = DeadMontages;
+		DeadMontage = DeadMontages[8];
 	}
 
-	if (ComboActionMontages)
+	if (ComboActionMontages[8])
 	{
-		ComboActionMontage = ComboActionMontages;
+		ComboActionMontage = ComboActionMontages[8];
 	}
 
 	UMaterialInterface* MaskedMaterial = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Monster/M_AttackRange.M_AttackRange"));
@@ -169,6 +185,29 @@ void AASCharacterNonPlayer::PostInitializeComponents()
 	StaticMeshComponent->SetRelativeScale3D(FVector(GetAIAttackRange() / 50.f, GetAIAttackRange() / 50.f, 1.f));
 
 	Stat->SetLevelStat(CurLevel);
+}
+
+void AASCharacterNonPlayer::SetNPC(int index)
+{
+	if (NPCMeshes[index])
+	{
+		GetMesh()->SetSkeletalMesh(NPCMeshes[index]);
+		GetMesh()->SetVisibility(true);
+	}
+	if (AnimClasses[index])
+	{
+		GetMesh()->SetAnimInstanceClass(AnimClasses[index]);
+	}
+
+	if (DeadMontages[index])
+	{
+		DeadMontage = DeadMontages[index];
+	}
+
+	if (ComboActionMontages[index])
+	{
+		ComboActionMontage = ComboActionMontages[index];
+	}
 }
 
 void AASCharacterNonPlayer::SetDead()
@@ -329,6 +368,20 @@ void AASCharacterNonPlayer::SetTargetPos(const Protocol::PosInfo& pos)
 	UBlackboardComponent* BB = AICon->GetBlackboardComponent();
 	if (BB == nullptr)
 		return;
-	UE_LOG(LogTemp, Warning, TEXT("[SET] PosInfo (%.2f, %.2f, %.2f)"), pos.x(), pos.y(), pos.z());
-	BB->SetValueAsVector(BBKEY_PATROLPOS, FVector(pos.x(), pos.y(), pos.z()));
+	FVector PatrolPos;
+	FVector Pos = FVector(pos.x(), pos.y(), pos.z());
+	if (!Pos.IsNearlyZero())
+	{
+		PatrolPos = FVector(pos.x(), pos.y(), pos.z());
+	}
+	else
+	{
+		float RandX = FMath::FRandRange(-500.f, 500.f);
+		float RandY = FMath::FRandRange(-500.f, 500.f);
+		PatrolPos = FVector(GetActorLocation().X + RandX, GetActorLocation().Y + RandY, GetActorLocation().Z);
+
+		UE_LOG(LogTemp, Warning, TEXT("[Fallback] No valid PosInfo! Generated random patrol pos: (%.2f, %.2f, %.2f)"),
+			PatrolPos.X, PatrolPos.Y, PatrolPos.Z);
+	}
+	BB->SetValueAsVector(BBKEY_PATROLPOS, PatrolPos);
 }

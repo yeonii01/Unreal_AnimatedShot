@@ -96,6 +96,9 @@ extern S_MOVEDefaultTypeInternal _S_MOVE_default_instance_;
 class S_PARTY_WEAPON;
 struct S_PARTY_WEAPONDefaultTypeInternal;
 extern S_PARTY_WEAPONDefaultTypeInternal _S_PARTY_WEAPON_default_instance_;
+class S_SERVER_TIME;
+struct S_SERVER_TIMEDefaultTypeInternal;
+extern S_SERVER_TIMEDefaultTypeInternal _S_SERVER_TIME_default_instance_;
 class S_SPAWN;
 struct S_SPAWNDefaultTypeInternal;
 extern S_SPAWNDefaultTypeInternal _S_SPAWN_default_instance_;
@@ -117,6 +120,7 @@ template<> ::Protocol::S_LOGIN* Arena::CreateMaybeMessage<::Protocol::S_LOGIN>(A
 template<> ::Protocol::S_MONSTER_MOVE* Arena::CreateMaybeMessage<::Protocol::S_MONSTER_MOVE>(Arena*);
 template<> ::Protocol::S_MOVE* Arena::CreateMaybeMessage<::Protocol::S_MOVE>(Arena*);
 template<> ::Protocol::S_PARTY_WEAPON* Arena::CreateMaybeMessage<::Protocol::S_PARTY_WEAPON>(Arena*);
+template<> ::Protocol::S_SERVER_TIME* Arena::CreateMaybeMessage<::Protocol::S_SERVER_TIME>(Arena*);
 template<> ::Protocol::S_SPAWN* Arena::CreateMaybeMessage<::Protocol::S_SPAWN>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace Protocol {
@@ -725,6 +729,154 @@ class S_ENTER_GAME final :
 };
 // -------------------------------------------------------------------
 
+class S_SERVER_TIME final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.S_SERVER_TIME) */ {
+ public:
+  inline S_SERVER_TIME() : S_SERVER_TIME(nullptr) {}
+  ~S_SERVER_TIME() override;
+  explicit PROTOBUF_CONSTEXPR S_SERVER_TIME(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  S_SERVER_TIME(const S_SERVER_TIME& from);
+  S_SERVER_TIME(S_SERVER_TIME&& from) noexcept
+    : S_SERVER_TIME() {
+    *this = ::std::move(from);
+  }
+
+  inline S_SERVER_TIME& operator=(const S_SERVER_TIME& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline S_SERVER_TIME& operator=(S_SERVER_TIME&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const S_SERVER_TIME& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const S_SERVER_TIME* internal_default_instance() {
+    return reinterpret_cast<const S_SERVER_TIME*>(
+               &_S_SERVER_TIME_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(S_SERVER_TIME& a, S_SERVER_TIME& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(S_SERVER_TIME* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(S_SERVER_TIME* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  S_SERVER_TIME* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<S_SERVER_TIME>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const S_SERVER_TIME& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const S_SERVER_TIME& from) {
+    S_SERVER_TIME::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(S_SERVER_TIME* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.S_SERVER_TIME";
+  }
+  protected:
+  explicit S_SERVER_TIME(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kServerTimeMsFieldNumber = 1,
+  };
+  // int64 server_time_ms = 1;
+  void clear_server_time_ms();
+  int64_t server_time_ms() const;
+  void set_server_time_ms(int64_t value);
+  private:
+  int64_t _internal_server_time_ms() const;
+  void _internal_set_server_time_ms(int64_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.S_SERVER_TIME)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    int64_t server_time_ms_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
 class C_REGISTER_MONSTER final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.C_REGISTER_MONSTER) */ {
  public:
@@ -773,7 +925,7 @@ class C_REGISTER_MONSTER final :
                &_C_REGISTER_MONSTER_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   friend void swap(C_REGISTER_MONSTER& a, C_REGISTER_MONSTER& b) {
     a.Swap(&b);
@@ -929,7 +1081,7 @@ class C_LEAVE_GAME final :
                &_C_LEAVE_GAME_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   friend void swap(C_LEAVE_GAME& a, C_LEAVE_GAME& b) {
     a.Swap(&b);
@@ -1047,7 +1199,7 @@ class S_LEAVE_GAME final :
                &_S_LEAVE_GAME_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
   friend void swap(S_LEAVE_GAME& a, S_LEAVE_GAME& b) {
     a.Swap(&b);
@@ -1166,7 +1318,7 @@ class S_SPAWN final :
                &_S_SPAWN_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    8;
 
   friend void swap(S_SPAWN& a, S_SPAWN& b) {
     a.Swap(&b);
@@ -1343,7 +1495,7 @@ class S_DESPAWN final :
                &_S_DESPAWN_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    9;
 
   friend void swap(S_DESPAWN& a, S_DESPAWN& b) {
     a.Swap(&b);
@@ -1505,7 +1657,7 @@ class C_MOVE final :
                &_C_MOVE_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    10;
 
   friend void swap(C_MOVE& a, C_MOVE& b) {
     a.Swap(&b);
@@ -1662,7 +1814,7 @@ class S_MOVE final :
                &_S_MOVE_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    11;
 
   friend void swap(S_MOVE& a, S_MOVE& b) {
     a.Swap(&b);
@@ -1819,7 +1971,7 @@ class S_PARTY_WEAPON final :
                &_S_PARTY_WEAPON_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    12;
 
   friend void swap(S_PARTY_WEAPON& a, S_PARTY_WEAPON& b) {
     a.Swap(&b);
@@ -1978,7 +2130,7 @@ class C_PARTY_WEAPON final :
                &_C_PARTY_WEAPON_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    13;
 
   friend void swap(C_PARTY_WEAPON& a, C_PARTY_WEAPON& b) {
     a.Swap(&b);
@@ -2126,7 +2278,7 @@ class S_MONSTER_MOVE final :
                &_S_MONSTER_MOVE_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    14;
 
   friend void swap(S_MONSTER_MOVE& a, S_MONSTER_MOVE& b) {
     a.Swap(&b);
@@ -2283,7 +2435,7 @@ class C_MONSTER_MOVE final :
                &_C_MONSTER_MOVE_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    15;
 
   friend void swap(C_MONSTER_MOVE& a, C_MONSTER_MOVE& b) {
     a.Swap(&b);
@@ -2440,7 +2592,7 @@ class C_CHAT final :
                &_C_CHAT_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    16;
 
   friend void swap(C_CHAT& a, C_CHAT& b) {
     a.Swap(&b);
@@ -2593,7 +2745,7 @@ class S_CHAT final :
                &_S_CHAT_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    16;
+    17;
 
   friend void swap(S_CHAT& a, S_CHAT& b) {
     a.Swap(&b);
@@ -2910,6 +3062,30 @@ inline void S_ENTER_GAME::set_allocated_player(::Protocol::ObjectInfo* player) {
   }
   _impl_.player_ = player;
   // @@protoc_insertion_point(field_set_allocated:Protocol.S_ENTER_GAME.player)
+}
+
+// -------------------------------------------------------------------
+
+// S_SERVER_TIME
+
+// int64 server_time_ms = 1;
+inline void S_SERVER_TIME::clear_server_time_ms() {
+  _impl_.server_time_ms_ = int64_t{0};
+}
+inline int64_t S_SERVER_TIME::_internal_server_time_ms() const {
+  return _impl_.server_time_ms_;
+}
+inline int64_t S_SERVER_TIME::server_time_ms() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_SERVER_TIME.server_time_ms)
+  return _internal_server_time_ms();
+}
+inline void S_SERVER_TIME::_internal_set_server_time_ms(int64_t value) {
+  
+  _impl_.server_time_ms_ = value;
+}
+inline void S_SERVER_TIME::set_server_time_ms(int64_t value) {
+  _internal_set_server_time_ms(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_SERVER_TIME.server_time_ms)
 }
 
 // -------------------------------------------------------------------
@@ -3549,6 +3725,8 @@ inline void S_CHAT::set_allocated_msg(std::string* msg) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

@@ -37,7 +37,6 @@ protected:
 
 
 protected:
-
 	UPROPERTY(EditDefaultsOnly,Category = "UI")
 	TSubclassOf<UUserWidget> ShopWidgetClass;
 

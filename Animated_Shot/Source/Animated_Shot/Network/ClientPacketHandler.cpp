@@ -39,6 +39,15 @@ bool Handle_S_ENTER_GAME(PacketSessionRef& session, Protocol::S_ENTER_GAME& pkt)
 	return true;
 }
 
+bool Handle_S_SERVER_TIME(PacketSessionRef& session, Protocol::S_SERVER_TIME& pkt)
+{
+	if (auto* GameInstance = Cast<UASGameInstance>(GWorld->GetGameInstance()))
+	{
+		GameInstance->HandleTimer(pkt);
+	}
+	return true;
+}
+
 bool Handle_S_LEAVE_GAME(PacketSessionRef& session, Protocol::S_LEAVE_GAME& pkt)
 {
 	if (auto* GameInstance = Cast<UASGameInstance>(GWorld->GetGameInstance()))

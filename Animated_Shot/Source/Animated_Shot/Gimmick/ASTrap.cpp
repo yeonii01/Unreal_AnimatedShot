@@ -4,7 +4,10 @@
 #include "Gimmick/ASTrap.h"
 #include "Components/SphereComponent.h"
 #include "../../../../Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h"
-#include "../Character/ASCharacterPlayer.h"
+#include "Character/ASCharacterPlayer.h"
+#include "Character/ASPartyCharacterPlayer.h"
+#include "Character/ASCharacterBase.h"
+#include "Network/ASGameInstance.h"
 #include "Engine/DamageEvents.h"
 
 // Sets default values
@@ -67,20 +70,43 @@ void AASTrap::Tick(float DeltaTime)
     }
 }
 
+int64 AASTrap::GetServerTimeFromInstance()
+{
+    if (auto* GI = Cast<UASGameInstance>(GWorld->GetGameInstance()))
+    {
+        return GI->ServerTime;
+    }
+    return 0;
+}
+
 void AASTrap::OnTriggerEnter(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    AASCharacterPlayer* Player = Cast<AASCharacterPlayer>(OtherActor);
+    AASCharacterBase* Player = Cast<AASCharacterBase>(OtherActor);
 
-    if (Player)
+    if (Player->IsMyPlayer() || Player->IsPartyPlayer())
     {
-        OverlapActor = Player;
+        OverlapActor = Player; 
+        if (Player->IsMyPlayer())
+        {
+            DamageActor = Cast<AASCharacterPlayer>(OtherActor);
+        }
         bPlayerOnTrigger = true;
-    }
 
-    if (CircleEffect)
-    {
-        CircleEffect->Activate();
+        if (CircleEffect)
+        {
+            CircleEffect->Activate();
+        }
     }
+ /*   else if (Player->IsPartyPlayer())
+    {
+        OverlapActor = Cast<AASPartyCharacterPlayer>(Player); 
+        bPlayerOnTrigger = true;
+
+        if (CircleEffect)
+        {
+            CircleEffect->Activate();
+        }
+    }*/
 }
 
 void AASTrap::OnTriggerExit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -105,6 +131,9 @@ void AASTrap::ActivateTrap_Implementation()
     }
 
     FDamageEvent DamageEvent;
-    if (OverlapActor)
-        OverlapActor->TakeDamage(TrapDamage, DamageEvent, OverlapActor->GetController(), this);
+
+    if (DamageActor)
+    {
+        DamageActor->TakeDamage(TrapDamage, DamageEvent, DamageActor->GetController(), this);
+    }
 }

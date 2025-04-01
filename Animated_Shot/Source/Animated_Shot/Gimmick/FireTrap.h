@@ -21,6 +21,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+private:
+    int64 GetServerTimeFromInstance();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

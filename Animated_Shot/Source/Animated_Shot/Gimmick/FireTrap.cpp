@@ -3,6 +3,7 @@
 
 #include "Gimmick/FireTrap.h"
 #include "Character/ASCharacterPlayer.h"
+#include "Network/ASGameInstance.h"
 #include "Engine/DamageEvents.h"
 
 // Sets default values
@@ -50,34 +51,50 @@ void AFireTrap::BeginPlay()
 	
 }
 
+int64 AFireTrap::GetServerTimeFromInstance()
+{
+    if (auto* GI = Cast<UASGameInstance>(GWorld->GetGameInstance()))
+    {
+        return GI->ServerTime;
+    }
+    return 0;
+}
+
 void AFireTrap::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-    // 시간 업데이트
-    TimeSinceLastToggle += DeltaTime;
 
+    int64 Now = GetServerTimeFromInstance();
+
+    if (TimeSinceLastToggle == 0)
+    {
+        TimeSinceLastToggle = Now;
+        return;
+    }
+
+    int64 Elapsed = Now - TimeSinceLastToggle;
 
     if (bIsFlameActive)
     {
-        if (TimeSinceLastToggle >= FireActiveTime) // 시간이 지나면 꺼짐
+        if (Elapsed >= static_cast<int64>(FireActiveTime * 1000)) 
         {
             bIsFlameActive = false;
             FireParticle->Deactivate();
             FireParticle->SetVisibility(false);
             DamageZone->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-            TimeSinceLastToggle = 0.0f; // 타이머 초기화
+            TimeSinceLastToggle = Now; 
         }
     }
 
     else
     {
-        if (TimeSinceLastToggle >= FireInactiveTime) // 시간이 지나면 켜짐
+        if (Elapsed >= static_cast<int64>(FireActiveTime * 1000)) 
         {
             bIsFlameActive = true;
             FireParticle->ActivateSystem();
             FireParticle->SetVisibility(true);
             DamageZone->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-            TimeSinceLastToggle = 0.0f; // 타이머 초기화
+            TimeSinceLastToggle = Now; 
         }
     }
 }

@@ -6,6 +6,7 @@
 #include "Components/BoxComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/PlayerController.h"
+#include "Character/ASCharacterPlayer.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -57,6 +58,9 @@ void AASShop::Tick(float DeltaTime)
 
 void AASShop::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult)
 {
+    AASCharacterPlayer* player = Cast<AASCharacterPlayer>(OtherActor);
+    if (player == nullptr) return;
+
     if (ShopWidgetInstance && !ShopWidgetInstance->IsInViewport()) // 한 번만 UI 추가
     {
         ShopWidgetInstance->AddToViewport();

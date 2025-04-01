@@ -16,6 +16,8 @@ UASGameInstance::UASGameInstance()
 {
 	OtherPlayerClass = AASPartyCharacterPlayer::StaticClass();
 	MonsterClass = AASCharacterNonPlayer::StaticClass();
+
+	SpawnerClass = AASSpawner::StaticClass();
 }
 
 void UASGameInstance::ConnectToGameServer()
@@ -86,6 +88,11 @@ void UASGameInstance::SendPacket(SendBufferRef SendBuffer)
 	GameServerSession->SendPacket(SendBuffer);
 }
 
+void UASGameInstance::HandleTimer(const Protocol::S_SERVER_TIME& TimePkt)
+{
+	ServerTime = TimePkt.server_time_ms();
+}
+
 void UASGameInstance::HandleSpawn(const Protocol::ObjectInfo& ObjectInfo, bool IsMine)
 {
 	if (Socket == nullptr || GameServerSession == nullptr)
@@ -144,6 +151,7 @@ void UASGameInstance::HandleSpawn(const Protocol::ObjectInfo& ObjectInfo, bool I
 			Monster->GetMesh()->SetVisibility(true);
 			Monster->GetMesh()->SetHiddenInGame(false);
 			Monster->SetActorHiddenInGame(false);
+			Monster->SetNPC(ObjectInfo.pos_info().num()%8);
 		}
 		else
 		{
@@ -228,12 +236,11 @@ void UASGameInstance::HandleMonsterMove(const Protocol::S_MONSTER_MOVE& MonsterP
 		const int64 objectId = pos.object_id();
 
 		AASCharacterBase** BasePtr = Players.Find(objectId);
-		if (BasePtr == nullptr)
+		if (BasePtr == nullptr || *BasePtr == nullptr)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("[MONSTER_MOVE] objectId %lld not found in Players map!"), objectId);
 			continue;
 		}
-
 
 		AASCharacterNonPlayer* Monster = Cast<AASCharacterNonPlayer>(*BasePtr);
 		if (Monster == nullptr)

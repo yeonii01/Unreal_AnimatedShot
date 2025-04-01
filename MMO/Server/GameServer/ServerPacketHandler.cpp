@@ -53,7 +53,7 @@ bool Handle_C_ENTER_GAME(PacketSessionRef& session, Protocol::C_ENTER_GAME& pkt)
 
 	if (!bMonsterSpawned)
 	{
-		for (int i = 0; i < 2; ++i)
+		for (int i = 0; i < 11; ++i)
 		{
 			ObjectRef monObj = ObjectUtils::CreateObject(nullptr, Protocol::CREATURE_TYPE_MONSTER);
 			MonsterRef monster = dynamic_pointer_cast<Monster>(monObj);
@@ -66,6 +66,7 @@ bool Handle_C_ENTER_GAME(PacketSessionRef& session, Protocol::C_ENTER_GAME& pkt)
 				pos->set_z(306.00001);
 				pos->set_yaw(-90.f);
 				pos->set_hp(150.f);
+				pos->set_num(0);
 				break;
 			case 1:
 				pos->set_x(5979.999897);
@@ -73,6 +74,71 @@ bool Handle_C_ENTER_GAME(PacketSessionRef& session, Protocol::C_ENTER_GAME& pkt)
 				pos->set_z(507.698568);
 				pos->set_yaw(90.f);
 				pos->set_hp(150.f);
+				pos->set_num(1);
+				break;
+			case 2:
+				pos->set_x(7509.999985);
+				pos->set_y(7770.0);
+				pos->set_z(606.000009);
+				pos->set_yaw(-90);
+				pos->set_hp(150);
+				pos->set_num(2);
+				break;
+			case 3:
+				pos->set_x(8419.999985);
+				pos->set_y(6969.999999);
+				pos->set_z(606.00001);
+				pos->set_yaw(180);
+				pos->set_hp(150);
+				pos->set_num(3);
+				break;
+			case 4:
+				pos->set_x(11990.0);
+				pos->set_y(9409.999984);
+				pos->set_z(1606.00001);
+				pos->set_yaw(-180);
+				pos->set_hp(150);
+				pos->set_num(4);
+				break;
+			case 5:
+				pos->set_x(11990.0);
+				pos->set_y(8989.999984);
+				pos->set_z(1606.00001);
+				pos->set_yaw(-180);
+				pos->set_hp(150);
+				pos->set_num(5);
+				break;
+			case 6:
+				pos->set_x(17150.0);
+				pos->set_y(9859.999986);
+				pos->set_z(1606.000008);
+				pos->set_yaw(180);
+				pos->set_hp(150);
+				pos->set_num(6);
+				break;
+			case 7:
+				pos->set_x(17700.0);
+				pos->set_y(9859.999986);
+				pos->set_z(1606.000008);
+				pos->set_yaw(180);
+				pos->set_hp(150);
+				pos->set_num(7);
+				break;
+			case 8:
+				pos->set_x(17150.0);
+				pos->set_y(8819.999986);
+				pos->set_z(1606.000008);
+				pos->set_yaw(180);
+				pos->set_hp(150);
+				pos->set_num(8);
+				break;
+			case 9:
+				pos->set_x(17840.0);
+				pos->set_y(8699.999986);
+				pos->set_z(1606.000008);
+				pos->set_yaw(180);
+				pos->set_hp(150);
+				pos->set_num(9);
 				break;
 			default:
 				pos->set_x(0);

@@ -30,6 +30,7 @@ private:
 
 private:
 	unordered_map<uint64, ObjectRef> _objects;
+	int64 _time = 0;
 };
 
 extern RoomRef GRoom;

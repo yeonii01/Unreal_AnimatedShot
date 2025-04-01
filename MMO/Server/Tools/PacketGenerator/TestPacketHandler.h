@@ -17,19 +17,20 @@ enum : uint16
 	PKT_S_LOGIN = 1001,
 	PKT_C_ENTER_GAME = 1002,
 	PKT_S_ENTER_GAME = 1003,
-	PKT_C_REGISTER_MONSTER = 1004,
-	PKT_C_LEAVE_GAME = 1005,
-	PKT_S_LEAVE_GAME = 1006,
-	PKT_S_SPAWN = 1007,
-	PKT_S_DESPAWN = 1008,
-	PKT_C_MOVE = 1009,
-	PKT_S_MOVE = 1010,
-	PKT_S_PARTY_WEAPON = 1011,
-	PKT_C_PARTY_WEAPON = 1012,
-	PKT_S_MONSTER_MOVE = 1013,
-	PKT_C_MONSTER_MOVE = 1014,
-	PKT_C_CHAT = 1015,
-	PKT_S_CHAT = 1016,
+	PKT_S_SERVER_TIME = 1004,
+	PKT_C_REGISTER_MONSTER = 1005,
+	PKT_C_LEAVE_GAME = 1006,
+	PKT_S_LEAVE_GAME = 1007,
+	PKT_S_SPAWN = 1008,
+	PKT_S_DESPAWN = 1009,
+	PKT_C_MOVE = 1010,
+	PKT_S_MOVE = 1011,
+	PKT_S_PARTY_WEAPON = 1012,
+	PKT_C_PARTY_WEAPON = 1013,
+	PKT_S_MONSTER_MOVE = 1014,
+	PKT_C_MONSTER_MOVE = 1015,
+	PKT_C_CHAT = 1016,
+	PKT_S_CHAT = 1017,
 };
 
 // Custom Handlers
@@ -67,6 +68,7 @@ public:
 	}
 	static SendBufferRef MakeSendBuffer(Protocol::S_LOGIN& pkt) { return MakeSendBuffer(pkt, PKT_S_LOGIN); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_ENTER_GAME& pkt) { return MakeSendBuffer(pkt, PKT_S_ENTER_GAME); }
+	static SendBufferRef MakeSendBuffer(Protocol::S_SERVER_TIME& pkt) { return MakeSendBuffer(pkt, PKT_S_SERVER_TIME); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_LEAVE_GAME& pkt) { return MakeSendBuffer(pkt, PKT_S_LEAVE_GAME); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_SPAWN& pkt) { return MakeSendBuffer(pkt, PKT_S_SPAWN); }
 	static SendBufferRef MakeSendBuffer(Protocol::S_DESPAWN& pkt) { return MakeSendBuffer(pkt, PKT_S_DESPAWN); }

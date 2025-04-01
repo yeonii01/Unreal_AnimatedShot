@@ -36,8 +36,12 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Trap")
     void ActivateTrap();
 
+private:
+    int64 GetServerTimeFromInstance();
+
 protected:
-    TObjectPtr<AASCharacterPlayer> OverlapActor = nullptr;
+    TObjectPtr<AASCharacterBase> OverlapActor = nullptr;
+    TObjectPtr<AASCharacterPlayer> DamageActor = nullptr;
     
     UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Effects")
     TObjectPtr<UNiagaraComponent> NiagaraEffect = nullptr;
@@ -62,4 +66,7 @@ protected:
     
     UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Trap")
     bool bTrapActivated = false;
+
+private:
+    int64 LastActivationTimeMs = 0;
 };

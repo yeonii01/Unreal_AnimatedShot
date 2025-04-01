@@ -26,6 +26,11 @@ message S_ENTER_GAME
 	ObjectInfo player = 2;
 }
 
+message S_SERVER_TIME
+{
+	int64 server_time_ms = 1;
+}
+
 message C_REGISTER_MONSTER
 {
 	repeated ObjectInfo monsters = 1;

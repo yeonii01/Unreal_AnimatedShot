@@ -8,6 +8,7 @@
 #include "Character/ASCharacterBase.h"
 #include "Character/ASPartyCharacterPlayer.h"
 #include "Character/ASCharacterNonPlayer.h"
+#include "Gimmick/ASSpawner.h"
 #include "ASGameInstance.generated.h"
 
 /**
@@ -34,6 +35,8 @@ public:
 	void SendPacket(SendBufferRef SendBuffer);
 
 public:
+	void HandleTimer(const Protocol::S_SERVER_TIME& TimePkt);
+
 	void HandleSpawn(const Protocol::ObjectInfo& PlayerInfo, bool IsMine);
 	void HandleSpawn(const Protocol::S_ENTER_GAME& EnterGamePkt);
 	void HandleSpawn(const Protocol::S_SPAWN& SpawnPkt);
@@ -59,7 +62,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AASCharacterNonPlayer> MonsterClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AASSpawner> SpawnerClass;
+
 	AASCharacterBase* MyPlayer;
 
 	TMap<uint64, AASCharacterBase*>Players;
+
+	int64 ServerTime;
 };
