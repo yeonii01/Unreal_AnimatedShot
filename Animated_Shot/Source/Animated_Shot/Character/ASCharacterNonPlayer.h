@@ -25,27 +25,36 @@ public:
 protected:
 	virtual void PostInitializeComponents() override;
 
+public:
+	bool IsDead() { return Dead; }
+	void SetIsDead(bool InDead) { Dead = InDead; }
+
+	void SetNPC(int index);
+
+private:
+	bool Dead;
 protected:
 	virtual void SetDead() override;
 	void NPCMeshLoadCompleted();
 	void DropItem();
 	void DropCoin();
 
+
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Settings")
 	//TArray<FSoftObjectPath> NPCMeshes;	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Settings")
-	USkeletalMesh* NPCMesh;
+	TArray<USkeletalMesh*> NPCMeshes;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Settings")
 	//TSubclassOf<UClass*> AnimClasses;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Settings")
-	TSubclassOf<UAnimInstance> AnimClasses;
+	TArray<TSubclassOf<UAnimInstance>> AnimClasses;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Settings")
-	UAnimMontage* DeadMontages;
+	TArray<UAnimMontage*> DeadMontages;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Settings")
-	UAnimMontage*  ComboActionMontages;
+	TArray<UAnimMontage*> ComboActionMontages;
 
 	TSharedPtr<FStreamableHandle> NPCMeshHandle;
 
@@ -92,4 +101,6 @@ protected:
 	FAICharacterAttackFinished OnAttackFinished;
 
 	virtual void NotifyComboActionEnd() override;
+public:
+	void SetTargetPos(const Protocol::PosInfo& pos);
 };

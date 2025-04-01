@@ -14,6 +14,7 @@ public:
 	bool HandleEnterObject(ObjectRef object);
 	bool HandleLeavePlayer(PlayerRef player);
 	void HandleMove(Protocol::C_MOVE pkt);
+	void HandleRegisterWeapon(PlayerRef Player, Protocol::C_PARTY_WEAPON pkt);
 
 public:
 	void UpdateTick();
@@ -29,6 +30,7 @@ private:
 
 private:
 	unordered_map<uint64, ObjectRef> _objects;
+	int64 _time = 0;
 };
 
 extern RoomRef GRoom;

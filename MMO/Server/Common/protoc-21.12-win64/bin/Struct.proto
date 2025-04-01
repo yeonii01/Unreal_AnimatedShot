@@ -12,6 +12,7 @@ message PosInfo
 	float yaw = 5;
 	float hp = 6;
 	MoveState state = 7;
+	uint64 num = 8;
 }
 
 message ObjectInfo

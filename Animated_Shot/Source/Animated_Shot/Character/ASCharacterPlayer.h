@@ -115,7 +115,7 @@ private:
 
 	/** ¹Ì´Ï¸Ê¿ë Scene Capture */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Minimap, meta = (AllowPrivateAccess = "true"))
-	USceneCaptureComponent2D* MinimapCapture;
+	USceneCaptureComponent2D* MinimapCapture;	
 
 	/** ¹Ì´Ï¸Ê ·»´õ Å¸°Ù */
 	UPROPERTY(EditAnywhere, Category = Minimap)

@@ -168,20 +168,6 @@ void AASCharacterBase::Tick(float DeltaTime)
 	
 	if (!IsMyPlayer() && !IsNPC())
 	{
-		//FVector Location = GetActorLocation();
-		//FVector DestLocation = FVector(DestInfo->x(), DestInfo->y(), DestInfo->z());
-		//
-		//FVector MoveDir = (DestLocation - Location);
-		//
-		//const float DistToDest = MoveDir.Length();
-		//MoveDir.Normalize();
-		//
-		//float MoveDist = (MoveDir * 500.f * DeltaTime).Length();
-		//MoveDist = FMath::Min(MoveDist, DistToDest);
-		//FVector NextLocation = Location + MoveDir * MoveDist;
-		//
-		//SetActorLocation(NextLocation);
-
 		const Protocol::MoveState State = PlayerInfo->state();
 
 		switch (State)
@@ -189,7 +175,6 @@ void AASCharacterBase::Tick(float DeltaTime)
 		case Protocol::MOVE_STATE_RUN:
 			SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
 			AddMovementInput(GetActorForwardVector());
-
 			break;
 		case Protocol::MOVE_STATE_JUMP:
 			Jump();
@@ -209,21 +194,33 @@ void AASCharacterBase::Tick(float DeltaTime)
 		default:
 			break;
 		}
+		if (State != Protocol::MOVE_STATE_RUN && State != Protocol::MOVE_STATE_JUMP)
+		{
+			FVector Location = GetActorLocation();
+			FVector DestLocation = FVector(DestInfo->x(), DestInfo->y(), DestInfo->z());
 
+			FVector MoveDir = DestLocation - Location;
+			float DistToDest = MoveDir.Length();
+
+			if (DistToDest > 5.f)
+			{
+				MoveDir.Normalize();
+				float MoveSpeed = 500.f; 
+				float MoveDist = FMath::Min(MoveSpeed * DeltaTime, DistToDest);
+				FVector NextLocation = Location + MoveDir * MoveDist;
+
+				SetActorLocation(NextLocation);
+			}
+		}
 		Stat->SetHp(DestInfo->hp());
 
-		CorrectPosition -= DeltaTime;
+		/*CorrectPosition -= DeltaTime;
 
 		if (CorrectPosition <= 0)
 		{
 			CorrectPosition = CORRECT_POSITION_DELAY;
-			{
-				FVector Location = GetActorLocation();
-				DestInfo->set_x(Location.X);
-				DestInfo->set_y(Location.Y);
-				DestInfo->set_z(Location.Z);
-			}
-		}
+			SetActorLocation(FVector(DestInfo->x(), DestInfo->y(), DestInfo->z()));
+		}*/
 	}
 }
 

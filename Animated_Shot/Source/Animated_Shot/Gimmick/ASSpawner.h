@@ -42,4 +42,13 @@ protected:
 protected:
 	UPROPERTY(EditAnyWhere, Category = Stat, Meta = (AllowPrivateAccess = "true"))
 	int32 CurrentStageNum;
+
+protected:
+	UPROPERTY()
+	float TimeAccumulator = 0.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Spawner")
+	float ActionInterval = 3.0f;
+
+	AASCharacterNonPlayer* ASOpponentCharacter;
 };

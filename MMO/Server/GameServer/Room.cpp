@@ -149,7 +149,6 @@ void Room::HandleMove(Protocol::C_MOVE pkt)
 	PlayerRef player = dynamic_pointer_cast<Player>(_objects[objectId]);
 	player->posInfo->CopyFrom(pkt.info());
 
-	// 이동 사실을 알린다 (본인 포함? 빼고?)
 	{
 		Protocol::S_MOVE movePkt;
 		{
@@ -161,10 +160,58 @@ void Room::HandleMove(Protocol::C_MOVE pkt)
 	}
 }
 
+void Room::HandleRegisterWeapon(PlayerRef player, Protocol::C_PARTY_WEAPON pkt)
+{
+	if (player == nullptr)
+		return;
+
+	Protocol::S_PARTY_WEAPON weaponPkt;
+	{
+		weaponPkt.set_playerid(player->posInfo->object_id());
+		weaponPkt.set_weapon(pkt.weapon());
+	}
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(weaponPkt);
+	Broadcast(sendBuffer);
+}
+
 void Room::UpdateTick()
 {
-	cout << "Update Room" << endl;
+	_time += 100;
 
+	Protocol::S_SERVER_TIME timepkt;
+	{
+		timepkt.set_server_time_ms(_time);
+	}
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(timepkt);
+	Broadcast(sendBuffer);
+
+	if (_time % 3000 == 0)
+	{
+		Protocol::S_MONSTER_MOVE monsterpkt;
+		for (auto& item : _objects)
+		{
+			if (item.second->objectInfo == nullptr || item.second->objectInfo->has_pos_info() == false)
+				continue;
+
+			MonsterRef monster = dynamic_pointer_cast<Monster>(item.second);
+			if (monster == nullptr)
+				continue;
+
+			Protocol::PosInfo* monsterInfo = monsterpkt.add_monsters();
+			monsterInfo->CopyFrom(item.second->objectInfo->pos_info());
+			float offsetX = Utils::GetRandom(-500.f, 500.f);
+			float offsetY = Utils::GetRandom(-500.f, 500.f);
+
+			monsterInfo->set_object_id(item.second->objectInfo->object_id());
+			monsterInfo->set_x(monsterInfo->x() + offsetX);
+			monsterInfo->set_y(monsterInfo->y() + offsetY);
+			monsterInfo->set_z(monsterInfo->z());
+			//cout << monsterInfo->x() << ", " << monsterInfo->y() << ", " << monsterInfo->z() << endl;
+		}
+
+		SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(monsterpkt);
+		Broadcast(sendBuffer);
+	}
 	DoTimer(100, &Room::UpdateTick);
 }
 

@@ -16,6 +16,8 @@ UASGameInstance::UASGameInstance()
 {
 	OtherPlayerClass = AASPartyCharacterPlayer::StaticClass();
 	MonsterClass = AASCharacterNonPlayer::StaticClass();
+
+	SpawnerClass = AASSpawner::StaticClass();
 }
 
 void UASGameInstance::ConnectToGameServer()
@@ -86,6 +88,11 @@ void UASGameInstance::SendPacket(SendBufferRef SendBuffer)
 	GameServerSession->SendPacket(SendBuffer);
 }
 
+void UASGameInstance::HandleTimer(const Protocol::S_SERVER_TIME& TimePkt)
+{
+	ServerTime = TimePkt.server_time_ms();
+}
+
 void UASGameInstance::HandleSpawn(const Protocol::ObjectInfo& ObjectInfo, bool IsMine)
 {
 	if (Socket == nullptr || GameServerSession == nullptr)
@@ -125,6 +132,11 @@ void UASGameInstance::HandleSpawn(const Protocol::ObjectInfo& ObjectInfo, bool I
 		break;
 	case Protocol::CREATURE_TYPE_MONSTER:
 	{
+		if (ObjectInfo.object_id() == 0 || Players.Contains(ObjectInfo.object_id()))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Monster with ObjectId %lld already exists. Skipping spawn."), ObjectInfo.object_id());
+			return;
+		}
 		AASCharacterNonPlayer* Monster = Cast<AASCharacterNonPlayer>(World->SpawnActor(MonsterClass, &SpawnTransform));
 		if (Monster)
 		{
@@ -134,11 +146,12 @@ void UASGameInstance::HandleSpawn(const Protocol::ObjectInfo& ObjectInfo, bool I
 			}
 
 			Monster->SetObjectInfo(ObjectInfo.pos_info());
-			Players.Add(ObjectId, Monster);
+			Players.Add(ObjectInfo.object_id(), Monster);
 
 			Monster->GetMesh()->SetVisibility(true);
 			Monster->GetMesh()->SetHiddenInGame(false);
 			Monster->SetActorHiddenInGame(false);
+			Monster->SetNPC(ObjectInfo.pos_info().num()%8);
 		}
 		else
 		{
@@ -214,4 +227,43 @@ void UASGameInstance::HandleMove(const Protocol::S_MOVE& MovePkt)
 	const Protocol::PosInfo& Info = MovePkt.info();
 	//Player->SetPlayerInfo(Info);
 	Player->SetDestInfo(Info);
+}
+
+void UASGameInstance::HandleMonsterMove(const Protocol::S_MONSTER_MOVE& MonsterPkt)
+{
+	for (const Protocol::PosInfo& pos : MonsterPkt.monsters())
+	{
+		const int64 objectId = pos.object_id();
+
+		AASCharacterBase** BasePtr = Players.Find(objectId);
+		if (BasePtr == nullptr || *BasePtr == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[MONSTER_MOVE] objectId %lld not found in Players map!"), objectId);
+			continue;
+		}
+
+		AASCharacterNonPlayer* Monster = Cast<AASCharacterNonPlayer>(*BasePtr);
+		if (Monster == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[MONSTER_MOVE] objectId %lld is not a Monster!"), objectId);
+			continue;
+		}
+		Monster->SetTargetPos(pos);
+	}
+}
+
+void UASGameInstance::HandleRegisterWeapon(const Protocol::S_PARTY_WEAPON& WeaponPkt)
+{
+	AASCharacterBase** FindActor = Players.Find(WeaponPkt.playerid());
+	if (FindActor == nullptr || *FindActor == nullptr)
+		return;
+
+	AASPartyCharacterPlayer* Player = Cast<AASPartyCharacterPlayer>(*FindActor);
+	if (Player == nullptr)
+		return;
+
+	if (Player->IsMyPlayer())
+		return;
+
+	Player->EquipWeapon(WeaponPkt.weapon());
 }

@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Character/ASCharacterBase.h"
+#include "Item/AASItemWeaponBox.h"
+#include "PaperSpriteComponent.h"
 #include "ASPartyCharacterPlayer.generated.h"
 
 /**
@@ -23,8 +25,16 @@ protected:
 
 public:
 	void PlayDamageMontage();
+	void EquipWeapon(bool index);
 
+	void SetWeaponBox(AAASItemWeaponBox* InWeaponBox) { WeaponBox = InWeaponBox; }
 private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Minimap, meta = (AllowPrivateAccess = "true"))
+	UPaperSpriteComponent* MinimapIcon;
+
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = Animation, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> DamageMontage;
+
+private:
+	AAASItemWeaponBox* WeaponBox;
 };

@@ -39,6 +39,15 @@ bool Handle_S_ENTER_GAME(PacketSessionRef& session, Protocol::S_ENTER_GAME& pkt)
 	return true;
 }
 
+bool Handle_S_SERVER_TIME(PacketSessionRef& session, Protocol::S_SERVER_TIME& pkt)
+{
+	if (auto* GameInstance = Cast<UASGameInstance>(GWorld->GetGameInstance()))
+	{
+		GameInstance->HandleTimer(pkt);
+	}
+	return true;
+}
+
 bool Handle_S_LEAVE_GAME(PacketSessionRef& session, Protocol::S_LEAVE_GAME& pkt)
 {
 	if (auto* GameInstance = Cast<UASGameInstance>(GWorld->GetGameInstance()))
@@ -71,6 +80,24 @@ bool Handle_S_MOVE(PacketSessionRef& session, Protocol::S_MOVE& pkt)
 	if (auto* GameInstance = Cast<UASGameInstance>(GWorld->GetGameInstance()))
 	{
 		GameInstance->HandleMove(pkt);
+	}
+	return true;
+}
+
+bool Handle_S_PARTY_WEAPON(PacketSessionRef& session, Protocol::S_PARTY_WEAPON& pkt)
+{
+	if (auto* GameInstance = Cast<UASGameInstance>(GWorld->GetGameInstance()))
+	{
+		GameInstance->HandleRegisterWeapon(pkt);
+	}
+	return true;
+}
+
+bool Handle_S_MONSTER_MOVE(PacketSessionRef& session, Protocol::S_MONSTER_MOVE& pkt)
+{
+	if (auto* GameInstance = Cast<UASGameInstance>(GWorld->GetGameInstance()))
+	{
+		GameInstance->HandleMonsterMove(pkt);
 	}
 	return true;
 }
