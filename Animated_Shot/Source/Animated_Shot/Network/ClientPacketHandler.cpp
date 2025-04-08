@@ -102,6 +102,15 @@ bool Handle_S_MONSTER_MOVE(PacketSessionRef& session, Protocol::S_MONSTER_MOVE& 
 	return true;
 }
 
+bool Handle_S_MONSTER_DAMAGEINFO(PacketSessionRef& session, Protocol::S_MONSTER_DAMAGEINFO& pkt)
+{
+	if (auto* GameInstance = Cast<UASGameInstance>(GWorld->GetGameInstance()))
+	{
+		GameInstance->HandleMonsterDamage(pkt);
+	}
+	return true;
+}
+
 bool Handle_S_CHAT(PacketSessionRef& session, Protocol::S_CHAT& pkt)
 {
 	auto Msg = pkt.msg();

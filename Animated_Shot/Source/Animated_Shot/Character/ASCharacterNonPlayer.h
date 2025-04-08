@@ -103,4 +103,9 @@ protected:
 	virtual void NotifyComboActionEnd() override;
 public:
 	void SetTargetPos(const Protocol::PosInfo& pos);
+	void SetObjectId(int64 InObjectId) { ObjectId = InObjectId; };
+	int64 GetObjectId() { return ObjectId; };
+
+private:
+	int64 ObjectId;
 };

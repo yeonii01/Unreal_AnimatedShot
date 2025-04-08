@@ -19,6 +19,8 @@
 #include "Character/ASCharacterPlayer.h"
 #include "Character/ASPartyCharacterPlayer.h"
 #include "Character/ASCharacterNonPlayer.h"
+#include "Animated_Shot.h"
+#include "Network/ASGameInstance.h"
 
 DEFINE_LOG_CATEGORY(LogASCharacter);
 
@@ -255,6 +257,11 @@ void AASCharacterBase::ProcessComboCommand()
 
 void AASCharacterBase::ComboActionBegin()
 {
+	if (!GetMesh())
+	{
+		UE_LOG(LogTemp, Error, TEXT("ComboActionBegin: StatComponent is nullptr!"));
+		return;
+	}
 	//Combo Status
 	CurrentCombo = 1;
 
@@ -324,11 +331,33 @@ void AASCharacterBase::AttackHitCheck()
 	const FVector Start = (GetActorLocation() - FVector(0.f, 0.f, 30.f)) + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
 	const FVector End = Start + GetActorForwardVector() * AttackRange;
 
-	bool HitDetected = GetWorld()->SweepSingleByChannel(OutHitResult, Start, End, FQuat::Identity, CCHANEL_ASACTION, FCollisionShape::MakeSphere(AttackRadius), Params); //World가 제공하는 함수					
+	bool HitDetected = GetWorld()->SweepSingleByChannel(OutHitResult, Start, End, FQuat::Identity, CCHANEL_ASACTION, FCollisionShape::MakeSphere(AttackRadius), Params); 				
 	if (HitDetected)
 	{
-		FDamageEvent DamageEvent;
-		OutHitResult.GetActor()->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
+		AASCharacterNonPlayer* HitMonster = Cast<AASCharacterNonPlayer>(OutHitResult.GetActor());
+		if (HitMonster)
+		{
+			if (this->IsMyPlayer())
+			{
+				FDamageEvent DamageEvent;
+				OutHitResult.GetActor()->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
+
+				Protocol::C_MONSTER_DAMAGEINFO DamagePkt;
+				{
+					Protocol::PosInfo* Info = DamagePkt.mutable_monsters();
+					Info->set_hp(AttackDamage);
+					Info->set_object_id(HitMonster->GetObjectId());
+				}
+
+				SEND_PACKET(DamagePkt);
+			}
+		}
+		
+		else
+		{
+			FDamageEvent DamageEvent;
+			OutHitResult.GetActor()->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
+		}
 	}
 
 #if ENABLE_DRAW_DEBUG
@@ -359,7 +388,26 @@ void AASCharacterBase::SetDead()
 
 void AASCharacterBase::PlayDeadAnimation()
 {
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	USkeletalMeshComponent* MeshComp = GetMesh();
+	if (!MeshComp)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[PlayDeadAnimation] GetMesh() is nullptr!"));
+		return;
+	}
+
+	UAnimInstance* AnimInstance = MeshComp->GetAnimInstance();
+	if (!AnimInstance)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[PlayDeadAnimation] AnimInstance is nullptr!"));
+		return;
+	}
+
+	if (!DeadMontage)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[PlayDeadAnimation] DeadMontage is nullptr!"));
+		return;
+	}
+
 	AnimInstance->StopAllMontages(0.f);
 	AnimInstance->Montage_Play(DeadMontage, 1.f);
 }

@@ -219,6 +219,23 @@ bool Handle_C_MONSTER_MOVE(PacketSessionRef& session, Protocol::C_MONSTER_MOVE& 
 	return true;
 }
 
+bool Handle_C_MONSTER_DAMAGEINFO(PacketSessionRef& session, Protocol::C_MONSTER_DAMAGEINFO& pkt)
+{
+	auto gameSession = static_pointer_cast<GameSession>(session);
+
+	PlayerRef player = gameSession->player.load();
+	if (player == nullptr)
+		return false;
+
+	RoomRef room = player->room.load().lock();
+	if (room == nullptr)
+		return false;
+
+	room->DoAsync(&Room::HandleMonsterDamage, player, pkt);
+
+	return true;
+}
+
 bool Handle_C_CHAT(PacketSessionRef& session, Protocol::C_CHAT& pkt)
 {
 	return true;

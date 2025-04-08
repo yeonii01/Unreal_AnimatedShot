@@ -15,7 +15,7 @@ public:
 	bool HandleLeavePlayer(PlayerRef player);
 	void HandleMove(Protocol::C_MOVE pkt);
 	void HandleRegisterWeapon(PlayerRef Player, Protocol::C_PARTY_WEAPON pkt);
-
+	void HandleMonsterDamage(PlayerRef Player, Protocol::C_MONSTER_DAMAGEINFO pkt);
 public:
 	void UpdateTick();
 

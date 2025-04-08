@@ -88,6 +88,16 @@ message C_MONSTER_MOVE
 	repeated PosInfo monsters = 1;
 }
 
+message S_MONSTER_DAMAGEINFO
+{
+	PosInfo monsters = 1;
+}
+
+message C_MONSTER_DAMAGEINFO
+{
+	PosInfo monsters = 1;
+}
+
 message C_CHAT
 {
 	string msg = 1;

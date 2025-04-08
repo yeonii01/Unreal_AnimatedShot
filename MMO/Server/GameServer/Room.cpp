@@ -174,6 +174,17 @@ void Room::HandleRegisterWeapon(PlayerRef player, Protocol::C_PARTY_WEAPON pkt)
 	Broadcast(sendBuffer);
 }
 
+void Room::HandleMonsterDamage(PlayerRef player, Protocol::C_MONSTER_DAMAGEINFO pkt)
+{
+	Protocol::S_MONSTER_DAMAGEINFO damagePkt;
+	{
+		Protocol::PosInfo* info = damagePkt.mutable_monsters();
+		info->CopyFrom(pkt.monsters());
+	}
+	SendBufferRef sendBuffer = ServerPacketHandler::MakeSendBuffer(damagePkt);
+	Broadcast(sendBuffer, player->posInfo->object_id());
+}
+
 void Room::UpdateTick()
 {
 	_time += 100;

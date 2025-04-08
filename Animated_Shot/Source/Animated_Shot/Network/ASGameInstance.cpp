@@ -10,6 +10,7 @@
 #include "ClientPacketHandler.h"
 #include "Character/ASCharacterPlayer.h"
 #include "Character/ASCharacterNonPlayer.h"
+#include "CharacterStat/ASCharacterStatComponent.h"
 #include "Protocol.pb.h"
 
 UASGameInstance::UASGameInstance()
@@ -152,6 +153,7 @@ void UASGameInstance::HandleSpawn(const Protocol::ObjectInfo& ObjectInfo, bool I
 			Monster->GetMesh()->SetHiddenInGame(false);
 			Monster->SetActorHiddenInGame(false);
 			Monster->SetNPC(ObjectInfo.pos_info().num()%8);
+			Monster->SetObjectId(ObjectInfo.object_id());
 		}
 		else
 		{
@@ -236,20 +238,61 @@ void UASGameInstance::HandleMonsterMove(const Protocol::S_MONSTER_MOVE& MonsterP
 		const int64 objectId = pos.object_id();
 
 		AASCharacterBase** BasePtr = Players.Find(objectId);
-		if (BasePtr == nullptr || *BasePtr == nullptr)
+		if (BasePtr == nullptr)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[MONSTER_MOVE] objectId %lld not found in Players map!"), objectId);
+			UE_LOG(LogTemp, Warning, TEXT("[MONSTER_MOVE] objectId %lld not found in Players map"), objectId);
 			continue;
 		}
 
-		AASCharacterNonPlayer* Monster = Cast<AASCharacterNonPlayer>(*BasePtr);
-		if (Monster == nullptr)
+		AASCharacterBase* Base = *BasePtr;
+
+		if (!IsValid(Base))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[MONSTER_MOVE] objectId %lld points to invalid (possibly destroyed) actor"), objectId);
+			Players.Remove(objectId); // 안전 정리
+			continue;
+		}
+
+		AASCharacterNonPlayer* Monster = Cast<AASCharacterNonPlayer>(Base);
+		if (!Monster)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("[MONSTER_MOVE] objectId %lld is not a Monster!"), objectId);
 			continue;
 		}
+
 		Monster->SetTargetPos(pos);
 	}
+}
+
+void UASGameInstance::HandleMonsterDamage(const Protocol::S_MONSTER_DAMAGEINFO& MonsterPkt)
+{
+	const Protocol::PosInfo& pos = MonsterPkt.monsters();
+	const int64 objectId = pos.object_id();
+
+	AASCharacterBase** BasePtr = Players.Find(objectId);
+	if (BasePtr == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[MONSTER_MOVE] objectId %lld not found in Players map"), objectId);
+		return;
+	}
+
+	AASCharacterBase* Base = *BasePtr;
+
+	if (!IsValid(Base))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[MONSTER_MOVE] objectId %lld points to invalid (possibly destroyed) actor"), objectId);
+		Players.Remove(objectId); // 안전 정리
+		return;
+	}
+
+	AASCharacterNonPlayer* Monster = Cast<AASCharacterNonPlayer>(Base);
+	if (!Monster)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[MONSTER_MOVE] objectId %lld is not a Monster!"), objectId);
+		return;
+	}
+
+	Monster->GetStatComponent()->ApplyDamage(pos.hp());
 }
 
 void UASGameInstance::HandleRegisterWeapon(const Protocol::S_PARTY_WEAPON& WeaponPkt)

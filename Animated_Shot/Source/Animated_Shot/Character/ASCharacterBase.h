@@ -91,6 +91,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UASCharacterStatComponent> Stat;
 
+	UASCharacterStatComponent* GetStatComponent() { return Stat; };
+
 //UI Widget Section
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widget, Meta = (AllowPrivateAccess = "true"))
